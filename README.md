@@ -8,5 +8,6 @@ This is a very rough implementation of NLP technologies in Akka/Scala
 To run:
 
 	1) In terminal run: 'sbt compile run'
-	2) From eclipse run TestApp.java
+	2) Select number corresponding to DaemonSystem
+	3) From eclipse run TestApp.java
 
