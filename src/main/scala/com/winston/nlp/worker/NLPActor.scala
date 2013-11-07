@@ -12,10 +12,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class NLPActor(splitRouter:ActorRef, parseRouter:ActorRef) extends Actor { 
 
-	println("NLP Actor active");
-
 	def receive = {
-	case raw_text: RawText => process(raw_text, sender);
+		case raw_text: RawText => process(raw_text, sender);
 	}
 
 	// Process Raw Text
@@ -29,8 +27,7 @@ class NLPActor(splitRouter:ActorRef, parseRouter:ActorRef) extends Actor {
 			ask(parseRouter, RawSentece(sentence)).mapTo[ParsedSentence]
 		}
 		
-		val futureParsed = Future.sequence(parseFutures);
-		val parsed = Await.result(futureParsed, timeout.duration) 
+		val parsed = Await.result(Future.sequence(parseFutures), timeout.duration) 
 		
 		origin ! NLPResponse(parsed)
 	}
