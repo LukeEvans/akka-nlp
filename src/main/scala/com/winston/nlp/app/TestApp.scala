@@ -17,8 +17,8 @@ import com.winston.nlp.messages.RawText
 import com.winston.nlp.worker.ParseActor
 import akka.actor.Inbox
 import com.winston.nlp.messages.RawText
-import com.winston.nlp.messages.NLPResponse
 import scala.concurrent.duration._
+import com.winston.nlp.messages.ScoreRequest
 
 
 class TestApplication extends Bootable {
@@ -34,7 +34,7 @@ class TestApplication extends Bootable {
 	Thread sleep 10000
 	val inbox = Inbox.create(system);
 	inbox.send(nlpWorker, RawText("Hello there, my name is Luke. What is your name? Wow, that's a stupid name"));
-	val NLPResponse(response) = inbox.receive(5.seconds);
+	val ScoreRequest(text, response) = inbox.receive(5.seconds);
 
 	println(response)
 	
