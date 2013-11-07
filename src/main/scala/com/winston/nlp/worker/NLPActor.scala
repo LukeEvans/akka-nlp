@@ -14,6 +14,7 @@ class NLPActor(splitRouter:ActorRef) extends Actor {
 	
 	def receive = {
 		case raw_text: RawText => process(raw_text);
+		case text:Any => println(text) 
 	}
 
 	// Process Raw Text

@@ -31,7 +31,7 @@ class TestApplication extends Bootable {
 	}
 	
 	def startup ={
-
+		
 	}
 
 	def shutdown={
