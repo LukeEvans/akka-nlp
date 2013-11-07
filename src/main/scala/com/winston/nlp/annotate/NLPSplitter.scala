@@ -9,6 +9,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
 import java.util.ArrayList
 import com.winston.nlp.messages.SplitSentences
+import com.winston.nlp.messages.SplitSentences
 
 class NLPSplitter {
 
@@ -23,8 +24,6 @@ class NLPSplitter {
 
 		splitProcessor.annotate(document)
 
-		println("\nParse : " + splitProcessor.timingInformation() + "\n")
-
 		var list = document.get(classOf[SentencesAnnotation])
 		var sentences = new ArrayList[String];
 
@@ -32,6 +31,6 @@ class NLPSplitter {
 		  sentences.add(m.get(classOf[TextAnnotation]))
 		}
 
-		return SplitSentences(sentences)
+		SplitSentences(sentences.toList);
 	}
 }
