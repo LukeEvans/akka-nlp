@@ -8,6 +8,8 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import com.winston.nlp.nlp.SentenceSet
+import scala.collection.JavaConversions._
 
 
 class NLPActor(splitRouter:ActorRef, parseRouter:ActorRef) extends Actor { 
@@ -21,14 +23,20 @@ class NLPActor(splitRouter:ActorRef, parseRouter:ActorRef) extends Actor {
 		implicit val timeout = Timeout(5 seconds);
 
 		val futureSplit = splitRouter ? rawText; 
-		val split = Await.result(futureSplit, timeout.duration).asInstanceOf[SplitSentences];
+		val splitSet = Await.result(futureSplit, timeout.duration).asInstanceOf[SetContainer];
 
-		val parseFutures: List[Future[ParsedSentence]] = split.sentences map { sentence =>
-			ask(parseRouter, RawSentece(sentence)).mapTo[ParsedSentence]
+		var set = splitSet.set;
+		
+		val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
+			ask(parseRouter, SentenceContainer(sentence)).mapTo[SentenceContainer]
 		}
 		
 		val parsed = Await.result(Future.sequence(parseFutures), timeout.duration) 
 		
-		origin ! ScoreRequest(rawText.text, parsed)
+		parsed map { sc =>
+			set.replaceSentence(sc.sentence);
+		}
+		
+		origin ! SetContainer(set)
 	}
 }

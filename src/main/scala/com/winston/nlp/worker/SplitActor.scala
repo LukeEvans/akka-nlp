@@ -12,6 +12,6 @@ class SplitActor extends Actor {
 	val splitter = new NLPSplitter();
 
 	def receive = {
-		case raw_text: RawText => sender ! splitter.splitProcess(raw_text.text);
+		case raw_text: RawText => sender ! splitter.splitProcess(raw_text);
 	}
 }

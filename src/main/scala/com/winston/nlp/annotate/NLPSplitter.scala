@@ -3,13 +3,15 @@ package com.winston.nlp.annotate
 import scala.collection.JavaConversions._
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import java.util.Properties
-import com.winston.nlp.messages.SplitSentences
 import edu.stanford.nlp.pipeline.Annotation
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
 import java.util.ArrayList
-import com.winston.nlp.messages.SplitSentences
-import com.winston.nlp.messages.SplitSentences
+import com.winston.nlp.messages._
+import com.winston.nlp.nlp.SentenceSet
+import com.winston.nlp.messages.RawText
+import com.winston.nlp.nlp.NLPSentence
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 
 class NLPSplitter {
 
@@ -18,19 +20,27 @@ class NLPSplitter {
 	val splitProcessor:StanfordCoreNLP = new StanfordCoreNLP(splitProps);
 	println("--Splitter Created");
 	
-	def splitProcess(text:String):SplitSentences = {
+	def splitProcess(textObject: RawText):SetContainer = {
 
-		var document = new Annotation(text)
+		var set = new SentenceSet(textObject.query, textObject.text);
+		
+		var document = new Annotation(textObject.text)
 
 		splitProcessor.annotate(document)
 
 		var list = document.get(classOf[SentencesAnnotation])
-		var sentences = new ArrayList[String];
 
 		for(m <- list){
-		  sentences.add(m.get(classOf[TextAnnotation]))
+		  
+		  var sentence = new NLPSentence(m.get(classOf[TextAnnotation]));
+		  
+		  for (t <- m.get(classOf[TokensAnnotation])) {
+		    sentence.addWord(t.get(classOf[TextAnnotation]));
+		  }
+		  
+		  set.addSentence(sentence);
 		}
 
-		SplitSentences(sentences.toList);
+		SetContainer(set);
 	}
 }

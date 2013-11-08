@@ -1,19 +1,12 @@
 package com.winston.nlp.scoring
 
 import akka.actor.Actor
-import com.winston.nlp.messages.ScoreRequest
-import com.winston.nlp.messages.ScoreRequest
-import com.winston.nlp.messages.ScoreRespones
+import org.apache.xpath.operations.String
 
 class ScoringActor extends Actor {
 
   	def receive = {
-		case score_request: ScoreRequest => sender ! processScore(score_request);
+		case score_request: String => sender ! score_request;
 	}
   	
-  	// Process Score request
-  	def processScore(request:ScoreRequest) : ScoreRespones = {
-  	  
-  	  null;
-  	} 
 }

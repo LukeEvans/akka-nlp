@@ -13,12 +13,12 @@ import com.winston.nlp.worker.SplitActor
 import akka.routing.FromConfig
 import com.winston.nlp.worker.NLPActor
 import com.winston.nlp.worker.NLPActor
-import com.winston.nlp.messages.RawText
+import com.winston.nlp.messages._
 import com.winston.nlp.worker.ParseActor
 import akka.actor.Inbox
 import com.winston.nlp.messages.RawText
 import scala.concurrent.duration._
-import com.winston.nlp.messages.ScoreRequest
+import com.winston.nlp.messages.response
 
 
 class TestApplication extends Bootable {
@@ -27,16 +27,21 @@ class TestApplication extends Bootable {
 	
 	val system = SystemCreator.createClientSystem("System", ip, port);
 	
-	val splitRouter = system.actorOf(Props(classOf[SplitActor]).withRouter(new FromConfig()), "splitWorkers");
-	val parseRouter = system.actorOf(Props(classOf[ParseActor]).withRouter(new FromConfig()), "parseWorkers");
-	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter).withRouter(new FromConfig()), "nlpWorkers");
+//	val splitRouter = system.actorOf(Props(classOf[SplitActor]).withRouter(new FromConfig()), "splitWorkers");
+//	val parseRouter = system.actorOf(Props(classOf[ParseActor]).withRouter(new FromConfig()), "parseWorkers");
+//	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter).withRouter(new FromConfig()), "nlpWorkers");
+	
+	// Local testing
+	val splitRouter = system.actorOf(Props(classOf[SplitActor]), "split");
+	val parseRouter = system.actorOf(Props(classOf[ParseActor]), "parse");
+	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter), "nlpWorkers");
 
 	Thread sleep 10000
 	val inbox = Inbox.create(system);
-	inbox.send(nlpWorker, RawText("Hello there, my name is Luke. What is your name? Wow, that's a stupid name"));
-	val ScoreRequest(text, response) = inbox.receive(5.seconds);
+	inbox.send(nlpWorker, RawText("Fake query","Hello there, my name is Luke. What is your name? Wow, that's a stupid name"));
+	val SetContainer(set) = inbox.receive(5000.seconds);
 
-	println(response)
+	println(set)
 	
 	
 	def startup ={
