@@ -18,3 +18,7 @@ case class SetContainer(set:SentenceSet) extends request
 
 // Sentence 
 case class SentenceContainer(sentence:NLPSentence) extends request
+
+// Term frequency response
+case class SingleTermFrequency(word:String, count:Long) extends request; 
+case class TermFrequencyResponse(map:Map[String, Long]) extends response;

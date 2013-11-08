@@ -19,7 +19,8 @@ import akka.actor.Inbox
 import com.winston.nlp.messages.RawText
 import scala.concurrent.duration._
 import com.winston.nlp.messages.response
-
+import akka.serialization.SerializationExtension
+import com.winston.nlp.nlp.NLPWord
 
 class TestApplication extends Bootable {
 	val ip = IPTools.getPrivateIp();
@@ -42,7 +43,6 @@ class TestApplication extends Bootable {
 	val SetContainer(set) = inbox.receive(5000.seconds);
 
 	println(set)
-	
 	
 	def startup ={
 	}

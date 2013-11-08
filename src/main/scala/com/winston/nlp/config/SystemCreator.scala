@@ -15,6 +15,15 @@ object SystemCreator {
     				s"""akka {
                         	actor {
                             	provider = "akka.remote.RemoteActorRefProvider"
+    				
+    				            serializers {
+                                	java = "akka.serialization.JavaSerializer"
+                            	}
+                                	
+                            	serialization-bindings {
+                                	"java.lang.String" = java
+                                	"com.winston.nlp.messages.TransportMessage" = java
+                            	}
                         	}
                         
     						remote {
@@ -23,6 +32,7 @@ object SystemCreator {
                                 	port = $port
                                 }
                             }
+                                	
                      }"""
     		)
         
@@ -75,8 +85,17 @@ object SystemCreator {
               					nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"] 
            					} 
            				}
+           			}
+                                 
+           			serializers {
+                    	java = "akka.serialization.JavaSerializer"
+                    }
+                                	
+                    serialization-bindings {
+                        "java.lang.String" = java
+                        "com.winston.nlp.messages.TransportMessage" = java
+                    }
            		}
-           }
            
             actor.provider = "akka.remote.RemoteActorRefProvider"
            	remote.netty.tcp.port = $port

@@ -2,8 +2,9 @@ package com.winston.nlp.nlp
 
 import java.util.ArrayList
 import scala.collection.JavaConversions._
+import com.winston.nlp.messages.TransportMessage
 
-class NLPSentence(v:String) {
+class NLPSentence(v:String) extends TransportMessage {
 	val value = v;
 	var index = -1;
 	var words =  new ArrayList[NLPWord]
