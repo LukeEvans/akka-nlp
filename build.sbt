@@ -16,3 +16,4 @@ libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 
 libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.2.0" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp")) 
 
+libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.20.5"

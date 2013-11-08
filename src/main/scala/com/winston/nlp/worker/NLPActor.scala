@@ -29,6 +29,6 @@ class NLPActor(splitRouter:ActorRef, parseRouter:ActorRef) extends Actor {
 		
 		val parsed = Await.result(Future.sequence(parseFutures), timeout.duration) 
 		
-		origin ! NLPResponse(parsed)
+		origin ! ScoreRequest(rawText.text, parsed)
 	}
 }
