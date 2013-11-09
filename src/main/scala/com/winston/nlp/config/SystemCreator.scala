@@ -75,6 +75,14 @@ object SystemCreator {
               					nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"] 
            					} 
            				}
+           
+           				/comboWorkers {
+           					router = "round-robin"
+           					nr-of-instances = 1
+           					target {
+           						nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"]
+           					}
+           				}
            		}
            }
            
