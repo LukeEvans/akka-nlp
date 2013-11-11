@@ -1,11 +1,17 @@
 package com.winston.utlities
 
 import scala.collection.JavaConversions._
-
 import edu.stanford.nlp.trees.Tree
+import javax.swing.ImageIcon
+import java.awt.Image
 
 object Tools {
 	
+//  def getImageFromURL(url:String){
+//    var image:Image = new ImageIcon(parseUrl(url)).getImage()
+//    
+//    return image
+//  }
   
   def getStringFromTree(tree:Tree):String = {
     var sb = new StringBuilder()

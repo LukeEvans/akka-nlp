@@ -40,6 +40,12 @@ case class NLPWord extends Ordered[NLPWord]{
 	  invalid = true  
 	}
 	
+	override def toString():String = {
+	  var s:String = ""
+	  s += value	
+	  return s
+	}
+	
 	def compare(other:NLPWord) = (this.tfidf - other.tfidf).toInt
 	
 }
