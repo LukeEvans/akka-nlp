@@ -1,6 +1,7 @@
 package com.winston.webextraction
 
 import com.winston.utlities.Tools
+import com.fasterxml.jackson.databind.JsonNode
 
 class WebExtractor {
 	val diffbotBase:String = "http://www.diffbot.com/api/article?token=2a418fe6ffbba74cd24d03a0b2825ea5&url="

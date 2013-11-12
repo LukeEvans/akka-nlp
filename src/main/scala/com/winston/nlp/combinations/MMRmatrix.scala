@@ -2,6 +2,7 @@ package com.winston.nlp.combinations
 
 import java.util.ArrayList
 import com.winston.nlp.NLPSentence
+import com.winston.nlp.stats.CosinSimilarity
 
 class MMRmatrix {
 	var array:Array[Double] = new Array[Double](0)
@@ -13,7 +14,7 @@ class MMRmatrix {
 	  dimSize = sentences.size()
 	  size = dimSize*dimSize
 	  array = new Array[Double](size)
-	  //fillMatrix(sentences)
+	  fillMatrix(sentences)
 	}
 	
 	def getIndex(i:Int, j:Int):Double = {
@@ -30,7 +31,7 @@ class MMRmatrix {
 	def getMaxValue():Double = {
 	  var maxValue:Double = 0;
 	  var i = 0;
-	  /*
+	  
 	  for( i <- 1 to 10){
 	    if(array(i) > maxValue){
 	      maxValue = array(i)
@@ -38,19 +39,42 @@ class MMRmatrix {
 	    
 	    return maxValue
 	  }
-	  */
+	  
 	  return maxValue
 	}
 	
-	def getCombinedMMR():Float ={
+	def getCombinedMMR():Double ={
 	  var midValue = size/2
 	  
 	  var combinedMMR:Double = 0
-	  /*
 	  for(i <- 0 to 10){
-	    
+	    combinedMMR += array(i)
 	  }
-	  */
-	  return 0
+	  
+	  return combinedMMR
+	}
+	
+	def fillMatrix(sentences:ArrayList[NLPSentence]){
+	  var numSentences = sentences.size()
+	  
+	  for(i <- 0 to numSentences){
+	    for(j <- 0 to numSentences){
+	      var index = j
+	      index += (i*dimSize)
+	      
+	      if(j == i){
+	        array(index) = 0
+	      }
+	      else{
+	        array(index) = getMMRScore(sentences.get(i), sentences.get(j))
+	      }
+	    }
+	  }
+	}
+	
+	def getMMRScore(sentence1:NLPSentence, sentence2:NLPSentence):Double = {
+	  var cosinSim = CosinSimilarity.getSimilarity(sentence1.value, sentence2.value)
+	  
+	  return cosinSim
 	}
 }

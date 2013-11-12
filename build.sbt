@@ -17,3 +17,13 @@ libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.2.0" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp")) 
 
 libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.20.5"
+
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.3"
+
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.2.3"
+
+libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.0-alpha4"
+
+
+
+
