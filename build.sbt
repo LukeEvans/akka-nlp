@@ -1,10 +1,16 @@
 name := "NLP Akka"
 
-version := "1.0"
+version := "0.1"
 
 scalaVersion := "2.10.3"
 
+scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+
+resolvers ++= Seq(
+  "spray repo" at "http://repo.spray.io/"
+)
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
 
@@ -23,6 +29,21 @@ libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.2.3"
 
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.0-alpha4"
+
+libraryDependencies ++= {
+  val akkaV = "2.2.3"
+  val sprayV = "1.2-RC2"
+  Seq(
+    "io.spray"            %   "spray-can"     % sprayV,
+    "io.spray"            %   "spray-routing" % sprayV,
+    "io.spray"            %   "spray-testkit" % sprayV,
+    "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
+    "com.typesafe.akka"   %%  "akka-testkit"  % akkaV,
+    "org.specs2"          %%  "specs2"        % "2.2.3" % "test"
+  )
+}
+
+seq(Revolver.settings: _*)
 
 
 

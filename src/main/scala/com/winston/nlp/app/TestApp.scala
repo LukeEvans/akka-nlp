@@ -54,7 +54,6 @@ class TestApplication extends Bootable {
 
 object TestApp{
 	def main(args: Array[String]){
-		//val tester = new TestApplication
-		println(Tools.leafIsLeadingSymbol("$"))
+		val tester = new TestApplication
 	}
 }
