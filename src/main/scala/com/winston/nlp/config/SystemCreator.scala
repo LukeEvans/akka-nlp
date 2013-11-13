@@ -33,7 +33,21 @@ object SystemCreator {
                                 }
                             }
                                 	
-                     }"""
+                     }
+                      atmos {
+                          trace {
+                              enabled: true
+                              node: Test
+                              traceable {
+                                "*": true
+                              }
+                              sampling {
+                                "*": 1
+                              }
+                          }
+                       }          	
+                                	
+                      """
     		)
         
     		return ActorSystem.create(name, ConfigFactory.load(string))

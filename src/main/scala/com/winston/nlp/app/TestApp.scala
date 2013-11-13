@@ -28,14 +28,14 @@ class TestApplication extends Bootable {
 	
 	val system = SystemCreator.createClientSystem("System", ip, port);
 	
-//	val splitRouter = system.actorOf(Props(classOf[SplitActor]).withRouter(new FromConfig()), "splitWorkers");
-//	val parseRouter = system.actorOf(Props(classOf[ParseActor]).withRouter(new FromConfig()), "parseWorkers");
-//	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter).withRouter(new FromConfig()), "nlpWorkers");
+	val splitRouter = system.actorOf(Props(classOf[SplitActor]).withRouter(new FromConfig()), "splitWorkers");
+	val parseRouter = system.actorOf(Props(classOf[ParseActor]).withRouter(new FromConfig()), "parseWorkers");
+	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter).withRouter(new FromConfig()), "nlpWorkers");
 	
 	// Local testing
-	val splitRouter = system.actorOf(Props(classOf[SplitActor]), "split");
-	val parseRouter = system.actorOf(Props(classOf[ParseActor]), "parse");
-	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter), "nlpWorkers");
+//	val splitRouter = system.actorOf(Props(classOf[SplitActor]), "split");
+//	val parseRouter = system.actorOf(Props(classOf[ParseActor]), "parse");
+//	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter), "nlpWorkers");
 
 	Thread sleep 10000
 	val inbox = Inbox.create(system);
