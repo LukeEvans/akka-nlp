@@ -8,11 +8,10 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-resolvers ++= Seq(
-  "spray repo" at "http://repo.spray.io/"
-)
+resolvers += "spray repo" at "http://repo.spray.io/"
 
-libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
+
+//libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
 
 libraryDependencies += "com.typesafe.akka" % "akka-remote_2.10" % "2.2.3"
 
