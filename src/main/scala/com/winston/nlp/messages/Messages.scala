@@ -22,3 +22,6 @@ case class SentenceContainer(sentence:NLPSentence) extends request
 // Term frequency response
 case class SingleTermFrequency(word:String, count:Long) extends request; 
 case class TermFrequencyResponse(map:Map[String, Long]) extends response;
+
+// Request actors to initilize any dangerous code they may have to start
+case class InitRequest extends request;

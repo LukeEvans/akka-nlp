@@ -18,10 +18,7 @@ import com.winston.nlp.search.ElasticSearchActor
 class ScoringActor extends Actor {
 
 	val elasticSearchRouter = context.actorOf(Props(classOf[ElasticSearchActor]).withRouter(RoundRobinRouter(nrOfInstances = 3)));
-	println("ES Router created");
-
 	val termFrequencyRouter = context.actorOf(Props(classOf[TermFrequencyActor],elasticSearchRouter).withRouter(RoundRobinRouter(nrOfInstances = 1)));
-	println("TF Router created");
 	
 	def receive = {
 		case set: SetContainer => processScore(set.set, sender);

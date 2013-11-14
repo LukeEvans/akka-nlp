@@ -17,8 +17,12 @@ class NLPSplitter {
 
 	var splitProps:Properties = new Properties();
 	splitProps.put("annotators", "tokenize, ssplit");
-	val splitProcessor:StanfordCoreNLP = new StanfordCoreNLP(splitProps);
-	println("--Splitter Created");
+	var splitProcessor:StanfordCoreNLP = null;
+	
+	def init() {
+		splitProcessor = new StanfordCoreNLP(splitProps)
+		println("--Splitter Created");
+	}
 	
 	def splitProcess(textObject: RawText):SetContainer = {
 

@@ -16,10 +16,14 @@ import com.winston.nlp.messages.SentenceContainer
 
 
 class NLPParser {
-	var parseProperties = new Properties()
-	parseProperties.put("annotators", "tokenize, ssplit, pos, parse")
-	val parseProcessor:StanfordCoreNLP = new StanfordCoreNLP(parseProperties)
-	println("--Parser Created");
+	var parseProps = new Properties()
+	parseProps.put("annotators", "tokenize, ssplit, pos, parse")
+	var parseProcessor:StanfordCoreNLP = null;
+	
+	def init() {
+	  parseProcessor = new StanfordCoreNLP(parseProps)
+	  println("--Parser Created");
+	}
 	
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 

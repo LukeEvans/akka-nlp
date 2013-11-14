@@ -6,10 +6,19 @@ import akka.actor.Actor
 
 class ParseActor extends Actor {
 
-	println("--Creating Parser");
 	val parser = new NLPParser()
 
+	override def preStart() {
+	  println("--Creating Parser");
+      self ! InitRequest
+	}
+	
+	override def postStop() {
+		println("--Stopped parser");
+	}
+	
 	def receive = {
+	  	case InitRequest => parser.init(); 
 		case sc:SentenceContainer => sender ! parser.parseProcess(sc.sentence)
 	}
 	
