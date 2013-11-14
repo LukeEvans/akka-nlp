@@ -15,6 +15,15 @@ object SystemCreator {
     				s"""akka {
                         	actor {
                             	provider = "akka.remote.RemoteActorRefProvider"
+    				
+    				            serializers {
+                                	java = "akka.serialization.JavaSerializer"
+                            	}
+                                	
+                            	serialization-bindings {
+                                	"java.lang.String" = java
+                                	"com.winston.nlp.messages.TransportMessage" = java
+                            	}
                         	}
                         
     						remote {
@@ -23,7 +32,22 @@ object SystemCreator {
                                 	port = $port
                                 }
                             }
-                     }"""
+                                	
+                     }
+                      atmos {
+                          trace {
+                              enabled: true
+                              node: Test
+                              traceable {
+                                "*": true
+                              }
+                              sampling {
+                                "*": 1
+                              }
+                          }
+                       }          	
+                                	
+                      """
     		)
         
     		return ActorSystem.create(name, ConfigFactory.load(string))
@@ -75,6 +99,7 @@ object SystemCreator {
               					nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"] 
            					} 
            				}
+<<<<<<< HEAD
            
            				/comboWorkers {
            					router = "round-robin"
@@ -83,8 +108,19 @@ object SystemCreator {
            						nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"]
            					}
            				}
+=======
+           			}
+                                 
+           			serializers {
+                    	java = "akka.serialization.JavaSerializer"
+                    }
+                                	
+                    serialization-bindings {
+                        "java.lang.String" = java
+                        "com.winston.nlp.messages.TransportMessage" = java
+                    }
+>>>>>>> ClusterMark1
            		}
-           }
            
             actor.provider = "akka.remote.RemoteActorRefProvider"
            	remote.netty.tcp.port = $port

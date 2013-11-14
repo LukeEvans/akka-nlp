@@ -1,26 +1,39 @@
 package com.winston.nlp.search
 
 import akka.actor.Actor
-import com.winston.nlp.messages.ParsedSentence
-import com.winston.nlp.messages.ParsedSentence
-import com.winston.nlp.messages.ScoredSentence
-import org.elasticsearch.client.Client
-import org.elasticsearch.common.settings.Settings
+import com.winston.nlp.messages.SingleTermFrequency
+import akka.actor.ActorRef
+import com.sksamuel.elastic4s.ElasticClient
+import com.sksamuel.elastic4s.ElasticDsl._
+import com.winston.nlp.messages.SingleTermFrequency
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 
 class ElasticSearchActor extends Actor {
 
+  
 	val settings = ImmutableSettings.settingsBuilder().put("cluster.name", "elasticsearch").build();
-	val client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("ec2-54-234-94-194.compute-1.amazonaws.com", 9300));
+	val client = ElasticClient.remote(settings, ("ec2-54-211-99-5.compute-1.amazonaws.com", 9300));
+
+//	val client = ElasticClient.remote("ec2-54-234-94-194.compute-1.amazonaws.com" -> 9300);
+	println("ES Client connected");
 
 	def receive = {
-		case sentence: ParsedSentence => sender ! processSearch(sentence);
+		case term: SingleTermFrequency => processTermSearch(term.word, sender);
 	}
 
-	def processSearch(sentence:ParsedSentence) : ScoredSentence = {
-
-		null;
+	def processTermSearch(text: String, origin:ActorRef) {
+//		val resp = client.sync.execute {
+//		  search in "places"->"cities" query "London"
+////			count from "news twitter" query { term("text", text) }
+//		}
+//		
+//		println(resp)
+//		
+//		val c = resp.asInstanceOf[Long];
+		
+	  val c = 56;
+	  println("sending back: " + c)
+	  origin ! SingleTermFrequency(text,c);
 	}
+
 }
