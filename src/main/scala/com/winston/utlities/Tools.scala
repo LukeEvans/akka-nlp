@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import java.util.HashMap
 import java.security.MessageDigest
 import java.math.BigInteger
+import org.apache.commons.lang3.StringEscapeUtils
 
 object Tools {
 	
@@ -267,5 +268,17 @@ object Tools {
       }
     }
     return md5
+  }
+  
+  def cleanHtmlFormat(input:String):String = {
+    var output = StringEscapeUtils.escapeHtml4(input);
+    output = output.replaceAll("&rdquo;", "&quot;");
+    output = output.replaceAll("&ldquo;", "&quot;");
+    output = output.replaceAll("&lsquo;", "'");
+    output = output.replaceAll("&rsquo;", "'");
+    output = output.replaceAll("&mdash;", "-");
+    output = StringEscapeUtils.unescapeHtml4(output);
+ 
+    return output
   }
 }

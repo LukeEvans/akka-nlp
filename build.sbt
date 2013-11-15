@@ -10,6 +10,8 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 resolvers += "spray repo" at "http://repo.spray.io/"
 
+resolvers += "spray" at "http://repo.spray.io/"
+
 
 //libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
 
@@ -28,6 +30,16 @@ libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.2.3"
 
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.0-alpha4"
+
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.1"
+
+libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5"
+
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.5"
+
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.5"
+
+libraryDependencies += "play" % "play_2.10" % "2.1.0"
 
 libraryDependencies ++= {
   val akkaV = "2.2.3"
