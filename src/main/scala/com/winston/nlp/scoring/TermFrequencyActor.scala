@@ -1,7 +1,7 @@
 package com.winston.nlp.scoring
 
 import com.winston.nlp.messages.SetContainer
-import com.winston.nlp.nlp.SentenceSet
+import com.winston.nlp.SentenceSet
 import akka.actor.Actor
 import akka.actor.ActorRef
 import scala.collection.JavaConversions._
@@ -19,10 +19,12 @@ import scala.concurrent.Await
 class TermFrequencyActor(searchRouter:ActorRef) extends Actor {
 
   	def receive = {
-		case sc: SetContainer => processTermFrequency(sc.set);
+		case sc: SetContainer =>
+		  val origin = sender;
+		  processTermFrequency(sc.set, origin);
 	}
   	
-  	def processTermFrequency(set:SentenceSet) {
+  	def processTermFrequency(set:SentenceSet, origin:ActorRef) {
   	  implicit val timeout = Timeout(5 seconds);
   		
   	  // Build list of words that should be looked for
@@ -50,8 +52,6 @@ class TermFrequencyActor(searchRouter:ActorRef) extends Actor {
 	    wordMap += (termFreq.word -> termFreq.count);
 	  }
 	  
-	  println(wordMap)
-	  
-  	  sender ! TermFrequencyResponse(wordMap.toMap)
+  	  origin ! TermFrequencyResponse(wordMap.toMap)
   	}
 }

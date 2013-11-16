@@ -2,16 +2,20 @@ package com.winston.webextraction
 
 import com.winston.utlities.Tools
 import com.fasterxml.jackson.databind.JsonNode
+import akka.actor.ActorSystem
 
-class WebExtractor {
+class WebExtractor() {
 	val diffbotBase:String = "http://www.diffbot.com/api/article?token=2a418fe6ffbba74cd24d03a0b2825ea5&url="
-	var diffbotUrl:String = null
-	var response:JsonNode = null
+	var diffbotUrl:String = _;
+	var response:JsonNode = _;
+	var system:ActorSystem = _;
 	
-	def this(url:String){
+	def this(url:String, s:ActorSystem){
 	  this()
+	  system = s;
+	  
 	  diffbotUrl = constructUrl(url)
-	  response = Tools.fetchURL(diffbotUrl)
+//	  response = Tools.fetchURL(diffbotUrl,system)
 	}
 	
 	def getText():String = {

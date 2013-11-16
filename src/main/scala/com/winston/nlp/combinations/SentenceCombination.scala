@@ -4,7 +4,7 @@ import scala.collection.JavaConversions._
 import java.util.ArrayList
 import com.winston.nlp.NLPSentence
 
-case class SentenceCombination extends Ordered[SentenceCombination]{
+case class SentenceCombination() extends Ordered[SentenceCombination]{
 	var size:Int = 0
 	var sentenceNumbers:ArrayList[Int] = new ArrayList[Int]
 	var sentences:ArrayList[NLPSentence] = new ArrayList[NLPSentence]

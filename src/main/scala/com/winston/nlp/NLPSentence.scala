@@ -5,15 +5,18 @@ import java.util.ArrayList
 import edu.stanford.nlp.trees.Tree
 import com.winston.utlities.Tools
 import com.winston.nlp.stats.CosinSimilarity
+import com.winston.nlp.messages.TransportMessage
 
-class NLPSentence {
+class NLPSentence extends TransportMessage {
 	var value:String = null
+	var index = -1;
 	var words:ArrayList[NLPWord] = new ArrayList[NLPWord]
 	var cosine_score:Double = 0
 	var cummulative_tfidf:Double = 0
 	var predecayed_weight:Double = 0
 	var weight:Double = 0
 	var tree:Tree = null
+	var treeString:String = null;
 	
 	def this(s:String, buildWords:Boolean){
 	  this()
@@ -63,7 +66,11 @@ class NLPSentence {
 	  tree = t
 	}
 	
-	def caluculateWeight(location:Int){
+	def putTree(t:String) {
+	  treeString = t;
+	}
+	
+	def caluculateWeight(location:Int, decay:Boolean){
 	  cosine_score *= 1
 	  cummulative_tfidf *= 3
 	  
@@ -77,7 +84,10 @@ class NLPSentence {
 	    weight = (cosine_score + cummulative_tfidf)
 	  }
 	  predecayed_weight = weight
-	  decayWeight(location)
+	  
+	  if (decay) {
+	    decayWeight(location)
+	  }
 	}
 	
 	def decayWeight(loc:Int){
@@ -101,21 +111,11 @@ class NLPSentence {
 	  return score
 	}
 	
-	def calculateSimilarity(querySet:ArrayList[String], ignoreWords:ArrayList[String], headline:String){
-	  if(querySet == null){
-	    return
-	  }
-	  
-	  var cleanValue = removeIgnoreWords(ignoreWords)
-	  
+	def calculateSimilarity(headline:String){
 	  var total:Double = 0;
 	  
 	  total += calculateSimilarity(value, headline)
 	  
-	  for(query <- querySet) {
-	    var thisSim = calculateSimilarity(query, cleanValue)
-	    total += thisSim
-	  }
 	  cosine_score = total
 	}
 	

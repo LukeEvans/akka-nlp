@@ -13,50 +13,20 @@ import com.reactor.nlp.config.SystemCreator
 import com.winston.nlp.worker.SplitActor
 import akka.routing.FromConfig
 import com.winston.nlp.worker.NLPActor
-<<<<<<< HEAD
 import com.winston.nlp.worker.ComboActor
-import com.winston.nlp.messages.RawText
-=======
 import com.winston.nlp.worker.NLPActor
 import com.winston.nlp.messages._
->>>>>>> ClusterMark1
 import com.winston.nlp.worker.ParseActor
 import akka.actor.Inbox
-import com.winston.nlp.messages.RawText
 import scala.concurrent.duration._
-<<<<<<< HEAD
-import com.winston.nlp.messages.ScoreRequest
 import com.winston.utlities.Tools
-
-
-class TestApplication extends Bootable {
-	val ip = IPTools.getPrivateIp();
-	val port = "2554";
-	
-	val system = SystemCreator.createClientSystem("System", ip, port);
-	
-	val splitRouter = system.actorOf(Props(classOf[SplitActor]).withRouter(new FromConfig()), "splitWorkers");
-	val parseRouter = system.actorOf(Props(classOf[ParseActor]).withRouter(new FromConfig()), "parseWorkers");
-	val nlpWorker = system.actorOf(Props(classOf[NLPActor], splitRouter, parseRouter).withRouter(new FromConfig()), "nlpWorkers");
-	val comboWorker = system.actorOf(Props(classOf[ComboActor]).withRouter(new FromConfig()), "comboWorkers");
-
-	Thread sleep 10000
-	val inbox = Inbox.create(system);
-	//inbox.send(nlpWorker, RawText("Hello there, my name is Luke. What is your name? Wow, that's a stupid name"));
-	//val ScoreRequest(text, response) = inbox.receive(5.seconds);
-	
-	inbox.send(comboWorker, "Test message")
-	
-	//println(response)
-=======
-import com.winston.nlp.messages.response
 import akka.serialization.SerializationExtension
-import com.winston.nlp.nlp.NLPWord
 import akka.cluster.Cluster
 import com.winston.nlp.worker.NLPActor
 import akka.cluster.routing.ClusterRouterConfig
 import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
+import com.winston.nlp.http.HttpRequestActor
 
 class TestApplication extends Bootable {
 	val ip = IPTools.getPrivateIp();
@@ -65,7 +35,14 @@ class TestApplication extends Bootable {
     val system = ActorSystem("NLPClusterSystem-0-1", config)
     system.log.info("Reducto will start when 2 backend members in the cluster.")
     var frontend: ActorRef = _;
->>>>>>> ClusterMark1
+	
+//	val reqActor = system.actorOf(Props(classOf[HttpRequestActor]), name = "http");
+//	reqActor ! HttpObject("http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:obama",null,null,"GET");
+//	val inbox = Inbox.create(system);
+//	inbox.send(reqActor, HttpObject("http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:obama",null,null,"GET"))
+//	val HttpObject(uri, obj, response, method) = inbox.receive(5.seconds)
+//	
+//	println(response)
 	
     //#registerOnUp
     Cluster(system) registerOnMemberUp {
@@ -87,7 +64,7 @@ class TestApplication extends Bootable {
        
        else {
          inbox.send(frontend, RawText("Fake Query", input));
-         val SetContainer(set) = inbox.receive(5.seconds);
+         val SetContainer(set) = inbox.receive(500.seconds);
          
          set.sentences.toList map { sentence =>
            println(sentence.tree)
@@ -96,7 +73,6 @@ class TestApplication extends Bootable {
      }
 
 	def startup ={
-
 	}
 
 	def shutdown={

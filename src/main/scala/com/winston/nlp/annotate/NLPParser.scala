@@ -9,7 +9,7 @@ import java.util.Properties
 import edu.stanford.nlp.ling.CoreAnnotations._
 import edu.stanford.nlp.pipeline.Annotation
 import java.util.ArrayList
-import com.winston.nlp.nlp.NLPSentence
+import com.winston.nlp.NLPSentence
 import com.winston.nlp.messages.SentenceContainer
 import com.winston.nlp.messages.SentenceContainer
 

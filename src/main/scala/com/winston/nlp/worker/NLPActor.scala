@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.winston.nlp.nlp.SentenceSet
+import com.winston.nlp.SentenceSet
 import scala.collection.JavaConversions._
 import com.winston.nlp.scoring.ScoringActor
 import akka.routing.RoundRobinRouter
@@ -24,32 +24,24 @@ class NLPActor extends Actor {
 	// Splitting router
     val splitRouter = context.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
-	    totalInstances = 100, maxInstancesPerNode = 3,
-	    allowLocalRoutees = false, useRole = Some("nlp-backend")))),
+	    totalInstances = 100, maxInstancesPerNode = 1,
+	    allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
 	  name = "splitRouter")
 	  
 	// Parsing router
 	val parseRouter = context.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	    ClusterRouterSettings(
-	    totalInstances = 100, maxInstancesPerNode = 3,
-	    allowLocalRoutees = false, useRole = Some("nlp-backend")))),
+	    totalInstances = 100, maxInstancesPerNode = 1,
+	    allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
 	  name = "parseRouter")
 	  
 	// Scoring actor
 	val scoringRouter = context.actorOf(Props[ScoringActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
-	    totalInstances = 100, maxInstancesPerNode = 3,
-	    allowLocalRoutees = false, useRole = Some("nlp-backend")))),
+	    totalInstances = 100, maxInstancesPerNode = 1,
+	    allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
 	  name = "scoringRouter")
 
-	override def preStart() {
-      println("\n\n\nStarting NLP\n\n\n")
-	}
-	
-	override def postStop(){
-	  println("\n\n\nStopping NLP\n\n\n")
-	}
-	
 	def receive = {
 		case raw_text: RawText =>
 		  val origin = sender;
@@ -58,7 +50,7 @@ class NLPActor extends Actor {
 
 	// Process Raw Text
 	def process(rawText: RawText, origin: ActorRef) {
-		implicit val timeout = Timeout(5 seconds);
+		implicit val timeout = Timeout(500 seconds);
 
 		// Get the split sentences
 		val futureSplit = splitRouter ? rawText; 
@@ -78,8 +70,9 @@ class NLPActor extends Actor {
 		}
 		
 		// Score sentences
-		scoringRouter ! SetContainer(set);
+		val futureSet = scoringRouter ? SetContainer(set);
+		val SetContainer(scoredSet) = Await.result(futureSet, timeout.duration).asInstanceOf[SetContainer];
 		
-		origin ! SetContainer(set)
+		origin ! SetContainer(scoredSet)
 	}
 }
