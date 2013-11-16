@@ -8,9 +8,9 @@ import spray.can.Http
 object ApiApp{
   def main(args: Array[String]) ={
 
-	implicit val system = ActorSystem("on-spray-can")
+	implicit val system = ActorSystem("Reducto-Spray-Can-Api")
 	
-	val service = system.actorOf(Props[ApiActor], "demo-service")
+	val service = system.actorOf(Props[ApiActor], "api-service")
 	
 	IO(Http) ! Http.Bind(service, interface = "localhost", port = 8080)
 	

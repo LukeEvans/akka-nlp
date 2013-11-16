@@ -1,46 +1,32 @@
 package com.winston.api
 
-import org.json4s.DefaultFormats
-import org.json4s.Formats
-import org.json4s.JsonAST.JObject
-
 import akka.actor.Actor
 import spray.http._
 import spray.http.MediaTypes._
-import spray.httpx.Json4sSupport
 import spray.httpx.unmarshalling._
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 import spray.routing._
 import play.api.libs.json._
 
-class ApiActor extends Actor with getService{
-  
+class ApiActor extends Actor with ApiService{
   def actorRefFactory = context
-  
-  def receive = runRoute(getRoute)
-
+  // Route requests to our HttpService
+  def receive = runRoute(apiRoute)
 }
 
-object Json4sProtocol extends Json4sSupport {
-  implicit def json4sFormats: Formats = DefaultFormats
-}
-
-trait getService extends HttpService{
-  val getRoute =
+trait ApiService extends HttpService{
+  val apiRoute =
 	path(""){
-		get {
-			complete("Reducto API")
-		} ~
-		post{
-			complete("Reducto API")
-		}
+	  complete("Reducto API")
 	}~
 	path("url"){
 		get{
 		  respondWithMediaType(MediaTypes.`application/json`){
 			  entity(as[HttpRequest]){
 			    obj => complete{
+			    	var response:Any = null
+			      
 			    	var  urlField = obj.uri.query.get("url");
 			    	var  weightField = obj.uri.query.get("weight");
 			    	var  metadataField = obj.uri.query.get("metadata");
@@ -57,9 +43,10 @@ trait getService extends HttpService{
 
 		    	    if(urlField != None){
 		    	    	url = urlField.get
+		    	    	response = obj.uri
 		    	    }
 		    	    else{
-		    	    	"Error: No url"
+		    	    	response = "Error: No url"
 		    	    }
 		    	  
 			    	if(weightField != None)
@@ -74,7 +61,7 @@ trait getService extends HttpService{
 			    	if(sentencesField != None)
 			    		sentences = sentencesField.get.toInt
 
-			    	"ok"
+			        response.toString
 			    }
 			  }
 		  }
@@ -84,45 +71,43 @@ trait getService extends HttpService{
 			  entity(as[String]){
 				  obj => complete{
 		    	  
-		    	  val request = Json.parse(obj)
+					  val request = Json.parse(obj)
+					  var response:Any = null
 		    	  
-		    	  val urlField = (request \ "url").asOpt[String]		    	  
-    			  val weightField = (request \ "weight").asOpt[Boolean]
-		    	  val metadataField = (request \ "metadata").asOpt[Boolean]
-		    	  val socialField = (request \ "social").asOpt[Boolean]
-    			  val breakdownField = (request \ "breakdown").asOpt[Boolean]		    	  
-		    	  val sentencesField = (request\ "sentences").asOpt[Int]
+					  val urlField = (request \ "url").asOpt[String]		    	  
+					  val weightField = (request \ "weight").asOpt[Boolean]
+					  val metadataField = (request \ "metadata").asOpt[Boolean]
+					  val socialField = (request \ "social").asOpt[Boolean]
+    			      val breakdownField = (request \ "breakdown").asOpt[Boolean]		    	  
+		    	      val sentencesField = (request\ "sentences").asOpt[Int]
 
-		    	  var url:String = null
-		    	  var weight:Boolean = false
-		    	  var metadata:Boolean = false
-		    	  var social:Boolean = false
-		    	  var breakdown:Boolean = false
-		    	  var sentences:Int = 3
+		    	      var url:String = null
+		    	      var weight:Boolean = false
+		    	      var metadata:Boolean = false
+		    	      var social:Boolean = false
+		    	      var breakdown:Boolean = false
+		    	      var sentences:Int = 3
 
-		    	  if(urlField != None){
-		    	    url = urlField.get
-				  }
-		    	  else{
-		    	    "Error: No url"
-		    	  }
+		    	     if(urlField != None){
+		    	        url = urlField.get
+		    	        response = obj.asJson.prettyPrint
+				     }
+		    	     else{
+		    	        response = "Error: URL field missing"
+		    	     }
 		    	  
-		    	  if(weightField != None)
-		    		  weight = weightField.get
-		          if(metadataField != None)
-		    		  metadata = metadataField.get
-		          if(socialField != None)
-		    		  social = socialField.get		    	  
-		          if(breakdownField != None)
-		    		  breakdown = breakdownField.get
-		    	  if(sentencesField != None)
-		    		  sentences = sentencesField.get
+		    	     if(weightField != None)
+		    		    weight = weightField.get
+		             if(metadataField != None)
+		    		    metadata = metadataField.get
+		             if(socialField != None)
+		    		    social = socialField.get		    	  
+		             if(breakdownField != None)
+		    		    breakdown = breakdownField.get
+		    	     if(sentencesField != None)
+		    		    sentences = sentencesField.get
 		    	  
-  		  
-		  
-		    	  val response = obj.asJson
-		    	  val responseString =response.prettyPrint
-		    	  responseString
+		    	     response.toString
 				  }
 			  }
 		  }	
@@ -133,6 +118,8 @@ trait getService extends HttpService{
 		  	respondWithMediaType(MediaTypes.`application/json`){
 			  entity(as[HttpRequest]){
 			    obj => complete{
+			    	var response:Any = null
+			      
 			    	var  headlineField = obj.uri.query.get("headline");
 			    	var  textField = obj.uri.query.get("text");
 			    	var  weightField = obj.uri.query.get("weight");
@@ -152,9 +139,11 @@ trait getService extends HttpService{
 		    	    if(headlineField != None && textField != None){
 		    	    	headline = headlineField.get
 		    	    	text = textField.get
+		    	    	response = obj.uri
 		    	    }
 		    	    else{
-		    	    	"Error: No headline or text fields"
+		    	    	
+		    	    	response = "Error: No headline or text fields"
 		    	    }
 		    	  
 			    	if(weightField != None)
@@ -169,7 +158,7 @@ trait getService extends HttpService{
 			    	if(sentencesField != None)
 			    		sentences = sentencesField.get.toInt
 
-			    	"ok"
+			    	response.toString
 			    }
 			  }
 		  }
@@ -180,6 +169,7 @@ trait getService extends HttpService{
 				  obj => complete{
 		    	  
 		    	  val request = Json.parse(obj)
+		    	  var response:Any = null
 		    	  
 		    	  val headlineField = (request \ "headline").asOpt[String]
     			  val textField = (request \ "text").asOpt[String]		    	  
@@ -201,9 +191,10 @@ trait getService extends HttpService{
 		    	  if(headlineField != None && textField != None){
 		    	    headline = headlineField.get
 		    	    text = textField.get
+		    	    response = obj.asJson.prettyPrint
 				  }
 		    	  else{
-		    	    "Error: No headline or text fields"
+		    	    response = "Error: No headline or text fields"
 		    	  }
 		    	  
 		    	  if(weightField != None)
@@ -217,9 +208,7 @@ trait getService extends HttpService{
 		    	  if(sentencesField != None)
 		    		  sentences = sentencesField.get		    	  
 		    		  
-		    	  val response = obj.asJson
-		    	  val responseString =response.prettyPrint
-		    	  responseString
+		    	  	response.toString
 				  }
 			  }
 		  }	
@@ -230,6 +219,8 @@ trait getService extends HttpService{
 		  	respondWithMediaType(MediaTypes.`application/json`){
 			  entity(as[HttpRequest]){
 			    obj => complete{
+			    	var response:Any = null
+			      
 			    	var  headlineField = obj.uri.query.get("headline");
 			    	var  textField = obj.uri.query.get("text");
 			    	var  socialField = obj.uri.query.get("social");
@@ -241,15 +232,16 @@ trait getService extends HttpService{
 		    	    if(headlineField != None && textField != None){
 		    	    	headline = headlineField.get
 		    	    	text = textField.get
+		    	    	response = obj.uri
 		    	    }
 		    	    else{
-		    	    	"Error: No headline or text fields"
+		    	    	response = "Error: No headline or text fields"
 		    	    }
 		    	 
 			    	if(socialField != None)
 			    		social = socialField.get.toBoolean  
 
-			    	"ok"
+			    	response.toString
 			    }
 			  }
 		  }
@@ -260,6 +252,7 @@ trait getService extends HttpService{
 				  obj => complete{
 		    	  
 		    	  val request = Json.parse(obj)
+		    	  var response:Any = null
 		    	  
 		    	  val headlineField = (request \ "headline").asOpt[String]
     			  val textField = (request \ "text").asOpt[String]
@@ -272,40 +265,27 @@ trait getService extends HttpService{
 		    	  if(headlineField != None && textField != None){
 		    	    headline = headlineField.get
 		    	    text = textField.get
+		    	    response = obj.asJson.prettyPrint
 				  }
 		    	  else{
-		    	    "Error: No headline or text fields"
+		    	    response = "Error: No headline or text fields"
 		    	  }
 
 		          if(socialField != None)
 		    		  social = socialField.get		    	  
 
-		    	  val response = obj.asJson
-		    	  val responseString =response.prettyPrint
-		    	  responseString
+		    	  response.toString
 				  }
 			  }
 		  }	
 		}
 	}~
-	path("short"){
+	path("health"){
 		get{
-		  	respondWithMediaType(MediaTypes.`application/json`){
-			  entity(as[HttpRequest]){
-				  obj =>{
-				    complete{"OK."}
-				  }
-			  }
-		  }
+			complete{"OK."}
 		}
 		post{
-		  respondWithMediaType(MediaTypes.`application/json`){
-			  entity(as[String]){
-				obj=>{
-					complete{"OK."}
-				}
-			  }
-		  }	
+			complete{"OK."}
 		}
 	}
 }
