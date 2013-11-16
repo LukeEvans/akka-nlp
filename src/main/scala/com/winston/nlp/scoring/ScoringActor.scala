@@ -91,6 +91,9 @@ class ScoringActor extends Actor {
 		// Find total terms
 		set.findTotalTermsInDoc;
 		
+		// Calculate TFIDF
+		set.calculateTFIDF;
+		
 		// Calculate weight
 		set.calculateWeight;
 		
