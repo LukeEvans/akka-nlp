@@ -12,7 +12,9 @@ class ElasticSearchActor extends HttpRequestActor {
 	val totalCount = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count";
 	val queryCount = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:";
 	val stopPhrases = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/stop/_search?size=500";
-  
+	var recCount:Int = 0;
+	var sentCount:Int = 0;
+	
 	override def receive = {
 		case term: SingleTermFrequency =>
 		  val origin = sender;
@@ -30,8 +32,11 @@ class ElasticSearchActor extends HttpRequestActor {
 
 	def processTermSearch(text: String, origin:ActorRef) {
 		val uri = queryCount + text
+		recCount += 1;
 		val node = processRequest(HttpObject(uri, null, null, "GET"), null)
-		origin ! SingleTermFrequency(text, node.path("count").asLong())
+		val freq = SingleTermFrequency(text, node.path("count").asLong());
+		origin ! freq
+		sentCount += 1;
 	}
 
 	def processTotalDocuments(origin:ActorRef) {

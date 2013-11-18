@@ -21,17 +21,18 @@ class NLPSentence extends TransportMessage {
 	def this(s:String, buildWords:Boolean){
 	  this()
 	  value = s
-	  words = new ArrayList[NLPWord]
+	  
+	  if (buildWords) {
+	  	for(w <- s.split("\\s")){
+	  		addWord(w)
+	  	}
+	  }
 	}
 	
 	def this(s:String){
 	  this()
 	  value = s
 	  words = new ArrayList[NLPWord]
-	  
-	  for(w <- s.split("\\s")){
-	    addWord(w)
-	  }
 	}
 	
 	def this(t:Tree){

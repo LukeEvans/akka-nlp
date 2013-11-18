@@ -24,7 +24,7 @@ class ScoringActor extends Actor {
   	// Search router
     val elasticSearchRouter = context.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
-	    totalInstances = 100, maxInstancesPerNode = 1,
+	    totalInstances = 100, maxInstancesPerNode = 10,
 	    allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
 	  name = "elasticSearchRouter")
 	  
@@ -57,7 +57,7 @@ class ScoringActor extends Actor {
 		///////////////////////////
 		
 		// Calculate Cosine
-		set.calculateCosinSim();
+		set.calculateCosinSim;
 		
 		///////////////////////////
 		// Collect

@@ -17,9 +17,10 @@ import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
 import com.winston.nlp.scoring.ScoringActor
 import akka.routing.Broadcast
+import com.winston.nlp.combinations.SentenceCombinations
 
 
-class NLPActor extends Actor { 
+class ReductoActor extends Actor { 
   
 	// Splitting router
     val splitRouter = context.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -72,6 +73,10 @@ class NLPActor extends Actor {
 		// Score sentences
 		val futureSet = scoringRouter ? SetContainer(set);
 		val SetContainer(scoredSet) = Await.result(futureSet, timeout.duration).asInstanceOf[SetContainer];
+		
+		// Find Highest combo
+		val combos = new SentenceCombinations(set.sentences)
+		val c = combos.getHighestCombo(3, true);
 		
 		origin ! SetContainer(scoredSet)
 	}

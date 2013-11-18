@@ -21,7 +21,7 @@ class TFIDF extends Ordered[TFIDF]{
 	    return tf
 	  }
 	  
-	  var idf = Math.log10(totalDocuments.floatValue())/ (Float.MaxValue + numOfDocumentsWithTerm.floatValue())
+	  var idf = Math.log10(totalDocuments.floatValue()/ (Float.MinPositiveValue + numOfDocumentsWithTerm.floatValue()))
 	  return (tf * idf)
 	}
 	
