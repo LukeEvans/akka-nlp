@@ -21,6 +21,9 @@ import com.winston.nlp.messages._
 
 class ScoringActor extends Actor {
 
+	// Case class for future compositions
+    case class ScoringIntermediateObject(totalDocs:LongContainer, stopPhrases:StopPhrasesObject, frequencies:TermFrequencyResponse);
+  
   	// Search router
     val elasticSearchRouter = context.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
@@ -38,65 +41,41 @@ class ScoringActor extends Actor {
 
 	def processScore(set:SentenceSet, origin:ActorRef) {
 		implicit val timeout = Timeout(500 seconds);
+		import context.dispatcher
 		
-		///////////////////////////
-		// Send out to be processed
-		///////////////////////////
+		val future = for {
+		 totalDocs <- (elasticSearchRouter ? LongContainer(0)).mapTo[LongContainer]
+		 stopPhrases <- (elasticSearchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
+		 frequencies <- (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		} yield ScoringIntermediateObject(totalDocs, stopPhrases, frequencies)
 		
-		// Determine the number of total documents
-		val futureTD = elasticSearchRouter ? LongContainer(0);
-		
-		// Find stop phrases
-		val futureSP = elasticSearchRouter ? StopPhrasesObject();
-		
-		// Find term frequencies
-		val futureFrequencies = termFrequencyRouter ? SetContainer(set)
-		
-		///////////////////////////
-		// Intermediate Process
-		///////////////////////////
-		
-		// Calculate Cosine
-		set.calculateCosinSim;
-		
-		///////////////////////////
-		// Collect
-		///////////////////////////
-		
-		// Collect total docs
-		val TD = Await.result(futureTD, timeout.duration).asInstanceOf[LongContainer]
-		
-		// Collect stop phrases
-		val StopPhrasesObject(stopPhrases) = Await.result(futureSP, timeout.duration).asInstanceOf[StopPhrasesObject];
-		
-		// Collect frequencies
-		val TermFrequencyResponse(frequencyMap) = Await.result(futureFrequencies, timeout.duration).asInstanceOf[TermFrequencyResponse]
-		
-		///////////////////////////
-		// Post processing
-		///////////////////////////
-		
-		// Set total docs
-		set.putTotalCount(TD.long)
-		
-		// Add word frequencies
-		set.addWordFrequencies(frequencyMap)
-		
-		// Mark invalid words
-		set.markInavlidWords(stopPhrases);
-		
-		// Find index counts
-		set.findTotalObservedCounts;
-
-		// Find total terms
-		set.findTotalTermsInDoc;
-		
-		// Calculate TFIDF
-		set.calculateTFIDF;
-		
-		// Calculate weight
-		set.calculateWeight;
-		
-		origin ! SetContainer(set)
+		future map { item =>
+		  
+		  	// Calculate cosine score
+		  	set.calculateCosinSim;
+		  	
+			// Set total docs
+			set.putTotalCount(item.totalDocs.long)
+			
+			// Add word frequencies
+			set.addWordFrequencies(item.frequencies.mapObject)
+			
+			// Mark invalid words
+			set.markInavlidWords(item.stopPhrases.phrases);
+			
+			// Find index counts
+			set.findTotalObservedCounts;
+	
+			// Find total terms
+			set.findTotalTermsInDoc;
+			
+			// Calculate TFIDF
+			set.calculateTFIDF;
+			
+			// Calculate weight
+			set.calculateWeight;
+			
+			origin ! SetContainer(set)
+		}
 	}
 }

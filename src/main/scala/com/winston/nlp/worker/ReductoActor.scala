@@ -18,9 +18,13 @@ import akka.cluster.routing.ClusterRouterSettings
 import com.winston.nlp.scoring.ScoringActor
 import akka.routing.Broadcast
 import com.winston.nlp.combinations.SentenceCombinations
+import scala.util.Success
+import scala.util.Failure
 
 
 class ReductoActor extends Actor { 
+  
+    case class ReductoIntermediate()
   
 	// Splitting router
     val splitRouter = context.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -49,35 +53,40 @@ class ReductoActor extends Actor {
 		  process(raw_text, origin);
 	}
 
-	// Process Raw Text
+    	// Process Raw Text
 	def process(rawText: RawText, origin: ActorRef) {
-		implicit val timeout = Timeout(500 seconds);
-
-		// Get the split sentences
-		val futureSplit = splitRouter ? rawText; 
-		val splitSet = Await.result(futureSplit, timeout.duration).asInstanceOf[SetContainer];
-
-		var set = splitSet.set;
+    	implicit val timeout = Timeout(500 seconds);
+		import context.dispatcher
 		
-		// Get the parsed sentences
-		val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
-			ask(parseRouter, SentenceContainer(sentence)).mapTo[SentenceContainer]
+		val split = (splitRouter ? rawText).mapTo[SetContainer];
+		
+		split onComplete {
+		  case Success(result) => 
+		       val set = result.set;
+		       
+		  	   var parseFutures = List[Future[SentenceContainer]]();
+			   result.set.sentences map { sentence =>
+			   	  parseFutures.+: ((parseRouter ? SentenceContainer(sentence)).mapTo[SentenceContainer])
+			   }
+			   
+			   Future sequence(parseFutures) map { list =>
+			     list map { sc =>
+			       set.replaceSentence(sc.sentence);
+			     }
+			   }
+			   
+			   val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+			   
+			   futureScored map { scored =>
+			     val combos = new SentenceCombinations(scored.set.sentences);
+			     val c = combos.getHighestCombo(3, true);
+			     
+			     origin ! scored;
+			   }
+			   
+			   
+		  case Failure(failure) => println("Failure")
 		}
-		
-		val parsed = Await.result(Future.sequence(parseFutures), timeout.duration) 
-		
-		parsed map { sc =>
-			set.replaceSentence(sc.sentence);
-		}
-		
-		// Score sentences
-		val futureSet = scoringRouter ? SetContainer(set);
-		val SetContainer(scoredSet) = Await.result(futureSet, timeout.duration).asInstanceOf[SetContainer];
-		
-		// Find Highest combo
-		val combos = new SentenceCombinations(set.sentences)
-		val c = combos.getHighestCombo(3, true);
-		
-		origin ! SetContainer(scoredSet)
 	}
+	
 }
