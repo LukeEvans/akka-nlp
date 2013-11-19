@@ -35,6 +35,13 @@ class NLPSentence extends TransportMessage {
 	  words = new ArrayList[NLPWord]
 	}
 	
+	def this(s:String, i:Int){
+	  this()
+	  value = s
+	  index = i
+	  words = new ArrayList[NLPWord]
+	}
+		
 	def this(t:Tree){
 	  this()
 	  value = Tools.getStringFromTree(t)
@@ -145,6 +152,7 @@ class NLPSentence extends TransportMessage {
 	  var newSentence = new NLPSentence(value, false)
 	  newSentence.cosine_score = cosine_score
 	  newSentence.cummulative_tfidf = cummulative_tfidf
+	  newSentence.index = index
 	  
 	  if(tree != null){
 	    newSentence.tree = tree.deepCopy()
@@ -168,4 +176,5 @@ class NLPSentence extends TransportMessage {
 	  s += value
 	  return s
 	}
+	
 }

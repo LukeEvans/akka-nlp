@@ -20,6 +20,7 @@ import akka.routing.Broadcast
 import com.winston.nlp.combinations.SentenceCombinations
 import scala.util.Success
 import scala.util.Failure
+import com.winston.nlp.NLPSentence
 
 
 class ReductoActor extends Actor { 
@@ -53,40 +54,41 @@ class ReductoActor extends Actor {
 		  process(raw_text, origin);
 	}
 
-    	// Process Raw Text
-	def process(rawText: RawText, origin: ActorRef) {
+    // Process Raw Text
+    def process(rawText: RawText, origin: ActorRef) {
     	implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
+		// Split sentences
 		val split = (splitRouter ? rawText).mapTo[SetContainer];
 		
 		split onComplete {
 		  case Success(result) => 
-		       val set = result.set;
-		       
-		  	   var parseFutures = List[Future[SentenceContainer]]();
-			   result.set.sentences map { sentence =>
-			   	  parseFutures.+: ((parseRouter ? SentenceContainer(sentence)).mapTo[SentenceContainer])
-			   }
-			   
-			   Future sequence(parseFutures) map { list =>
-			     list map { sc =>
-			       set.replaceSentence(sc.sentence);
-			     }
-			   }
-			   
-			   val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
-			   
-			   futureScored map { scored =>
-			     val combos = new SentenceCombinations(scored.set.sentences);
-			     val c = combos.getHighestCombo(3, true);
+		    val set = result.set;
+		    
+		    // Parse sentences
+		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
+		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+            }
+			
+		    // Add parsed sentences back into the set at proper location
+		    parseFutures map { list =>
+		      list map { sc =>
+		        set.replaceSentence(sc.sentence)
+		      }
+		    }
+		    
+		    // Score the sentences
+		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+		    
+			futureScored map { scored =>
+				val combos = new SentenceCombinations(scored.set.sentences);
+			    val c = combos.getHighestCombo(3, true);
 			     
-			     origin ! scored;
-			   }
-			   
-			   
-		  case Failure(failure) => println("Failure")
+			    origin ! scored;
+		 	}
+			
+		  case Failure(failure) => println(failure)
 		}
-	}
-	
+    }
 }

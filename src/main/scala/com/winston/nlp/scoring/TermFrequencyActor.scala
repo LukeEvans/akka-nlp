@@ -47,12 +47,10 @@ class TermFrequencyActor(searchRouter:ActorRef) extends Actor {
 	  	ask(searchRouter, SingleTermFrequency(term, 0)).mapTo[SingleTermFrequency]
   	  } 
 
-  	  val futureList = Future sequence(frequencyFutures);
-  	  
   	  val wordMap = scala.collection.mutable.Map[String, Long]();
 
   	  // Collect
-  	  futureList map { list =>
+  	  Future sequence(frequencyFutures) map { list =>
   	  	list map { termFreq =>
   	  		wordMap += (termFreq.word -> termFreq.count);
   	  	}

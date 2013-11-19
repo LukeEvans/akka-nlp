@@ -38,14 +38,6 @@ class TestApplication(args:Array[String]) extends Bootable {
     system.log.info("Reducto will start when 2 backend members in the cluster.")
     var frontend: ActorRef = _;
 	
-//	val reqActor = system.actorOf(Props(classOf[HttpRequestActor]), name = "http");
-//	reqActor ! HttpObject("http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:obama",null,null,"GET");
-//	val inbox = Inbox.create(system);
-//	inbox.send(reqActor, HttpObject("http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:obama",null,null,"GET"))
-//	val HttpObject(uri, obj, response, method) = inbox.receive(5.seconds)
-//	
-//	println(response)
-	
     //#registerOnUp
     Cluster(system) registerOnMemberUp {
      frontend = system.actorOf(Props[ReductoActor].withRouter(
