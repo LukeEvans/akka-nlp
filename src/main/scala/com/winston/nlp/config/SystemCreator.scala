@@ -99,6 +99,16 @@ object SystemCreator {
               					nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"] 
            					} 
            				}
+<<<<<<< HEAD
+           
+           				/comboWorkers {
+           					router = "round-robin"
+           					nr-of-instances = 1
+           					target {
+           						nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552"]
+           					}
+           				}
+=======
            			}
                                  
            			serializers {
@@ -109,6 +119,7 @@ object SystemCreator {
                         "java.lang.String" = java
                         "com.winston.nlp.messages.TransportMessage" = java
                     }
+>>>>>>> ClusterMark1
            		}
            
             actor.provider = "akka.remote.RemoteActorRefProvider"

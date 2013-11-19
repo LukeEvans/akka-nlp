@@ -8,17 +8,21 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
 import java.util.ArrayList
 import com.winston.nlp.messages._
-import com.winston.nlp.nlp.SentenceSet
+import com.winston.nlp.SentenceSet
 import com.winston.nlp.messages.RawText
-import com.winston.nlp.nlp.NLPSentence
+import com.winston.nlp.NLPSentence
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 
 class NLPSplitter {
 
 	var splitProps:Properties = new Properties();
 	splitProps.put("annotators", "tokenize, ssplit");
-	val splitProcessor:StanfordCoreNLP = new StanfordCoreNLP(splitProps);
-	println("--Splitter Created");
+	var splitProcessor:StanfordCoreNLP = null;
+	
+	def init() {
+		splitProcessor = new StanfordCoreNLP(splitProps)
+		println("--Splitter Created");
+	}
 	
 	def splitProcess(textObject: RawText):SetContainer = {
 
