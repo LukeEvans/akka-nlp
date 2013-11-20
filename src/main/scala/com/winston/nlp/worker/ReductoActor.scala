@@ -21,6 +21,7 @@ import com.winston.nlp.combinations.SentenceCombinations
 import scala.util.Success
 import scala.util.Failure
 import com.winston.nlp.NLPSentence
+import com.winston.nlp.SummaryResult
 
 
 class ReductoActor extends Actor { 
@@ -48,6 +49,13 @@ class ReductoActor extends Actor {
 	    allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
 	  name = "scoringRouter")
 
+	// Package actor
+	val packageRouter = context.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+	    ClusterRouterSettings(
+	    totalInstances = 100, maxInstancesPerNode = 1,
+	    allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
+	  name = "packageRouter")
+	  
 	def receive = {
 		case raw_text: RawText =>
 		  val origin = sender;
@@ -82,10 +90,12 @@ class ReductoActor extends Actor {
 		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
 		    
 			futureScored map { scored =>
-				val combos = new SentenceCombinations(scored.set.sentences);
-			    val c = combos.getHighestCombo(3, true);
-			     
-			    origin ! scored;
+				
+			  	val futureResult = (packageRouter ? scored).mapTo[SummaryResultContainer];
+			  	
+			  	futureResult map { result =>
+			  	  origin ! result
+			  	}
 		 	}
 			
 		  case Failure(failure) => println(failure)

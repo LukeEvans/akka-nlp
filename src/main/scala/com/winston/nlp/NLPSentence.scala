@@ -15,7 +15,6 @@ class NLPSentence extends TransportMessage {
 	var cummulative_tfidf:Double = 0
 	var predecayed_weight:Double = 0
 	var weight:Double = 0
-	var tree:Tree = null
 	var treeString:String = null;
 	
 	def this(s:String, buildWords:Boolean){
@@ -42,14 +41,17 @@ class NLPSentence extends TransportMessage {
 	  words = new ArrayList[NLPWord]
 	}
 		
-	def this(t:Tree){
+	def this(t:Tree, original:NLPSentence){
 	  this()
 	  value = Tools.getStringFromTree(t)
-	  tree = t.deepCopy()
+	  treeString = t.toString();
 	  words = new ArrayList[NLPWord]
-	  for(w <- value.split("\\s")){
-	    addWord(w)
-	  }
+	  
+	  index = original.index;
+	  cosine_score = original.cosine_score;
+	  cummulative_tfidf = original.cummulative_tfidf;
+	  predecayed_weight = original.predecayed_weight;
+	  weight = original.weight
 	}
 	
 	def addWord(w:String){
@@ -67,11 +69,13 @@ class NLPSentence extends TransportMessage {
 	}
 	
 	def grabTree():Tree = {
+	  if (treeString == null) {
+	    println("null treestring")
+	    return Tree.valueOf("")
+	  }
+	  
+	  val tree:Tree = Tree.valueOf(treeString);
 	  return tree
-	}
-	
-	def putTree(t:Tree){
-	  tree = t
 	}
 	
 	def putTree(t:String) {
@@ -153,11 +157,7 @@ class NLPSentence extends TransportMessage {
 	  newSentence.cosine_score = cosine_score
 	  newSentence.cummulative_tfidf = cummulative_tfidf
 	  newSentence.index = index
-	  
-	  if(tree != null){
-	    newSentence.tree = tree.deepCopy()
-	  }
-	  
+	  newSentence.treeString = treeString
 	  newSentence.weight = weight
 	  
 	  for( word <- words){

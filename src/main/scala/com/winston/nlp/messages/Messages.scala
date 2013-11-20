@@ -6,6 +6,7 @@ import java.util.ArrayList
 import com.winston.nlp.SentenceSet
 import com.winston.nlp.NLPSentence
 import com.fasterxml.jackson.databind.JsonNode
+import com.winston.nlp.SummaryResult
 
 trait request;
 trait response;
@@ -35,3 +36,6 @@ case class StopPhrasesObject(phrases:ArrayList[String] = new ArrayList[String]) 
 
 // Long Container
 case class LongContainer(long:Long) extends request;
+
+// Summary Result Container
+case class SummaryResultContainer(summary:SummaryResult) extends response;
