@@ -41,6 +41,10 @@ libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.5"
 
 libraryDependencies += "play" % "play_2.10" % "2.1.0"
 
+libraryDependencies += "com.cybozu.labs" % "langdetect" % "1.1-20120112"
+
+libraryDependencies += "edu.arizona.sista" % "processors" % "1.4"
+
 libraryDependencies ++= {
   val akkaV = "2.2.3"
   val sprayV = "1.2-RC2"
