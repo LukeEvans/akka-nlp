@@ -1,9 +1,9 @@
 package com.winston.nlp.combinations
 
 import scala.collection.JavaConversions._
-
 import java.util.ArrayList
 import com.winston.nlp.NLPSentence
+import com.winston.nlp.validation.Validator
 
 class SentenceCombinations {
 	var sentences:ArrayList[String] = new ArrayList[String]
@@ -33,23 +33,6 @@ class SentenceCombinations {
 	  size = sentences.size()
 	  
 	}
-
-	def getHighestIntCombo(numSentences:Int, sentence:Boolean): ArrayList[Int] = {
-	  var combos:ArrayList[SentenceCombination] = generateCombinations(numSentences, sentence)
-	  
-	  // sort the combos 
-	  
-	  var newCombos:ArrayList[SentenceCombination] = new ArrayList[SentenceCombination]
-	  
-	  for(combo <- combos){
-	    // Run validation actors
-	    // add to new Combos if valid
-	  }
-	  
-	  var sentenceSet:ArrayList[Int] = findHighestMMRIntegerCombo(scores, newCombos)
-	  
-	  return sentenceSet
-	}
 	
 	def getHighestCombo(numSentences:Int, sentence:Boolean):SentenceCombination = {
 	  var combos:ArrayList[SentenceCombination] = generateCombinations(numSentences, sentence)
@@ -58,12 +41,15 @@ class SentenceCombinations {
 	  
 	  var newCombos:ArrayList[SentenceCombination] = new ArrayList[SentenceCombination]
 	  
+	  // Add all valid combos
 	  for(combo <- combos){
-	    // Run validation accotrs
-	    // add ot new Combos if valid
+	    val validator = new Validator(combo.sentenceNumbers, nlpSentences);
+	    if(validator.validate()){
+			newCombos.add(combo);
+		}
 	  }
 	  
-	  return findHighestMMRCombo(scores, combos)
+	  return findHighestMMRCombo(scores, newCombos)
 	}
 		
 	def generateCombinations(limit:Int, sentence:Boolean): ArrayList[SentenceCombination] = {
@@ -93,37 +79,6 @@ class SentenceCombinations {
 	  }
 	  
 	    return combos
-	}
-	
-	def findHighestMMRIntegerCombo(scores:ArrayList[Double], combos:ArrayList[SentenceCombination]):ArrayList[Int] = {
-	  
-	  var comboRemoval:ArrayList[SentenceCombination] = new ArrayList[SentenceCombination]
-	  
-	  for(combo <- combos){
-	    if(combo.isOverMaxMMR){
-	      println("Removed combo: " + combo.sentenceNumbers)
-	      comboRemoval.add(combo)
-	    }
-	  }
-	  
-	  for (combo <- comboRemoval){
-	    combos.remove(combo)
-	  }
-	  
-	  var highestScore = new ArrayList[Int]
-	  
-	  for(i <- 0 to combos.get(0).size){
-	    highestScore.add(-1)
-	  }
-	  
-	  for(i <- 0 to combos.size()){
-	    var score = getScore(scores, combos.get(i).sentenceNumbers)
-	    var highScore = getScore(scores, highestScore)
-	    if(highScore < score)
-	      highestScore = combos.get(i).sentenceNumbers
-	  }
-	  
-	  return highestScore
 	}
 	
 	def findHighestMMRCombo(scores: ArrayList[Double], combos: ArrayList[SentenceCombination]): SentenceCombination = {

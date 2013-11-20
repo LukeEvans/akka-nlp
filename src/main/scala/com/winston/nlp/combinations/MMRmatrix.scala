@@ -32,7 +32,7 @@ class MMRmatrix {
 	  var maxValue:Double = 0;
 	  var i = 0;
 	  
-	  for( i <- 1 to 10){
+	  for( i <- 1 to array.length - 1){
 	    if(array(i) > maxValue){
 	      maxValue = array(i)
 	    }
@@ -47,7 +47,7 @@ class MMRmatrix {
 	  var midValue = size/2
 	  
 	  var combinedMMR:Double = 0
-	  for(i <- 0 to 10){
+	  for(i <- 0 to midValue){
 	    combinedMMR += array(i)
 	  }
 	  

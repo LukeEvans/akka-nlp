@@ -32,6 +32,8 @@ libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.
 
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.2.3"
 
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.2.3"
+
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.0-alpha4"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.1"
