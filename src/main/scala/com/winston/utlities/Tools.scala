@@ -1,29 +1,37 @@
 package com.winston.utlities
 
-import scala.collection.JavaConversions._
-import edu.stanford.nlp.trees.Tree
-import javax.swing.ImageIcon
-import java.awt.Image
-import com.fasterxml.jackson.databind.JsonNode
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.client.methods.HttpGet
-import java.io.BufferedReader
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.InputStreamReader
-import java.net.URL
-import java.net.URI
-import com.fasterxml.jackson.databind.node.ObjectNode
-import java.util.HashMap
-import java.security.MessageDigest
 import java.math.BigInteger
+import java.security.MessageDigest
+import java.util.HashMap
+import scala.collection.JavaConversions._
+import scala.concurrent.Future
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.commons.lang3.StringEscapeUtils
+import edu.stanford.nlp.trees.Tree
+import java.util.ArrayList
+import com.winston.nlp.NLPWord
 
 object Tools {
-	
-  def getImageFromURL(url:String):Image = {
-    var image:Image = new ImageIcon(parseUrl(url)).getImage()
+  
+  def getStringFromList(wordList:ArrayList[NLPWord]):String = {
+    var lastWord:NLPWord = null
+    var sentence:String = ""
     
-    return image
+    for(word <- wordList){
+      if(word.remove){
+    	  //do nothing
+      }
+      else if(lastWord == null || word.startIndex == lastWord.endIndex){
+    	  sentence += word.value
+      }
+      else{
+    	  sentence += (" " + word.value) 
+      }
+      lastWord = word
+    }    
+    return sentence
   }
   
   def getStringFromTree(tree:Tree):String = {
@@ -72,94 +80,6 @@ object Tools {
     case _ => false
   }
   
-  def fetchURL(url:String):JsonNode = {
-    try{
-      
-      var httpClient = new DefaultHttpClient()
-      httpClient.getParams().setParameter("http.socket.timeout", new Integer(2000))
-      var getRequest = new HttpGet(parseUrl(url).toString())
-      getRequest.addHeader("accept", "application/json")
-      
-      var response = httpClient.execute(getRequest)
-      
-      var mapper = new ObjectMapper()
-      var reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"))
-      
-      return mapper.readTree(reader)
-      
-    }catch{
-      case e:Exception =>{
-        e.printStackTrace()
-        return null
-      }
-      
-    }
-  }
-  
-  def readUrl(urlString: String): String = {
-    var reader:BufferedReader = null
-    try{
-      var encodedURL = parseUrl(urlString)
-      
-      if(encodedURL == null){
-        println("null encoded url")
-        return null
-      }
-      
-      reader = new BufferedReader(new InputStreamReader(parseUrl(urlString).openStream()))
-      
-      var buffer = new StringBuffer()
-      
-      var read:Int = 0
-      
-      var chars = new Array[Char](1024)
-      
-      while((read = reader.read(chars)) != -1){
-        buffer.append(chars, 0, read)
-      }
-      
-      if(reader != null)
-    	 buffer.append(chars, 0, read)
-    	 
-      return buffer.toString()
-      
-    }catch{
-      case e:Exception =>{
-        e.printStackTrace()
-        return null
-      }
-    }
-  }
-  
-  def parseUrl(s:String):URL = {
-    var u:URL = null
-    try{
-      
-      u = new URL(s)
-      try{
-        
-        return new URI(
-            u.getProtocol(),
-            u.getAuthority(),
-            u.getPath(),
-            u.getQuery(),
-            u.getRef()).toURL()
-        
-      } catch{
-        case e:Exception =>{
-          e.printStackTrace()
-          return null
-        }
-      }
-      
-    } catch{
-      case e:Exception =>{
-        e.printStackTrace()
-        return null
-      }
-    }
-  }
- 
   def generateRandomNumber():Int = {
     var Min = 0
     var Max = 65535

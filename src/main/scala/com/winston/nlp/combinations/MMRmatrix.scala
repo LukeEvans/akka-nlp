@@ -57,8 +57,8 @@ class MMRmatrix {
 	def fillMatrix(sentences:ArrayList[NLPSentence]){
 	  var numSentences = sentences.size()
 	  
-	  for(i <- 0 to numSentences){
-	    for(j <- 0 to numSentences){
+	  for(i <- 0 to (numSentences-1)){
+	    for(j <- 0 to (numSentences-1)){
 	      var index = j
 	      index += (i*dimSize)
 	      

@@ -1,10 +1,15 @@
 package com.winston.nlp
 
-case class NLPWord extends Ordered[NLPWord]{
+import com.winston.nlp.messages.TransportMessage
+
+case class NLPWord() extends Ordered[NLPWord] with TransportMessage {
 	var value:String = null
 	var tf:Long = 0
 	var tfidf:Double = 0
 	var invalid:Boolean = false
+	var startIndex:Int = 0
+	var endIndex:Int = 0
+	var remove:Boolean = false
 	
 	def this(w:String){
 	  this()
@@ -12,6 +17,12 @@ case class NLPWord extends Ordered[NLPWord]{
 	}
 	
 	def grabValue():String = return value
+	
+	def lowerval = value.toLowerCase();
+	
+	def setFrequency(l:Long) {
+		tf = l;
+	}
 	
 	def copy():NLPWord = {
 	  
@@ -36,7 +47,6 @@ case class NLPWord extends Ordered[NLPWord]{
 	def determineStopword():Boolean = return invalid
 	
 	def markInvalid(){
-	  
 	  invalid = true  
 	}
 	

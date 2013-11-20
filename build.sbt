@@ -10,20 +10,24 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 resolvers += "spray repo" at "http://repo.spray.io/"
 
-resolvers += "spray" at "http://repo.spray.io/"
+atmosSettings
 
 
-//libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
+traceAkka("2.2.3")
+
+libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
 
 libraryDependencies += "com.typesafe.akka" % "akka-remote_2.10" % "2.2.3"
 
 libraryDependencies += "com.typesafe.akka" % "akka-kernel_2.10" % "2.2.3"
 
+libraryDependencies += "com.typesafe.akka" % "akka-cluster_2.10" % "2.2.3"
+
 libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 
 libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.2.0" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp")) 
 
-libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.20.5"
+libraryDependencies += "com.sksamuel.elastic4s" % "elastic4s_2.10" % "0.90.5.2"
 
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.3"
 
@@ -45,6 +49,9 @@ libraryDependencies += "com.cybozu.labs" % "langdetect" % "1.1-20120112"
 
 libraryDependencies += "edu.arizona.sista" % "processors" % "1.4"
 
+libraryDependencies += "commons-lang" % "commons-lang" % "2.1"
+
+
 libraryDependencies ++= {
   val akkaV = "2.2.3"
   val sprayV = "1.2-RC2"
@@ -59,7 +66,4 @@ libraryDependencies ++= {
 }
 
 seq(Revolver.settings: _*)
-
-
-
 

@@ -15,7 +15,7 @@ object CosinSimilarity {
 	  var uniqueTokens1: ArrayList[String] = getUnique(tokens1)
 	  var termsInString1 = uniqueTokens1.size()
 	  
-	  var uniqueTokens2 = getUnique(tokens1)
+	  var uniqueTokens2 = getUnique(tokens2)
 	  var termsInString2 = uniqueTokens2.size()
 	  
 	  var tempTokens = new ArrayList[String]()

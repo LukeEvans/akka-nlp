@@ -63,7 +63,7 @@ class SentenceCombinations {
 	    // add ot new Combos if valid
 	  }
 	  
-	  return findHighestMMRCombo(scores, newCombos)
+	  return findHighestMMRCombo(scores, combos)
 	}
 		
 	def generateCombinations(limit:Int, sentence:Boolean): ArrayList[SentenceCombination] = {
@@ -141,11 +141,11 @@ class SentenceCombinations {
 	    
 	  var returnCombo = new SentenceCombination()
 	    
-	  for(i <- 0 to combos.get(0).size){
+	  for(i <- 0 to (combos.get(0).size-1)){
 	     returnCombo.sentenceNumbers.add(-1)
 	  }
 	    
-	  for(i <- 0 to combos.size()){
+	  for(i <- 0 to (combos.size()-1)){
 	    var score = getScore(scores, combos.get(i).sentenceNumbers)
 	    var highScore = getScore(scores, returnCombo.sentenceNumbers)
 	      
@@ -153,7 +153,7 @@ class SentenceCombinations {
 	      returnCombo = combos.get(i)
 	    }
 	  }
-	  return new SentenceCombination()
+	  return returnCombo;
 	}
 
 	def getCombosSentLimit(numbers:ArrayList[Int], min:Int, max:Int, n:Int, store: ArrayList[ArrayList[Int]]){
@@ -165,7 +165,7 @@ class SentenceCombinations {
 	    }
 	  }
 	  else if(n > 0){
-	    for(i <- min to max){
+	    for(i <- min to (max - 1)){
 	      numbers.add(i)
 	      getCombosSentLimit(numbers, i+1, max, n-1, store)
 	      numbers.remove(numbers.size() - 1)
@@ -204,7 +204,7 @@ class SentenceCombinations {
 	    return false
 	  }
 	  else{
-	    for(i <- 1 to listSize){
+	    for(i <- 1 to (listSize-1)){
 	      if(getDifference(list.get(i), list.get(i-1)) > difference){
 	        return true
 	      }
@@ -214,7 +214,8 @@ class SentenceCombinations {
 	}
 	
 	def getDifference(a:Int, b:Int):Int= {
-	  return Math.abs(a -b)
+	  val diff = Math.abs(a - b);
+	  diff;
 	}
 	
 	def comboWithinLimit(sentenceList:ArrayList[NLPSentence], limit:Int):Boolean = {

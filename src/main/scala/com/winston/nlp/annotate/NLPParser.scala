@@ -8,22 +8,26 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation
 import java.util.Properties
 import edu.stanford.nlp.ling.CoreAnnotations._
 import edu.stanford.nlp.pipeline.Annotation
-import com.winston.nlp.messages.ParsedSentence
-import com.winston.nlp.messages.SplitSentences
 import java.util.ArrayList
-import com.winston.nlp.messages.ParsedSentence
+import com.winston.nlp.NLPSentence
+import com.winston.nlp.messages.SentenceContainer
+import com.winston.nlp.messages.SentenceContainer
 
 
 
 class NLPParser {
-	var parseProperties = new Properties()
-	parseProperties.put("annotators", "tokenize, ssplit, pos, parse")
-	val parseProcessor:StanfordCoreNLP = new StanfordCoreNLP(parseProperties)
-	println("--Parser Created");
+	var parseProps = new Properties()
+	parseProps.put("annotators", "tokenize, ssplit, pos, parse")
+	var parseProcessor:StanfordCoreNLP = null;
 	
-	def parseProcess(text:String): ParsedSentence = {
+	def init() {
+	  parseProcessor = new StanfordCoreNLP(parseProps)
+	  println("--Parser Created");
+	}
+	
+	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
-		var document = new Annotation(text)
+		var document = new Annotation(sentence.value);
 
 		parseProcessor.annotate(document)
 
@@ -34,10 +38,10 @@ class NLPParser {
 			trees.add(m.get(classOf[TreeAnnotation]).toString());
 		}
 
-		if (trees.size() == 0) {
-		  return ParsedSentence(text, null);
+		if (trees.size() > 0) {
+			sentence.putTree(trees.get(0));
 		} 
 		
-		ParsedSentence(text, trees.get(0));
+		SentenceContainer(sentence)
 	}
 }

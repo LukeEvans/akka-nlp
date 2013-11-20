@@ -194,6 +194,18 @@ trait ApiService extends HttpService{
 		    	    headline = headlineField.get
 		    	    text = textField.get
 		    	    response = obj.asJson.prettyPrint
+		    	    
+		    	    		    	        
+		    	    val proc:Processor = new CoreNLPProcessor()
+		    	    val doc = proc.annotate("John Smith's dad didn't go to China. He visited Beijing, on January 10th, 2013.")
+		    	        
+		    	    for(sentence<-doc.sentences){
+		    	    	println(sentence.words.mkString(" "));
+		    	    			    	        
+		    	        println("Start character offsets: " + sentence.startOffsets.mkString(" "))
+		    	        println("End character offsets: " + sentence.endOffsets.mkString(" "))
+		    	    }
+		    	    
 				  }
 		    	  else{
 		    	    response = "Error: No headline or text fields"

@@ -1,16 +1,26 @@
 package com.winston.nlp.worker
 
 import com.winston.nlp.annotate.NLPParser
-import com.winston.nlp.messages.RawText
+import com.winston.nlp.messages._;
 import akka.actor.Actor
-import com.winston.nlp.messages.RawSentece
 
 class ParseActor extends Actor {
 
-	println("--Creating Parser");
 	val parser = new NLPParser()
 
-	def receive = {
-		case raw_sentece: RawSentece => sender ! parser.parseProcess(raw_sentece.text);
+	override def preStart() {
+	  println("--Creating Parser");
+      self ! InitRequest
 	}
+	
+	override def postStop() {
+		println("--Stopped parser");
+	}
+	
+	def receive = {
+	  	case InitRequest => parser.init(); 
+		case sc:SentenceContainer => sender ! parser.parseProcess(sc.sentence)
+	}
+	
+	
 }
