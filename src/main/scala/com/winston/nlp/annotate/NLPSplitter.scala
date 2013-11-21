@@ -12,6 +12,7 @@ import com.winston.nlp.SentenceSet
 import com.winston.nlp.messages.RawText
 import com.winston.nlp.NLPSentence
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import com.winston.nlp.NLPWord
 
 class NLPSplitter {
 
@@ -37,9 +38,8 @@ class NLPSplitter {
 		for(m <- list){
 		  
 		  var sentence = new NLPSentence(m.get(classOf[TextAnnotation]));
-		  
 		  for (t <- m.get(classOf[TokensAnnotation])) {
-		    sentence.addWord(t.get(classOf[TextAnnotation]));
+		    sentence.addWord(t.get(classOf[TextAnnotation]), t.beginPosition(), t.endPosition());
 		  }
 		  
 		  set.addSentence(sentence);
