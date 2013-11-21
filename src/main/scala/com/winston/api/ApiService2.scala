@@ -1,47 +1,61 @@
 package com.winston.api
 
-import akka.actor._
-import akka.pattern.ask
-import spray.http._
-import spray.http.MediaTypes._
-import spray.httpx.unmarshalling._
-import spray.json._
-import spray.json.DefaultJsonProtocol._
-import scala.concurrent.duration._
-import spray.routing._
-import play.api.libs.json._
-import akka.actor.ActorRef
-import akka.actor.Props
-import com.winston.nlp.worker.ReductoActor
-import akka.cluster.routing.ClusterRouterConfig
-import akka.cluster.routing.AdaptiveLoadBalancingRouter
-import akka.cluster.routing.ClusterRouterSettings
-import com.winston.nlp.messages.RawText
-import com.winston.nlp.SummaryResult
-import akka.util.Timeout
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.winston.nlp.messages.SummaryResultContainer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import spray.util.LoggingContext
+import scala.concurrent.duration._
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.winston.nlp.SummaryResult
+import com.winston.nlp.worker.ReductoActor
+import akka.actor._
+import akka.actor.ActorRef
+import akka.actor.Props
+import akka.cluster.routing.AdaptiveLoadBalancingRouter
+import akka.cluster.routing.ClusterRouterConfig
+import akka.cluster.routing.ClusterRouterSettings
+import akka.pattern.ask
+import akka.util.Timeout
+import play.api.libs.json._
+import spray.http._
+import spray.http.MediaTypes._
 import spray.http.StatusCodes._
-
+import spray.httpx.unmarshalling._
+import spray.json.DefaultJsonProtocol._
+import spray.routing._
+import spray.util.LoggingContext
+import com.winston.nlp.transport.ReductoRequest
+import com.fasterxml.jackson.core.JsonParseException
+import scala.compat.Platform
+import com.winston.nlp.transport.ReductoResponse
+import com.winston.nlp.transport.messages._
+import reflect.ClassTag
 
 class ApiActor2 extends Actor with ApiService2{
   def actorRefFactory = context
   
-implicit def myExceptionHandler(implicit log: LoggingContext) =
+implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
   ExceptionHandler {
     case e: NoSuchElementException => ctx =>
-      log.warning("Request could not be handled normally: {} ", ctx.request)
+      val err = "--No Such Element Exception--"
+      log.warning("{}\n encountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(BadRequest, "Ensure all required fields are present.")
+    
+    case e: JsonParseException => ctx =>
+      val err = "--Exception parsing input--"
+      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(InternalServerError, "Ensure all required fields are present with all Illegal characters properly escaped")
+      
+    case e: Exception => ctx => 
+      val err = "--Unknon Exception--"
+      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(InternalServerError, "Internal Server Error")
   }
   
   // Route requests to our HttpService
   def receive = runRoute(apiRoute)
+  
 }
 
 trait ApiService2 extends HttpService {
@@ -60,19 +74,60 @@ trait ApiService2 extends HttpService {
         path(""){
           complete("Reducto API")
         }~
-        path("text"){
+        path("url"){
+                get{
+                  respondWithMediaType(MediaTypes.`application/json`){
+                          entity(as[HttpRequest]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "URL")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
+                                container.resp.finishResponse(start);
+                              }
+                            }
+                          }
+                  }        
+                }
+                          
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){
-                                  obj => 
-                              
-                              val request = Json.parse(obj)
-                              var response:Any = null
-                              
-                              val headlineField = (request \ "headline").asOpt[String].get
-                              val textField = (request \ "text").asOpt[String].get                              
-
-                              complete(doReducto(headlineField, textField))
+                          entity(as[String]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "URL")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+                                container.resp.finishResponse(start) 
+                              }
+                            }
+                          }
+                  }        
+                }
+        }~        
+        path("text"){
+                get{
+                  respondWithMediaType(MediaTypes.`application/json`){
+                          entity(as[HttpRequest]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "TEXT")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+                                container.resp.finishResponse(start) 
+                              }
+                            }
+                          }
+                  }        
+                }
+                          
+                post{
+                  respondWithMediaType(MediaTypes.`application/json`){
+                          entity(as[String]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "TEXT")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+                                container.resp.finishResponse(start) 
+                              }
+                            }
                           }
                   }        
                 }
@@ -85,19 +140,5 @@ trait ApiService2 extends HttpService {
                         complete{"OK."}
                 }
         }
-        
-	//================================================================================
-	// Call Reducto
-	//================================================================================
-    def doReducto(headline:String, text:String): Future[String] = {
-    	implicit val timeout = Timeout(500 seconds);
-    	
-    	(reductoRouter ? RawText(headline, text)).mapTo[SummaryResultContainer] map { result =>
-    	  mapper.writeValueAsString(result.summary)
-    	}
-    	
-    }
-    
 }
-
 

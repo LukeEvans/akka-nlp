@@ -6,15 +6,13 @@ import akka.kernel.Bootable
 import com.reactor.nlp.utilities.IPTools
 import com.reactor.nlp.config.SystemCreator
 
-class Backend(args:Array[String]) extends Bootable {
+class FrontendDaemon(args:Array[String]) extends Bootable {
 	val ip = IPTools.getPrivateIp();
 
 	val config =
       (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
-      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-backend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
-//      .withFallback(ConfigFactory.parseString(s"akka.remote.netty.tcp.hostname='${ip}'"))
-
     val system = ActorSystem("NLPClusterSystem-0-1", config)
     
 	def startup(){
@@ -25,10 +23,10 @@ class Backend(args:Array[String]) extends Bootable {
 	}
 }
 
-object NLPBackend {
+object FrontendDaemon {
 	def main(args:Array[String]){
-		var bootstrap = new Backend(args)
+		var bootstrap = new FrontendDaemon(args)
 		bootstrap.startup()
-		println("Backend node running...")
+		println("Frontend node running...")
 	}
 }

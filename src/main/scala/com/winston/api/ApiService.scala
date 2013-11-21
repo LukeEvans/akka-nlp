@@ -16,7 +16,6 @@ import com.winston.nlp.worker.ReductoActor
 import akka.cluster.routing.ClusterRouterConfig
 import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
-import com.winston.nlp.messages.RawText
 import com.winston.nlp.SummaryResult
 import akka.util.Timeout
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
@@ -219,7 +218,6 @@ trait ApiService extends HttpService {
                                 headline = headlineField.get
                                 text = textField.get
                                 
-                                response = doReducto(headline, text)
                               }
                               
                               else{
@@ -319,16 +317,6 @@ trait ApiService extends HttpService {
                 }
         }
         
-	//================================================================================
-	// Call Reducto
-	//================================================================================
-    def doReducto(headline:String, text:String) {
-    	implicit val timeout = Timeout(500 seconds);
-    	val response = (reductoRouter ? RawText(headline, text)).mapTo[SummaryResult]
-    	complete(mapper.writeValueAsString(response))
-    }
-    
-    
 }
 
 

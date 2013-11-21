@@ -2,22 +2,19 @@ package com.winston.nlp.scoring
 
 import akka.actor.Actor
 import org.apache.xpath.operations.String
-import com.winston.nlp.messages.SetContainer
 import com.winston.nlp.SentenceSet
 import akka.actor.ActorRef
 import akka.actor.Props
 import akka.routing.RoundRobinRouter
-import com.winston.nlp.messages.SetContainer
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
 import scala.concurrent.Await
-import com.winston.nlp.messages.TermFrequencyResponse
 import com.winston.nlp.search.ElasticSearchActor
 import akka.cluster.routing.ClusterRouterConfig
 import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
-import com.winston.nlp.messages._
+import com.winston.nlp.transport.messages._
 
 class ScoringActor extends Actor {
 

@@ -9,10 +9,9 @@ import com.typesafe.config.ConfigFactory
 import com.winston.nlp.annotate._
 import scala.collection.JavaConversions._
 import com.reactor.nlp.utilities.IPTools
-import com.reactor.nlp.config.SystemCreator
 import com.winston.nlp.worker.SplitActor
 import akka.routing.FromConfig
-import com.winston.nlp.messages._
+import com.winston.nlp.transport.messages._
 import com.winston.nlp.worker.ParseActor
 import akka.actor.Inbox
 import scala.concurrent.duration._
@@ -65,11 +64,11 @@ class TestApplication(args:Array[String]) extends Bootable {
        }
        
        else if (input.equalsIgnoreCase("go")){
-         inbox.send(frontend, RawText("Fed maintains strong stimulus as U.S. growth stumbles", "(Reuters) - The Federal Reserve extended its support for a slowing U.S. economy on Wednesday, sounding a bit less optimistic about growth and saying it will keep buying $85 billion in bonds per month for the time being. In announcing the widely expected decision, Fed officials nodded to weaker economic prospects due in part to a fiscal fight in Washington that shuttered much of the government for 16 days earlier this month. The central bank noted that the recovery in the housing market had lost some steam and suggested some frustration at how slowly the labor market was healing. However, it also dropped a phrase expressing concern about a run-up in borrowing costs, suggesting greater comfort with the current level of interest rates. Available data suggest that household spending and business fixed investment advanced, while the recovery in the housing sector slowed somewhat in recent months, the policy-setting Federal Open Market Committee said. Fiscal policy is restraining economic growth. The Fed's statement differed only slightly from the economic assessment it delivered after it last meeting in September, and the reaction in financial markets was relatively subdued. U.S. stocks sold off slightly, while the dollar climbed against the euro and the yen. Prices of U.S. Treasuries turned negative, pushing yields higher."));
-         
-         val SummaryResultContainer(summary) = inbox.receive(500.seconds);
-         val jsonString = mapper.writeValueAsString(summary);
-         println(jsonString)
+//         inbox.send(frontend, RawText("Fed maintains strong stimulus as U.S. growth stumbles", "(Reuters) - The Federal Reserve extended its support for a slowing U.S. economy on Wednesday, sounding a bit less optimistic about growth and saying it will keep buying $85 billion in bonds per month for the time being. In announcing the widely expected decision, Fed officials nodded to weaker economic prospects due in part to a fiscal fight in Washington that shuttered much of the government for 16 days earlier this month. The central bank noted that the recovery in the housing market had lost some steam and suggested some frustration at how slowly the labor market was healing. However, it also dropped a phrase expressing concern about a run-up in borrowing costs, suggesting greater comfort with the current level of interest rates. Available data suggest that household spending and business fixed investment advanced, while the recovery in the housing sector slowed somewhat in recent months, the policy-setting Federal Open Market Committee said. Fiscal policy is restraining economic growth. The Fed's statement differed only slightly from the economic assessment it delivered after it last meeting in September, and the reaction in financial markets was relatively subdued. U.S. stocks sold off slightly, while the dollar climbed against the euro and the yen. Prices of U.S. Treasuries turned negative, pushing yields higher."));
+//         
+//         val SummaryResultContainer(summary) = inbox.receive(500.seconds);
+//         val jsonString = mapper.writeValueAsString(summary);
+//         println(jsonString)
        }
      }
 

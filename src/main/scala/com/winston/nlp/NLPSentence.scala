@@ -5,7 +5,7 @@ import java.util.ArrayList
 import edu.stanford.nlp.trees.Tree
 import com.winston.utlities.Tools
 import com.winston.nlp.stats.CosinSimilarity
-import com.winston.nlp.messages.TransportMessage
+import com.winston.nlp.transport.messages.TransportMessage
 
 class NLPSentence extends TransportMessage {
 	var value:String = null

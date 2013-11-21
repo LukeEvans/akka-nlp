@@ -24,7 +24,6 @@ object ApiApp{
         
          //#registerOnUp
         Cluster(system) registerOnMemberUp {
-          println("here")
           val service = system.actorOf(Props[ApiActor2].withRouter(
         		  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
         		  ClusterRouterSettings(
