@@ -34,13 +34,23 @@ libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.2.3"
 
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.2.3"
 
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.5"
+
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.0-alpha4"
+
+libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.1"
 
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.5"
+
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.5"
+
+libraryDependencies += "play" % "play_2.10" % "2.1.0"
+
 libraryDependencies ++= {
   val akkaV = "2.2.3"
-  val sprayV = "1.2-RC2"
+  val sprayV = "1.2-RC4"
   Seq(
     "io.spray"            %   "spray-can"     % sprayV,
     "io.spray"            %   "spray-routing" % sprayV,
