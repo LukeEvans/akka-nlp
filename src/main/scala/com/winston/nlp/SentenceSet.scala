@@ -32,8 +32,17 @@ class SentenceSet(h:String, ft:String) extends TransportMessage {
 	//================================================================================
 	def replaceSentence(sentence:NLPSentence) {
 	  if (sentence.index < sentences.size()) {
-	    sentences.set(sentence.index, sentence);
+	    sentences.set(sentence.index, sentence.copy);
 	  }
+	}
+	
+	//================================================================================
+	// Add tree to proper sentence
+	//================================================================================	
+	def addTreeToSentence(sentence:NLPSentence) {
+	  if (sentence.index < sentences.size()) {
+	    sentences.get(sentence.index).treeString = sentence.treeString;
+	  }	
 	}
 	
 	//================================================================================
