@@ -1,33 +1,67 @@
 package com.winston.api
 
-import akka.actor._
-import akka.pattern.ask
-import spray.http._
-import spray.http.MediaTypes._
-import spray.httpx.unmarshalling._
-import spray.json._
-import spray.json.DefaultJsonProtocol._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
-import spray.routing._
-import play.api.libs.json._
-import akka.actor.ActorRef
-import akka.actor.Props
-import com.winston.nlp.worker.ReductoActor
-import akka.cluster.routing.ClusterRouterConfig
-import akka.cluster.routing.AdaptiveLoadBalancingRouter
-import akka.cluster.routing.ClusterRouterSettings
-import com.winston.nlp.SummaryResult
-import akka.util.Timeout
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.winston.nlp.SummaryResult
+import com.winston.nlp.worker.ReductoActor
+import akka.actor._
+import akka.actor.ActorRef
+import akka.actor.Props
+import akka.cluster.routing.AdaptiveLoadBalancingRouter
+import akka.cluster.routing.ClusterRouterConfig
+import akka.cluster.routing.ClusterRouterSettings
+import akka.pattern.ask
+import akka.util.Timeout
+import play.api.libs.json._
+import spray.http._
+import spray.http.MediaTypes._
+import spray.http.StatusCodes._
+import spray.httpx.unmarshalling._
+import spray.json.DefaultJsonProtocol._
+import spray.routing._
+import spray.util.LoggingContext
+import com.winston.nlp.transport.ReductoRequest
+import com.fasterxml.jackson.core.JsonParseException
+import scala.compat.Platform
+import com.winston.nlp.transport.ReductoResponse
+import com.winston.nlp.transport.messages._
+import reflect.ClassTag
+import akka.pattern.AskTimeoutException
 
-class ApiActor extends Actor with ApiService{
+class ApiActor extends Actor with ApiService {
   def actorRefFactory = context
   
+implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
+  ExceptionHandler {
+    case e: NoSuchElementException => ctx =>
+      val err = "\n--No Such Element Exception--"
+      log.warning("{}\n encountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(BadRequest, "Ensure all required fields are present.")
+    
+    case e: JsonParseException => ctx =>
+      val err = "\n--Exception parsing input--"
+      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(InternalServerError, "Ensure all required fields are present with all Illegal characters properly escaped")
+      
+    case e: AskTimeoutException => ctx => 
+      val err = "\n--Timeout Exception--"
+      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(RequestTimeout, "Server Timeout")
+    
+    case e: Exception => ctx => 
+      val err = "\n--Unknon Exception--"
+      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(InternalServerError, "Internal Server Error")
+  }
+    
   // Route requests to our HttpService
   def receive = runRoute(apiRoute)
+  
 }
 
 trait ApiService extends HttpService {
@@ -35,7 +69,7 @@ trait ApiService extends HttpService {
    	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
    	ClusterRouterSettings(
    	totalInstances = 100, maxInstancesPerNode = 1,
-   	allowLocalRoutees = true, useRole = Some("nlp-frontend")))),
+   	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
    	name = "ReductoActors")
   
   val mapper = new ObjectMapper() with ScalaObjectMapper
@@ -49,261 +83,57 @@ trait ApiService extends HttpService {
         path("url"){
                 get{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[HttpRequest]){
-                            obj => complete{
-                                    var response:Any = null
-                              
-                                    var  urlField = obj.uri.query.get("url");
-                                    var  weightField = obj.uri.query.get("weight");
-                                    var  metadataField = obj.uri.query.get("metadata");
-                                    var  socialField = obj.uri.query.get("social");
-                                    var  breakdownField = obj.uri.query.get("breakdown");
-                                    var  sentencesField = obj.uri.query.get("sentences");
-                                    
-                                    var url:String = null
-                                    var weight:Boolean = false
-                                var metadata:Boolean = false
-                                var social:Boolean = false
-                                var breakdown:Boolean = false
-                                var sentences:Int = 3
-
-                                if(urlField != None){
-                                        url = urlField.get
-                                        response = obj.uri
-                                }
-                                else{
-                                        response = "Error: No url"
-                                }
-                              
-                                    if(weightField != None)
-                                            weight = weightField.get.toBoolean
-                                            println(weight)
-                                    if(metadataField != None)
-                                            metadata = metadataField.get.toBoolean
-                                    if(socialField != None)
-                                            social = socialField.get.toBoolean  
-                                    if(breakdownField != None)
-                                            breakdown = breakdownField.get.toBoolean
-                                    if(sentencesField != None)
-                                            sentences = sentencesField.get.toInt
-
-                                response.toString
+                          entity(as[HttpRequest]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "URL")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
+                                container.resp.finishResponse(start, mapper);
+                              }
                             }
-                          }
-                  }
-                }~
-                post{
-                  respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){
-                                  obj => complete{
-                              
-                                          val request = Json.parse(obj)
-                                          var response:Any = null
-                              
-                                          val urlField = (request \ "url").asOpt[String]                              
-                                          val weightField = (request \ "weight").asOpt[Boolean]
-                                          val metadataField = (request \ "metadata").asOpt[Boolean]
-                                          val socialField = (request \ "social").asOpt[Boolean]
-                                  val breakdownField = (request \ "breakdown").asOpt[Boolean]                              
-                                  val sentencesField = (request\ "sentences").asOpt[Int]
-
-                                  var url:String = null
-                                  var weight:Boolean = false
-                                  var metadata:Boolean = false
-                                  var social:Boolean = false
-                                  var breakdown:Boolean = false
-                                  var sentences:Int = 3
-
-                                 if(urlField != None){
-                                    url = urlField.get
-                                    response = obj.asJson.prettyPrint
-                                     }
-                                 else{
-                                    response = "Error: URL field missing"
-                                 }
-                              
-                                 if(weightField != None)
-                                        weight = weightField.get
-                             if(metadataField != None)
-                                        metadata = metadataField.get
-                             if(socialField != None)
-                                        social = socialField.get                              
-                             if(breakdownField != None)
-                                        breakdown = breakdownField.get
-                                 if(sentencesField != None)
-                                        sentences = sentencesField.get
-                              
-                                 response.toString
-                                  }
                           }
                   }        
                 }
-        }~
+                          
+                post{
+                  respondWithMediaType(MediaTypes.`application/json`){
+                          entity(as[String]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "URL")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+                                container.resp.finishResponse(start, mapper) 
+                              }
+                            }
+                          }
+                  }        
+                }
+        }~        
         path("text"){
                 get{
-                          respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[HttpRequest]){
-                            obj => complete{
-                                    var response:Any = null
-                              
-                                    var  headlineField = obj.uri.query.get("headline");
-                                    var  textField = obj.uri.query.get("text");
-                                    var  weightField = obj.uri.query.get("weight");
-                                    var  metadataField = obj.uri.query.get("metadata");
-                                    var  socialField = obj.uri.query.get("social");
-                                    var  breakdownField = obj.uri.query.get("breakdown");
-                                    var  sentencesField = obj.uri.query.get("sentences");
-                                    
-                                    var headline:String = null
-                                    var text:String = null
-                                    var weight:Boolean = false
-                                var metadata:Boolean = false
-                                var social:Boolean = false
-                                var breakdown:Boolean = false
-                                var sentences:Int = 3
-
-                                if(headlineField != None && textField != None){
-                                        headline = headlineField.get
-                                        text = textField.get
-                                        response = obj.uri
-                                }
-                                else{
-                                        
-                                        response = "Error: No headline or text fields"
-                                }
-                              
-                                    if(weightField != None)
-                                            weight = weightField.get.toBoolean
-                                            println(weight)
-                                    if(metadataField != None)
-                                            metadata = metadataField.get.toBoolean
-                                    if(socialField != None)
-                                            social = socialField.get.toBoolean  
-                                    if(breakdownField != None)
-                                            breakdown = breakdownField.get.toBoolean
-                                    if(sentencesField != None)
-                                            sentences = sentencesField.get.toInt
-
-                                    response.toString
-                            }
-                          }
-                  }
-                }
-                post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){
-                                  obj => complete{
-                              
-                              val request = Json.parse(obj)
-                              var response:Any = null
-                              
-                              val headlineField = (request \ "headline").asOpt[String]
-                              val textField = (request \ "text").asOpt[String]                              
-                              val weightField = (request \ "weight").asOpt[Boolean]
-                              val metadataField = (request \ "metadata").asOpt[Boolean]
-                              val socialField = (request \ "social").asOpt[Boolean]
-                              val breakdownField = (request \ "breakdown").asOpt[Boolean]
-                              val sentencesField = (request\ "sentences").asOpt[Int]
-
-                              var headline:String = null
-                              var text:String = null        
-                              var weight:Boolean = false
-                              var metadata:Boolean = false
-                              var social:Boolean = false
-                              var breakdown:Boolean = false
-                              var sentences:Int = 3
-
-                              
-                              if(headlineField != None && textField != None){
-                                headline = headlineField.get
-                                text = textField.get
-                                
+                          entity(as[HttpRequest]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "TEXT")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+                                container.resp.finishResponse(start, mapper) 
                               }
-                              
-                              else{
-                                response = "Error: No headline or text fields"
-                              }
-                              
-                              if(weightField != None)
-                                      weight = weightField.get
-                              if(metadataField != None)
-                                      metadata = metadataField.get
-                              if(socialField != None)
-                                      social = socialField.get                              
-                              if(breakdownField != None)
-                                      breakdown = breakdownField.get                              
-                              if(sentencesField != None)
-                                      sentences = sentencesField.get                              
-                                      
-                              response.toString
-                              
-                                  }
+                            }
                           }
                   }        
                 }
-        }~
-        path("weight"){
-                get{
-                          respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[HttpRequest]){
-                            obj => complete{
-                                    var response:Any = null
-                              
-                                    var  headlineField = obj.uri.query.get("headline");
-                                    var  textField = obj.uri.query.get("text");
-                                    var  socialField = obj.uri.query.get("social");
-                                    
-                                    var headline:String = null
-                                    var text:String = null
-                                var social:Boolean = false
-
-                                if(headlineField != None && textField != None){
-                                        headline = headlineField.get
-                                        text = textField.get
-                                        response = obj.uri
-                                }
-                                else{
-                                        response = "Error: No headline or text fields"
-                                }
-                             
-                                    if(socialField != None)
-                                            social = socialField.get.toBoolean  
-
-                                    response.toString
-                            }
-                          }
-                  }
-                }
+                          
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){
-                                  obj => complete{
-                              
-                              val request = Json.parse(obj)
-                              var response:Any = null
-                              
-                              val headlineField = (request \ "headline").asOpt[String]
-                              val textField = (request \ "text").asOpt[String]
-                              val socialField = (request \ "social").asOpt[Boolean]
-
-                              var headline:String = null
-                              var text:String = null        
-                              var social:Boolean = false
-                              
-                              if(headlineField != None && textField != None){
-                                headline = headlineField.get
-                                text = textField.get
-                                response = obj.asJson.prettyPrint
-                                  }
-                              else{
-                                response = "Error: No headline or text fields"
+                          entity(as[String]){ obj => 
+                            val start = Platform.currentTime
+                          	val request = new ReductoRequest(obj, "TEXT")
+                            complete {
+                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+                                container.resp.finishResponse(start, mapper) 
                               }
-
-                          if(socialField != None)
-                                      social = socialField.get                              
-
-                              response.toString
-                                  }
+                            }
                           }
                   }        
                 }
@@ -316,7 +146,5 @@ trait ApiService extends HttpService {
                         complete{"OK."}
                 }
         }
-        
 }
-
 

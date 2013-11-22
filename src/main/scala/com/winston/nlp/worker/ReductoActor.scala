@@ -30,32 +30,34 @@ class ReductoActor extends Actor {
   
     case class ReductoIntermediate()
   
+    println("\n\n\n\nstarting reducto\n\n\n\n")
+    
 	// Splitting router
     val splitRouter = context.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "splitRouter")
 	  
 	// Parsing router
 	val parseRouter = context.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "parseRouter")
 	  
 	// Scoring actor
 	val scoringRouter = context.actorOf(Props[ScoringActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "scoringRouter")
 
 	// Package actor
 	val packageRouter = context.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "packageRouter")
 	  
 	def receive = {

@@ -18,7 +18,9 @@ class ParseActor extends Actor {
 	}
 	
 	def receive = {
-	  	case InitRequest => parser.init(); 
+	  	case InitRequest => 
+	  	  println("Got init request from: " + sender.toString())
+	  	  parser.init(); 
 		case sc:SentenceContainer => sender ! parser.parseProcess(sc.sentence)
 	}
 	

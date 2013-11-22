@@ -21,11 +21,6 @@ class ReductoResponse extends TransportMessage {
 	var novelty_score:Float = 0;
 	var social_salience:Float = 0;
 	
-	@JsonIgnore
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-    mapper.registerModule(DefaultScalaModule)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-	
 	//================================================================================
 	// Constructors
 	//================================================================================
@@ -43,7 +38,7 @@ class ReductoResponse extends TransportMessage {
 	//================================================================================
 	// Finish 
 	//================================================================================
-	def finishResponse(start:Long): String = {
+	def finishResponse(start:Long, mapper:ObjectMapper): String = {
 	  val stop = Platform.currentTime
 	  val duration = stop - start
 	  time = duration + " ms"

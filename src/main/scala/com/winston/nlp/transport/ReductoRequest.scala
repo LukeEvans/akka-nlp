@@ -20,6 +20,7 @@ class ReductoRequest extends TransportMessage {
 	var decay:Boolean = true
 	var separationRules = true
 	
+	@transient
 	val mapper = new ObjectMapper()
 	
 	//================================================================================
