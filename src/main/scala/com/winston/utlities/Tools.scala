@@ -9,8 +9,29 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import edu.stanford.nlp.trees.Tree
+import com.winston.nlp.NLPWord
+import java.util.ArrayList
 
 object Tools {
+  
+  def getStringFromList(wordList:ArrayList[NLPWord]):String = {
+   	var lastWord:NLPWord = null
+   	var sentence:String = ""
+    
+   	for(word <- wordList){
+   		if(word.remove){
+             //do nothing
+   		}
+    	else if(lastWord == null || word.startIndex == lastWord.endIndex){
+             sentence += word.value
+   		}
+    	else{
+    		sentence += (" " + word.value) 
+    	}
+   		lastWord = word
+   	}    
+  	return sentence
+  }
   
   def getStringFromTree(tree:Tree):String = {
     var sb = new StringBuilder()

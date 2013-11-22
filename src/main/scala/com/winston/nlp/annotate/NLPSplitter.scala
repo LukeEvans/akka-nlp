@@ -39,7 +39,7 @@ class NLPSplitter {
 		  var sentence = new NLPSentence(m.get(classOf[TextAnnotation]));
 		  
 		  for (t <- m.get(classOf[TokensAnnotation])) {
-		    sentence.addWord(t.get(classOf[TextAnnotation]));
+			  sentence.addWord(t.get(classOf[TextAnnotation]), t.beginPosition(), t.endPosition());
 		  }
 		  
 		  set.addSentence(sentence);
