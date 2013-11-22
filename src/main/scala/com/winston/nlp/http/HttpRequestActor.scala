@@ -1,7 +1,7 @@
 package com.winston.nlp.http
 
 import akka.actor._
-import com.winston.nlp.messages.HttpObject
+import com.winston.nlp.transport.messages._
 import com.fasterxml.jackson.databind.JsonNode
 import spray.http._
 import scala.concurrent.Future
@@ -13,7 +13,6 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.winston.nlp.messages.HttpObject
 
 class HttpRequestActor extends Actor {
 

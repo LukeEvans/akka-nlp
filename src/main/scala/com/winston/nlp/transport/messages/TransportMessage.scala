@@ -1,4 +1,4 @@
-package com.winston.nlp.messages
+package com.winston.nlp.transport.messages
 
 trait TransportMessage extends Serializable {
 

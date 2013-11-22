@@ -3,7 +3,7 @@ package com.winston.nlp.worker
 import akka.actor._
 import akka.pattern.ask
 import akka.util.Timeout
-import com.winston.nlp.messages._
+import com.winston.nlp.transport.messages._
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scala.concurrent.Future
@@ -22,53 +22,57 @@ import scala.util.Success
 import scala.util.Failure
 import com.winston.nlp.NLPSentence
 import com.winston.nlp.SummaryResult
+import com.winston.nlp.transport.ReductoRequest
+import com.winston.nlp.transport.ReductoRequest
 
 
 class ReductoActor extends Actor { 
   
     case class ReductoIntermediate()
   
+    println("\n\n\n\nstarting reducto\n\n\n\n")
+    
 	// Splitting router
     val splitRouter = context.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "splitRouter")
 	  
 	// Parsing router
 	val parseRouter = context.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "parseRouter")
 	  
 	// Scoring actor
 	val scoringRouter = context.actorOf(Props[ScoringActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "scoringRouter")
 
 	// Package actor
 	val packageRouter = context.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
 	    totalInstances = 100, maxInstancesPerNode = 1,
-	    allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "packageRouter")
 	  
 	def receive = {
-		case raw_text: RawText =>
+		case RequestContainer(request) =>
 		  val origin = sender;
-		  process(raw_text, origin);
+		  process(request, origin);
 	}
 
     // Process Raw Text
-    def process(rawText: RawText, origin: ActorRef) {
+    def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
 		// Split sentences
-		val split = (splitRouter ? rawText).mapTo[SetContainer];
+		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
 		  case Success(result) => 
@@ -91,7 +95,7 @@ class ReductoActor extends Actor {
 		    
 			futureScored map { scored =>
 				
-			  	val futureResult = (packageRouter ? scored).mapTo[SummaryResultContainer];
+			  	val futureResult = (packageRouter ? scored).mapTo[ResponseContainer];
 			  	
 			  	futureResult map { result =>
 			  	  origin ! result

@@ -2,7 +2,7 @@ package com.winston.nlp
 
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import com.winston.nlp.messages.TransportMessage
+import com.winston.nlp.transport.messages.TransportMessage
 import scala.collection.JavaConversions._
 import org.apache.commons.lang.StringUtils
 import com.winston.nlp.stats.TFIDF
