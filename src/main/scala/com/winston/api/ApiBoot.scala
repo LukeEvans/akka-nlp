@@ -24,6 +24,8 @@ class ApiBoot(args: Array[String]) extends Bootable {
       
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
         
+    system.logConfiguration;
+	
     //#registerOnUp
     Cluster(system) registerOnMemberUp {
        val service = system.actorOf(Props[ApiActor].withRouter(
