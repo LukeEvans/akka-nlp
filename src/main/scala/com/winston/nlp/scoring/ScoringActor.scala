@@ -40,10 +40,14 @@ class ScoringActor extends Actor {
 		implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
+		val futureTD = (elasticSearchRouter ? LongContainer(0)).mapTo[LongContainer]
+		val futureSP = (elasticSearchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
+		val futureFQ = (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		
 		val future = for {
-		 totalDocs <- (elasticSearchRouter ? LongContainer(0)).mapTo[LongContainer]
-		 stopPhrases <- (elasticSearchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
-		 frequencies <- (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		 totalDocs <- futureTD
+		 stopPhrases <- futureSP
+		 frequencies <- futureFQ
 		} yield ScoringIntermediateObject(totalDocs, stopPhrases, frequencies)
 		
 		future map { item =>
