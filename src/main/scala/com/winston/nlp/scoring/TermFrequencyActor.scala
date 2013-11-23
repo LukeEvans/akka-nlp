@@ -1,23 +1,18 @@
 package com.winston.nlp.scoring
 
-import com.winston.nlp.messages.SetContainer
 import com.winston.nlp.SentenceSet
 import akka.actor.Actor
 import akka.actor.ActorRef
 import scala.collection.JavaConversions._
-import com.winston.nlp.messages.TermFrequencyResponse
-import com.winston.nlp.messages.SentenceContainer
 import akka.util.Timeout
 import scala.concurrent.duration._
 import akka.pattern.ask
-import com.winston.nlp.messages.SingleTermFrequency
 import java.util.ArrayList
 import scala.concurrent.Await
 import akka.actor.Status.Failure
 import akka.actor.Status.Success
-import com.winston.nlp.messages.SingleTermFrequency
 import scala.concurrent.Future
-import com.winston.nlp.messages.TermFrequencyResponse
+import com.winston.nlp.transport.messages._
 
 class TermFrequencyActor(searchRouter:ActorRef) extends Actor {
 

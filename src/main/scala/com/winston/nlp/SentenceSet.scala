@@ -2,7 +2,7 @@ package com.winston.nlp
 
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import com.winston.nlp.messages.TransportMessage
+import com.winston.nlp.transport.messages.TransportMessage
 import scala.collection.JavaConversions._
 import org.apache.commons.lang.StringUtils
 import com.winston.nlp.stats.TFIDF
@@ -32,8 +32,17 @@ class SentenceSet(h:String, ft:String) extends TransportMessage {
 	//================================================================================
 	def replaceSentence(sentence:NLPSentence) {
 	  if (sentence.index < sentences.size()) {
-	    sentences.set(sentence.index, sentence);
+	    sentences.set(sentence.index, sentence.copy);
 	  }
+	}
+	
+	//================================================================================
+	// Add tree to proper sentence
+	//================================================================================	
+	def addTreeToSentence(sentence:NLPSentence) {
+	  if (sentence.index < sentences.size()) {
+	    sentences.get(sentence.index).treeString = sentence.treeString;
+	  }	
 	}
 	
 	//================================================================================

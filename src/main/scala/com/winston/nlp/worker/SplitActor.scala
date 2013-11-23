@@ -4,9 +4,7 @@ import akka.actor._
 import akka.pattern.Patterns
 import akka.util.Timeout
 import com.winston.nlp.annotate.NLPSplitter
-import com.winston.nlp.messages.RawText
-import com.winston.nlp.messages.InitRequest
-import com.winston.nlp.messages.InitRequest
+import com.winston.nlp.transport.messages._
 
 class SplitActor extends Actor {
 
@@ -23,6 +21,6 @@ class SplitActor extends Actor {
 	
 	def receive = {
 	  	case InitRequest => splitter.init(); 
-		case raw_text: RawText => sender ! splitter.splitProcess(raw_text);
+		case RequestContainer(request) => sender ! splitter.splitProcess(request);
 	}
 }

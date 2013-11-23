@@ -1,6 +1,6 @@
 package com.winston.nlp
 
-import com.winston.nlp.messages.TransportMessage
+import com.winston.nlp.transport.messages.TransportMessage
 
 case class NLPWord() extends Ordered[NLPWord] with TransportMessage {
 	var value:String = null

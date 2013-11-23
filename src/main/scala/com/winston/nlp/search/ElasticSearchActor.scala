@@ -5,7 +5,7 @@ import akka.actor.ActorRef
 import org.elasticsearch.common.settings.ImmutableSettings
 import com.winston.nlp.http.HttpRequestActor
 import java.util.ArrayList
-import com.winston.nlp.messages._
+import com.winston.nlp.transport.messages._
 
 class ElasticSearchActor extends HttpRequestActor {
 	

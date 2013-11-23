@@ -1,6 +1,6 @@
 package com.winston.nlp
 
-import com.winston.nlp.messages.TransportMessage
+import com.winston.nlp.transport.messages.TransportMessage
 import java.util.ArrayList
 import com.fasterxml.jackson.annotation.JsonIgnore
 import scala.collection.JavaConversions._
@@ -16,6 +16,8 @@ class SummaryResult extends TransportMessage {
 	var relevance_score:Float = 0;
 	var novelty_score:Float = 0;
 	var social_salience:Float = 0;
+	
+	@JsonIgnore
 	var sentence_set:SentenceSet = _;
 	
 	@JsonIgnore

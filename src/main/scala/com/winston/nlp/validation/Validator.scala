@@ -32,7 +32,7 @@ class Validator {
 		
 	  // Check for global violations
 	  extractIndices(indices).toList map { sentence =>
-	    if (!globalTreeValid(sentence.grabTree, sentence.grabValue)) {
+	    if (!globalTreeValid(sentence.grabTree(), sentence.grabValue)) {
 	      return false;
 	    }
 	  }

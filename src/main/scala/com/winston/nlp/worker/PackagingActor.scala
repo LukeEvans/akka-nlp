@@ -2,10 +2,11 @@ package com.winston.nlp.worker
 
 import akka.actor.Actor
 import com.winston.nlp.SentenceSet
-import com.winston.nlp.messages._
+import com.winston.nlp.transport.messages._
 import akka.actor.ActorRef
 import com.winston.nlp.combinations.SentenceCombinations
 import com.winston.nlp.postProcessing.PostProcessor
+import com.winston.nlp.transport.ReductoResponse
 
 class PackagingActor extends Actor {
 	def receive = {
@@ -23,6 +24,6 @@ class PackagingActor extends Actor {
 		val processor = new PostProcessor(combo, set)
 		val result = processor.process;
 		
-		origin ! SummaryResultContainer(result)
+		origin ! ResponseContainer(new ReductoResponse(result))
 	}
 }
