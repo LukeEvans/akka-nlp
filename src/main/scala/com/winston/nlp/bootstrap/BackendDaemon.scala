@@ -9,6 +9,8 @@ import com.reactor.nlp.config.SystemCreator
 class BackendDaemon(args:Array[String]) extends Bootable {
 	val ip = IPTools.getPrivateIp();
 
+	println("IP: " + ip)
+	
 	val config =
       (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-backend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
