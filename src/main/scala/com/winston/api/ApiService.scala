@@ -164,7 +164,7 @@ trait ApiService extends HttpService{
 			    }
 			  }
 		  }
-		}
+		}~
 		post{
 		  respondWithMediaType(MediaTypes.`application/json`){
 			  entity(as[String]){
@@ -301,5 +301,15 @@ trait ApiService extends HttpService{
 		post{
 			complete{"OK."}
 		}
+	}~
+	(path("test") & get){
+	  parameters("headline", "text"){
+	    (headline, text) =>{
+	      println(text)
+	      println(headline)
+	      
+	      complete{text}
+	    }
+	  }
 	}
 }
