@@ -8,8 +8,6 @@ import spray.json._
 import spray.json.DefaultJsonProtocol._
 import spray.routing._
 import play.api.libs.json._
-import edu.arizona.sista.processor.Processor
-import edu.arizona.sista.processor.corenlp.CoreNLPProcessor
 
 class ApiActor extends Actor with ApiService{
   def actorRefFactory = context
