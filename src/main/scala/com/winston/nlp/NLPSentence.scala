@@ -187,4 +187,18 @@ class NLPSentence extends TransportMessage {
 	  return s
 	}
 	
+	def print(){
+	  println()
+	  println("value: "+ value)
+	  println("index: "+ index)
+	  for(word<-words)
+		  println("word: "+ word)
+	  println("cosine_score: "+ cosine_score)
+	  println("cummulative_tfidf: "+ cummulative_tfidf)
+	  println("predecayed_weight: "+ predecayed_weight)
+	  println("weight: "+ weight)
+	  println("treeString: "+ treeString)
+	  println()
+	}
+	
 }

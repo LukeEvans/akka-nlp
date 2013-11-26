@@ -30,6 +30,8 @@ case class NLPWord() extends Ordered[NLPWord] with TransportMessage {
 	  newWord.tf = tf
 	  newWord.tfidf = tfidf
 	  newWord.invalid = invalid
+	  newWord.startIndex = startIndex
+	  newWord.endIndex = endIndex
 	  
 	  return newWord
 	}

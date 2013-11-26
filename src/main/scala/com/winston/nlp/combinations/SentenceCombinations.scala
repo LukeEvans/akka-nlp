@@ -20,6 +20,9 @@ class SentenceCombinations {
 	
 	def this(nlpSentences:ArrayList[NLPSentence]){
 	  this()
+	  println("Sentence combos")
+	  println("Sentences size: " + nlpSentences.size())
+	  
 	  sentences = new ArrayList[String]
 	  scores = new ArrayList[Double]
 	  
@@ -48,7 +51,13 @@ class SentenceCombinations {
 			newCombos.add(combo);
 		}
 	  }
-	  
+	  println("Combos: ")
+	  for(score<-scores){
+	    System.out.println(score)
+	  }
+	  for(combo<-newCombos){
+	    System.out.println(combo.mmr)
+	  }
 	  return findHighestMMRCombo(scores, newCombos)
 	}
 		
@@ -202,5 +211,19 @@ class SentenceCombinations {
 	    }
 	  }
 	  return score
+	}
+	
+	def print(){
+	  println()
+	  println("Sentences: ")
+	  for(sentence<-sentences)
+	    println(sentence)
+	  println("NLPSentences: ")
+	  for(nlpSentence<-nlpSentences)
+	    nlpSentence.print
+	  println("scores")
+	  for(score<-scores)
+		 println(score)
+	  println()
 	}
 }

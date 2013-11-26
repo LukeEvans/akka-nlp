@@ -65,6 +65,10 @@ class PostProcessor {
 
 		// Gap trimming based on rules
 		gapTrim();
+		
+		println("processed sentences")
+		for(sent<-processedSentences)
+			sent.print
 
 		val results = new SummaryResult(originalSentences, processedSentences, indices);
 		return calculateResultStatistics(results);

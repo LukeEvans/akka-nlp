@@ -20,7 +20,7 @@ class PackagingActor extends Actor {
 		// Get highest combo
 		val combos = new SentenceCombinations(set.sentences);
 		val combo = combos.getHighestCombo(3, true);
-		
+
 		val processor = new PostProcessor(combo, set)
 		val result = processor.process;
 		

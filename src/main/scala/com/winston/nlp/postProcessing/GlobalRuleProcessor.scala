@@ -66,7 +66,9 @@ class GlobalRuleProcessor extends TreeProcessor {
 		
 		var nlpSentence = reconstructSentence(sentence.words, tree)
 		nlpSentence.index = sentence.index
-		return nlpSentence;
+		nlpSentence.treeString = tree.toString()
+		return new NLPSentence(tree, sentence);
+		//return nlpSentence
 	}
 
 	//================================================================================
@@ -130,7 +132,7 @@ class GlobalRuleProcessor extends TreeProcessor {
 		
 		var i:Int = 0
 		var j:Int = 0;
-		while(i < leaves.size() && j < words.size()){
+		while(j < leaves.size() && i < words.size()){
 			var leafString = leaves.get(j).value
 			var wordString = words.get(j).grabValue();
 			if(leafString.equalsIgnoreCase(wordString)){
