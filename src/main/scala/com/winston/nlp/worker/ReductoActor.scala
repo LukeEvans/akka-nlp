@@ -36,65 +36,11 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 	def receive = {
 		case RequestContainer(request) =>
 		  val origin = sender;
-		  process2(request, origin);
+		  process(request, origin);
 	}
 
-    // Process Raw Text
+    // Process Request
     def process(request: ReductoRequest, origin: ActorRef) {
-    	implicit val timeout = Timeout(500 seconds);
-		import context.dispatcher
-		
-		// Split sentences
-		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
-		
-		split onComplete {
-		  case Success(result) => 
-		    val set = result.set;
-		    
-		    // Parse sentences
-		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
-		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
-            }
-			
-		    
-		    // Score the sentences
-		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
-		        
-		    // Add parsed sentences back into the set at proper location
-		    Future.sequence(parseFutures) onComplete {
-		      case Success(list) => 
-		        list map { sc =>
-		          set.replaceSentence(sc.sentence)
-		        }
-		        
-		        futureScored onComplete {
-		          case Success(scored) => 
-		            val futureResult = (packageRouter ? scored).mapTo[ResponseContainer];
-
-					futureResult map { result =>
-			  	  		origin ! result
-					}		   
-					
-		          case Failure(scoreFail) => println(scoreFail)
-		        }
-		        
-//		        futureScored map { scored =>
-//					val futureResult = (packageRouter ? scored).mapTo[ResponseContainer];
-//			  	
-//					futureResult map { result =>
-//			  	  		origin ! result
-//					}
-//		        }	   
-		        
-		      case Failure(fail) => println(fail)
-		    }
-		    
-		  case Failure(failure) => println(failure)
-		}
-    }
-    
-        // Process Request
-    def process2(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
