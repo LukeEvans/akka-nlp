@@ -33,7 +33,7 @@ class HttpRequestActor extends Actor {
   	
   	def processGETRequest(uri:String, origin: ActorRef): JsonNode = {
   		implicit val system = context.system;
-  		implicit val timeout = Timeout(5 seconds);
+  		implicit val timeout = Timeout(.5 seconds);
   		
   		val futureResponse: Future[HttpResponse] = (IO(Http) ? HttpRequest(GET, Uri(uri))).mapTo[HttpResponse]
   		val response = Await.result(futureResponse, timeout.duration);
