@@ -37,20 +37,13 @@ class TermFrequencyActor(searchRouter:ActorRef) extends Actor {
   	    }
   	  }
   	  
-  	  // Get the parsed sentences
-	  val frequencyFutures: List[Future[SingleTermFrequency]] = wordList.toList map { term =>
-	  	ask(searchRouter, SingleTermFrequency(term, 0)).mapTo[SingleTermFrequency]
-  	  } 
-
-  	  val wordMap = scala.collection.mutable.Map[String, Long]();
-
-  	  // Collect
-  	  Future sequence(frequencyFutures) map { list =>
-  	  	list map { termFreq =>
-  	  		wordMap += (termFreq.word -> termFreq.count);
-  	  	}
-  	  	origin ! TermFrequencyResponse(wordMap.toMap)
+  	  // Send to ElasticSearch Bulk 
+  	  val frequencyFuture = (searchRouter ? TermFrequencyBulkReq(wordList.toList)).mapTo[TermFrequencyResponse]
+  	  
+  	  // Return
+  	  frequencyFuture map { result =>
+  		  origin ! result
   	  }
-
+  	  
   	}
 }
