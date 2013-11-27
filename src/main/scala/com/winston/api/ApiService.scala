@@ -36,6 +36,7 @@ import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.worker.ParseActor
 import com.winston.nlp.worker.PackagingActor
 import com.winston.nlp.worker.SplitActor
+import com.winston.nlp.search.ElasticSearchActor
 
 class ApiActor extends Actor with ApiService {
   def actorRefFactory = context
@@ -83,9 +84,16 @@ trait ApiService extends HttpService {
 	totalInstances = 100, maxInstancesPerNode = 1,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	name = "parseRouter")
+
+  // Search router
+  val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+	ClusterRouterSettings(
+	totalInstances = 100, maxInstancesPerNode = 1,
+	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	name = "elasticSearchRouter")
 	  
   // Scoring router
-  val scoringRouter = actorRefFactory.actorOf(Props[ScoringActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+  val scoringRouter = actorRefFactory.actorOf(Props(classOf[ScoringActor], elasticSearchRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 1,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
