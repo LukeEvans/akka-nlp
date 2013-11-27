@@ -24,10 +24,10 @@ class ScoringActor extends Actor {
   	// Search router
     val elasticSearchRouter = context.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	    ClusterRouterSettings(
-	    totalInstances = 100, maxInstancesPerNode = 5,
+	    totalInstances = 100, maxInstancesPerNode = 1,
 	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "elasticSearchRouter")
-	  
+
 	val termFrequencyRouter = context.actorOf(Props(classOf[TermFrequencyActor],elasticSearchRouter).withRouter(RoundRobinRouter(nrOfInstances = 1)));
 	
 	def receive = {

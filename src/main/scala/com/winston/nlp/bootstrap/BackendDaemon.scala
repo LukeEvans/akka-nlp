@@ -17,8 +17,6 @@ class BackendDaemon(args:Array[String]) extends Bootable {
       
     val system = ActorSystem("NLPClusterSystem-0-1", config)
     
-    system.logConfiguration;
-	
 	def startup(){
 	}
 
