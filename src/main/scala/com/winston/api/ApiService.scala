@@ -75,35 +75,35 @@ trait ApiService extends HttpService {
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "splitRouter")
 	  
   // Parsing router
   val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "parseRouter")
 
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "elasticSearchRouter")
 	  
   // Scoring router
   val scoringRouter = actorRefFactory.actorOf(Props(classOf[ScoringActor], elasticSearchRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "scoringRouter")
 
   // Package router
   val packageRouter = actorRefFactory.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "packageRouter")
   
   // Reducto Router
@@ -111,7 +111,7 @@ trait ApiService extends HttpService {
    	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
    	ClusterRouterSettings(
    	totalInstances = 100, maxInstancesPerNode = 1,
-   	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+   	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
    	name = "reductoActors")
   
   // Mapper	
