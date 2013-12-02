@@ -29,7 +29,7 @@ class ReductoRequest extends TransportMessage {
 	def this(request:String, rt:String) {
 	  this()
 	  
-	  var cleanRequest = request.replaceAll("\\r", "").replaceAll("\\n", "").trim();
+	  var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim();
 	  val reqJson = mapper.readTree(cleanRequest);
 	  
 	  url = if (!reqJson.path("url").isMissingNode()) reqJson.path("url").asText() else null
