@@ -81,7 +81,7 @@ trait ApiService extends HttpService {
   // Parsing router
   val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = 4,
+	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	name = "parseRouter")
 
@@ -188,6 +188,9 @@ trait ApiService extends HttpService {
                 post{
                         complete{"OK."}
                 }
+        }~
+        path(RestPath) { path =>
+          getFromFile("/var/www/akka-public/" + path)
         }
 }
 
