@@ -16,19 +16,12 @@ import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
 import com.winston.nlp.transport.messages._
 
-class ScoringActor extends Actor {
+class ScoringActor(searchRouter:ActorRef) extends Actor {
 
 	// Case class for future compositions
     case class ScoringIntermediateObject(totalDocs:LongContainer, stopPhrases:StopPhrasesObject, frequencies:TermFrequencyResponse);
   
-  	// Search router
-    val elasticSearchRouter = context.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-	    ClusterRouterSettings(
-	    totalInstances = 100, maxInstancesPerNode = 10,
-	    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	  name = "elasticSearchRouter")
-	  
-	val termFrequencyRouter = context.actorOf(Props(classOf[TermFrequencyActor],elasticSearchRouter).withRouter(RoundRobinRouter(nrOfInstances = 1)));
+	val termFrequencyRouter = context.actorOf(Props(classOf[TermFrequencyActor],searchRouter).withRouter(RoundRobinRouter(nrOfInstances = 1)));
 	
 	def receive = {
 		case set: SetContainer =>
@@ -40,10 +33,14 @@ class ScoringActor extends Actor {
 		implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
+		val futureTD = (searchRouter ? LongContainer(0)).mapTo[LongContainer]
+		val futureSP = (searchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
+		val futureFQ = (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		
 		val future = for {
-		 totalDocs <- (elasticSearchRouter ? LongContainer(0)).mapTo[LongContainer]
-		 stopPhrases <- (elasticSearchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
-		 frequencies <- (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		 totalDocs <- futureTD
+		 stopPhrases <- futureSP
+		 frequencies <- futureFQ
 		} yield ScoringIntermediateObject(totalDocs, stopPhrases, frequencies)
 		
 		future map { item =>
