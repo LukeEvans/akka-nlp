@@ -37,6 +37,7 @@ import com.winston.nlp.worker.ParseActor
 import com.winston.nlp.worker.PackagingActor
 import com.winston.nlp.worker.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
+import com.winston.nlp.transport.ReductoResponse
 
 class ApiActor extends Actor with ApiService {
   def actorRefFactory = context
@@ -191,10 +192,17 @@ trait ApiService extends HttpService {
           post {
             respondWithMediaType(MediaTypes.`application/json`){
             	entity(as[String]){ obj =>
+            	  	val start = Platform.currentTime
             		val request = new ReductoRequest(obj, "TEXT");
-            		complete {
-            		  (reductoRouter ? HammerRequestContainer(request)).mapTo[String]
-            		}
+                    complete {
+                    	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[String] map { res => 
+                    	    val container = new ReductoResponse()
+                    	    container.fake(start, res, mapper)
+                    	}
+                     }            		
+//            		complete {
+//            		  (reductoRouter ? HammerRequestContainer(request)).mapTo[String]
+//            		}
             	}
             }
           }
