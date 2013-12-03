@@ -45,12 +45,33 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     def sentencesSize(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(5 seconds);
     	
-    	// Split sentences
+		// Split sentences
 		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
 		
-		split map { container =>
-		  val size = container.set.sentences.size()
-		  origin ! size.toString
+		split onComplete {
+		  case Success(result) => 
+		    val set = result.set;
+		    
+		    // Parse sentences
+		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
+		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+            }
+
+		    // Sequence list
+		    val futureParsed = Future.sequence(parseFutures)
+		    
+		    val newSet = set;
+		    
+		    futureParsed map { list =>
+		      list map { item =>
+		      	newSet.addTreeToSentence(item.sentence)
+		      }
+		      
+		      origin ! SetContainer(set)
+		      
+		    }
+		    
+		 case Failure(failure) => println(failure)
 		}
     }
     

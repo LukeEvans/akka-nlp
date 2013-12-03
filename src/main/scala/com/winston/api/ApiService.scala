@@ -195,9 +195,9 @@ trait ApiService extends HttpService {
             	  	val start = Platform.currentTime
             		val request = new ReductoRequest(obj, "TEXT");
                     complete {
-                    	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[String] map { res => 
+                    	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[SetContainer] map { res => 
                     	    val container = new ReductoResponse()
-                    	    container.fake(start, res, mapper)
+                    	    container.fake(start, res.set, mapper)
                     	}
                      }            		
 //            		complete {
