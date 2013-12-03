@@ -132,8 +132,8 @@ class GlobalRuleProcessor extends TreeProcessor {
 		
 		var i:Int = 0
 		var j:Int = 0;
-		while(j < leaves.size() && i < words.size()){
-			var leafString = leaves.get(j).value
+		while(i < leaves.size() && j < words.size()){
+			var leafString = leaves.get(i).value
 			var wordString = words.get(j).grabValue();
 			if(leafString.equalsIgnoreCase(wordString)){
 				var word = new NLPWord(leaves.get(i).toString());
@@ -141,10 +141,12 @@ class GlobalRuleProcessor extends TreeProcessor {
 					var endIndex = newWords.get(newWords.size() - 1).endIndex;
 					word.startIndex = endIndex;
 					word.endIndex = words.get(j).endIndex;
+					word.originalText = words.get(j).originalText
 				}
 				else{
 					word.startIndex = words.get(j).startIndex;
 					word.endIndex = words.get(j).endIndex;
+					word.originalText = words.get(j).originalText
 				}
 				newWords.add(word);
 				i += 1;

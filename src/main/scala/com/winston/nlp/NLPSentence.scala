@@ -67,11 +67,12 @@ class NLPSentence extends TransportMessage {
 	}
 	
 
-	def addWord(w:String, start:Int, end:Int){
+	def addWord(w:String, start:Int, end:Int, originalText:String){
 		if(!words.contains(w)){
 			var word = new NLPWord(w)
 			word.startIndex = start
 			word.endIndex = end
+			word.originalText = originalText
 			words.add(word)
      	}
 	}

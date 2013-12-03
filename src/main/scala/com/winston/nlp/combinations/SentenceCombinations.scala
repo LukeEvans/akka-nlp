@@ -20,8 +20,6 @@ class SentenceCombinations {
 	
 	def this(nlpSentences:ArrayList[NLPSentence]){
 	  this()
-	  println("Sentence combos")
-	  println("Sentences size: " + nlpSentences.size())
 	  
 	  sentences = new ArrayList[String]
 	  scores = new ArrayList[Double]

@@ -28,7 +28,7 @@ class ElasticSearchActor extends HttpRequestActor {
 	  println("--Creating ES Bulker");
 	  self ! InitRequest
 	}
-		
+	
 	override def postStop() {
 	  println("--Stopped ES Bulker");
 	}
@@ -88,7 +88,7 @@ class ElasticSearchActor extends HttpRequestActor {
 	}
 	
 	def processTermSearch(text: String, origin:ActorRef) {
-		val uri = queryCount + text
+		val uri = queryCount + java.net.URLEncoder.encode(text, "UTF-8")
 		val node = processRequest(HttpObject(uri, null, null, "GET"), null)
 		val freq = SingleTermFrequency(text, node.path("count").asLong());
 		origin ! freq

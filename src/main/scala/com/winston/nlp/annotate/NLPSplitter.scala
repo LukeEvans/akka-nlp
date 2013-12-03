@@ -53,12 +53,12 @@ class NLPSplitter {
 		  var sentence = new NLPSentence(m.get(classOf[TextAnnotation]));
 		  
 		  for (t <- m.get(classOf[TokensAnnotation])) {
-			  sentence.addWord(t.get(classOf[TextAnnotation]), t.beginPosition(), t.endPosition());
+			  sentence.addWord(t.get(classOf[TextAnnotation]), t.beginPosition(), t.endPosition(), t.originalText());
 		  }
 		  
 		  set.addSentence(sentence);
 		}
 
-		SetContainer(set);
+		SetContainer(set, 0);
 	}
 }

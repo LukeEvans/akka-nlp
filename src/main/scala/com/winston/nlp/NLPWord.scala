@@ -10,6 +10,7 @@ case class NLPWord() extends Ordered[NLPWord] with TransportMessage {
 	var startIndex:Int = 0
 	var endIndex:Int = 0
 	var remove:Boolean = false
+	var originalText:String = null
 	
 	def this(w:String){
 	  this()
@@ -32,6 +33,7 @@ case class NLPWord() extends Ordered[NLPWord] with TransportMessage {
 	  newWord.invalid = invalid
 	  newWord.startIndex = startIndex
 	  newWord.endIndex = endIndex
+	  newWord.originalText = originalText
 	  
 	  return newWord
 	}

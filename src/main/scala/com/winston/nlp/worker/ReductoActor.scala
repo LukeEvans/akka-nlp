@@ -60,7 +60,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		    val futureParsed = Future.sequence(parseFutures)
 		    
 		    // Score the sentences
-		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+		    val futureScored = (scoringRouter ? SetContainer(set, 0)).mapTo[SetContainer];
 		    
 		    val resultFuture =  for {
 		      parsed <- futureParsed
@@ -76,7 +76,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
 
-		      val futureResult = (packageRouter ? SetContainer(newSet)).mapTo[ResponseContainer];
+		      val futureResult = (packageRouter ? SetContainer(newSet, request.sentences)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
 			  	origin ! result

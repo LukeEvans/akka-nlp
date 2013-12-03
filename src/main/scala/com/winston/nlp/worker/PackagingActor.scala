@@ -12,14 +12,14 @@ class PackagingActor extends Actor {
 	def receive = {
 		case set: SetContainer =>
 		  val origin = sender;
-		  processPackage(set.set, origin);
+		  processPackage(set.set, origin, set.number);
 	}
 
-	def processPackage(set:SentenceSet, origin:ActorRef) {
+	def processPackage(set:SentenceSet, origin:ActorRef, number:Int) {
 	  
 		// Get highest combo
 		val combos = new SentenceCombinations(set.sentences);
-		val combo = combos.getHighestCombo(3, true);
+		val combo = combos.getHighestCombo(number, true);
 
 		val processor = new PostProcessor(combo, set)
 		val result = processor.process;

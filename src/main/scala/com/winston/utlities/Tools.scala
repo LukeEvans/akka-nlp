@@ -22,22 +22,25 @@ import org.apache.http.HttpResponse
 object Tools {
   
   def getStringFromList(wordList:ArrayList[NLPWord]):String = {
-   	var lastWord:NLPWord = null
-   	var sentence:String = ""
+           var lastWord:NLPWord = null
+           var sentence:String = ""
     
-   	for(word <- wordList){
-   		if(word.remove){
-             //do nothing
-   		}
-    	else if(lastWord == null || word.startIndex == lastWord.endIndex){
-             sentence += word.value
-   		}
-    	else{
-    		sentence += (" " + word.value) 
-    	}
-   		lastWord = word
-   	}    
-  	return sentence
+           for(word <- wordList){
+                   if(!leafIsParenthetical(word.value)){
+                     if(lastWord == null || word.startIndex == lastWord.endIndex)
+                       sentence = sentence + word.value
+                     else
+                           sentence = sentence + (" "+ word.originalText)
+                   }
+                   else{
+                     if(lastWord == null || word.startIndex == lastWord.endIndex)
+                       sentence = sentence + word.value
+                     else
+                           sentence = sentence + (" "+ word.originalText)
+                   }
+                   lastWord = word
+           }    
+          return sentence
   }
   
   def getStringFromTree(tree:Tree):String = {
@@ -84,6 +87,10 @@ object Tools {
   	case "$" => true
     case "``" => true
     case _ => false
+  }
+  
+  def leafIsParenthetical(value:String):Boolean = {
+    if(value.contains("RRB") || value.contains("LRB")) true else false
   }
   
   def generateRandomNumber():Int = {
