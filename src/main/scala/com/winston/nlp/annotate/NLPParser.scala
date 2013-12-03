@@ -22,7 +22,7 @@ class NLPParser {
 	var parseProcessor:StanfordCoreNLP = null;
 	
 	def init() {
-	  parseProcessor = new StanfordCoreNLP(parseProps)
+//	  parseProcessor = new StanfordCoreNLP(parseProps)
 	  println("--Parser Created");
 	}
 	
