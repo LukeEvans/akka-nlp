@@ -78,7 +78,7 @@ trait ApiService extends HttpService {
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = 1,
+	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 //	totalInstances = 1, maxInstancesPerNode = 1,
 //	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),	
