@@ -49,13 +49,7 @@ class SentenceCombinations {
 			newCombos.add(combo);
 		}
 	  }
-	  println("Combos: ")
-	  for(score<-scores){
-	    System.out.println(score)
-	  }
-	  for(combo<-newCombos){
-	    System.out.println(combo.mmr)
-	  }
+
 	  return findHighestMMRCombo(scores, newCombos)
 	}
 		

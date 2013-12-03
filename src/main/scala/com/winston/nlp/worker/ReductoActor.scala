@@ -75,8 +75,17 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		      item.parsed map { sc =>
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
+		      
+		      var numSentences:Double = (newSet.sentences.size()).toDouble
 
-		      val futureResult = (packageRouter ? SetContainer(newSet, request.sentences)).mapTo[ResponseContainer];
+		      if(request.ratio > 0){
+                   numSentences = numSentences*request.ratio
+                   if(numSentences < 1){
+                      numSentences = 1
+                    }
+              }
+
+		      val futureResult = (packageRouter ? SetContainer(newSet, numSentences.toInt)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
 			  	origin ! result

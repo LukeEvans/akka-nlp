@@ -48,8 +48,6 @@ class SummaryResult extends TransportMessage {
  		
 	   	processedSentences.toList map { sentence =>
 	   	  var newSentence = sentence.grabValue.trim();
-	   	  println("New Sentence")
-	   	  println(newSentence)
 	   	  newSentence = newSentence.substring(0, 1).toUpperCase() + newSentence.substring(1);
 	   	  s += newSentence + " ";
 	   	}
