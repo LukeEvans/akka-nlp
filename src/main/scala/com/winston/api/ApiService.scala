@@ -80,6 +80,8 @@ trait ApiService extends HttpService {
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//	totalInstances = 1, maxInstancesPerNode = 1,
+//	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),	
 	name = "splitRouter")
 	  
   // Parsing router
@@ -87,6 +89,8 @@ trait ApiService extends HttpService {
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//	totalInstances = 1, maxInstancesPerNode = 1,
+//	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "parseRouter")
 
   // Search router
@@ -94,6 +98,8 @@ trait ApiService extends HttpService {
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//	totalInstances = 1, maxInstancesPerNode = 1,
+//	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "elasticSearchRouter")
 	  
   // Scoring router
@@ -101,6 +107,8 @@ trait ApiService extends HttpService {
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//	totalInstances = 1, maxInstancesPerNode = 1,
+//	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "scoringRouter")
 
   // Package router
@@ -108,14 +116,18 @@ trait ApiService extends HttpService {
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//	totalInstances = 1, maxInstancesPerNode = 1,
+//	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "packageRouter")
   
   // Reducto Router
   val reductoRouter = actorRefFactory.actorOf(Props(classOf[ReductoActor],splitRouter, parseRouter, scoringRouter, packageRouter).withRouter(
    	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
    	ClusterRouterSettings(
-   	totalInstances = 100, maxInstancesPerNode = 3,
-   	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+    totalInstances = 100, maxInstancesPerNode = 3,
+    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//   totalInstances = 1, maxInstancesPerNode = 1,
+//	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
    	name = "reductoActors")
   
   // Mapper	

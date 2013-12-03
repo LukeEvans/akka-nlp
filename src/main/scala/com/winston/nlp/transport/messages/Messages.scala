@@ -19,7 +19,7 @@ case class RequestContainer(req:ReductoRequest) extends request
 case class ResponseContainer(resp:ReductoResponse) extends response
 
 // Sentence set messages
-case class SetContainer(set:SentenceSet) extends request
+case class SetContainer(set:SentenceSet, number:Int) extends request
 
 // Sentence 
 case class SentenceContainer(sentence:NLPSentence) extends request

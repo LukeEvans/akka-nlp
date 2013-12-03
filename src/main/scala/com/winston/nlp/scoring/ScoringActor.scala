@@ -35,7 +35,7 @@ class ScoringActor(searchRouter:ActorRef) extends Actor {
 		
 		val futureTD = (searchRouter ? LongContainer(0)).mapTo[LongContainer]
 		val futureSP = (searchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
-		val futureFQ = (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		val futureFQ = (termFrequencyRouter ? SetContainer(set, 0)).mapTo[TermFrequencyResponse]
 		
 		val future = for {
 		 totalDocs <- futureTD
@@ -69,7 +69,7 @@ class ScoringActor(searchRouter:ActorRef) extends Actor {
 			// Calculate weight
 			set.calculateWeight;
 			
-			origin ! SetContainer(set)
+			origin ! SetContainer(set, 0)
 		}
 	}
 }
