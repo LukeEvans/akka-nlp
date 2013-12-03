@@ -37,8 +37,23 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		case RequestContainer(request) =>
 		  val origin = sender;
 		  process(request, origin);
+		case HammerRequestContainer(request) =>
+		  val origin = sender;
+		  sentencesSize(request, origin)
 	}
 
+    def sentencesSize(request: ReductoRequest, origin: ActorRef) {
+    	implicit val timeout = Timeout(5 seconds);
+    	
+    	// Split sentences
+		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
+		
+		split map { container =>
+		  val size = container.set.sentences.size()
+		  origin ! size.toString
+		}
+    }
+    
     // Process Request
     def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(500 seconds);

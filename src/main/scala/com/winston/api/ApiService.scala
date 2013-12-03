@@ -123,6 +123,8 @@ trait ApiService extends HttpService {
       mapper.registerModule(DefaultScalaModule)
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
        
+  implicit val timeout = Timeout(5 seconds);
+  
   val apiRoute =
         path(""){
           complete("Reducto API")
@@ -184,6 +186,18 @@ trait ApiService extends HttpService {
                           }
                   }        
                 }
+        }~
+        path("hammer") {
+          post {
+            respondWithMediaType(MediaTypes.`application/json`){
+            	entity(as[String]){ obj =>
+            		val request = new ReductoRequest(obj, "TEXT");
+            		complete {
+            		  (reductoRouter ? HammerRequestContainer(request)).mapTo[String]
+            		}
+            	}
+            }
+          }
         }~
         path("health"){
                 get{
