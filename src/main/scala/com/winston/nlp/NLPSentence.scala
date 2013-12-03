@@ -28,6 +28,12 @@ class NLPSentence extends TransportMessage {
 	  }
 	}
 	
+	def this(s:String, w:ArrayList[NLPWord]){
+	  this()
+	  value = s;
+	  words = w;
+	}
+	
 	def this(s:String){
 	  this()
 	  value = s

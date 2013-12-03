@@ -96,8 +96,10 @@ trait ApiService extends HttpService {
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = 3,
-	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+//	totalInstances = 100, maxInstancesPerNode = 3,
+//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
+	totalInstances = 1, maxInstancesPerNode = 1,
+	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 	name = "elasticSearchRouter")
 	  
   // Scoring router

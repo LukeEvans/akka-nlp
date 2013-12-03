@@ -4,6 +4,8 @@ import java.util.ArrayList
 import com.winston.nlp.NLPSentence
 import edu.stanford.nlp.trees.Tree
 import scala.collection.JavaConversions._
+import com.winston.utlities.Tools
+import com.winston.nlp.NLPWord
 
 class GapRuleProcessor extends TreeProcessor {
 
@@ -65,7 +67,11 @@ class GapRuleProcessor extends TreeProcessor {
 		// Dangling Subject
 		tree = danglingSubject(tree);
 		
-		return new NLPSentence(tree, sentence);
+		var nlpSentence = reconstructSentence(sentence.words, tree)
+		nlpSentence.index = sentence.index
+		nlpSentence.treeString = tree.toString()
+		return nlpSentence
+		//return new NLPSentence(tree, sentence);
 	}
 
 	//================================================================================
@@ -94,5 +100,45 @@ class GapRuleProcessor extends TreeProcessor {
 	//================================================================================
 	def danglingSubject(tree:Tree): Tree = {
 		return tsurgeonScript(tree, 10, "S=sub . /,/=comma  < (__=item !$++ __) < (~item!$-- __) >>, ROOT", "prune sub comma");
+	}
+	
+		//================================================================================
+	// Reconstruct Sentence
+	//================================================================================
+	def reconstructSentence(words:ArrayList[NLPWord], tree:Tree):NLPSentence = {
+		if(words.isEmpty || words == null || tree == null)
+			return null;
+	  
+		var leaves:java.util.List[Tree] = tree.getLeaves()
+		var newTree = tree
+		var newWords = new ArrayList[NLPWord]();
+		
+		var i:Int = 0
+		var j:Int = 0;
+		while(j < leaves.size() && i < words.size()){
+			var leafString = leaves.get(j).value
+			var wordString = words.get(j).grabValue();
+			if(leafString.equalsIgnoreCase(wordString)){
+				var word = new NLPWord(leaves.get(i).toString());
+				if(j != 0 && words.get(j-1).endIndex == words.get(j).startIndex){
+					var endIndex = newWords.get(newWords.size() - 1).endIndex;
+					word.startIndex = endIndex;
+					word.endIndex = words.get(j).endIndex;
+				}
+				else{
+					word.startIndex = words.get(j).startIndex;
+					word.endIndex = words.get(j).endIndex;
+				}
+				newWords.add(word);
+				i += 1;
+				j += 1;
+			}
+			else{
+				j += 1;
+			}
+		}
+		
+		var sentenceString = Tools.getStringFromList(newWords);
+		return new NLPSentence(sentenceString, newWords);
 	}
 }
