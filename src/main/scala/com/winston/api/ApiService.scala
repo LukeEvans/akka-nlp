@@ -89,7 +89,7 @@ trait ApiService extends HttpService {
   // Parsing router
   val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = 10,
+	totalInstances = 100, maxInstancesPerNode = 5,
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "parseRouter")
 
