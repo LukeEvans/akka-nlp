@@ -200,9 +200,6 @@ trait ApiService extends HttpService {
                     	    container.fake(start, res.set, mapper)
                     	}
                      }            		
-//            		complete {
-//            		  (reductoRouter ? HammerRequestContainer(request)).mapTo[String]
-//            		}
             	}
             }
           }
