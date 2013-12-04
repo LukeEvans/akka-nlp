@@ -38,6 +38,7 @@ import com.winston.nlp.worker.PackagingActor
 import com.winston.nlp.worker.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.transport.ReductoResponse
+import com.winston.nlp.worker.BatchParseActor
 
 class ApiActor extends Actor with ApiService {
   def actorRefFactory = context
@@ -77,7 +78,7 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 trait ApiService extends HttpService {
   
   // Easy role change for debugging
-  val role = "reducto-backend"
+  val role = "reducto-frontend"
     
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -89,10 +90,17 @@ trait ApiService extends HttpService {
   // Parsing router
   val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
 	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = 5,
+	totalInstances = 100, maxInstancesPerNode = 3,
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "parseRouter")
 
+  // Scoring router
+  val batchParseRouter = actorRefFactory.actorOf(Props(classOf[BatchParseActor], parseRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+	ClusterRouterSettings(
+	totalInstances = 100, maxInstancesPerNode = 5,
+	allowLocalRoutees = true, useRole = Some(role)))),
+	name = "batchParseRouter")
+	
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
@@ -115,7 +123,7 @@ trait ApiService extends HttpService {
 	name = "packageRouter")
   
   // Reducto Router
-  val reductoRouter = actorRefFactory.actorOf(Props(classOf[ReductoActor],splitRouter, parseRouter, scoringRouter, packageRouter).withRouter(
+  val reductoRouter = actorRefFactory.actorOf(Props(classOf[ReductoActor],splitRouter, parseRouter, scoringRouter, packageRouter, batchParseRouter).withRouter(
    	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
    	ClusterRouterSettings(
    	totalInstances = 100, maxInstancesPerNode = 5,

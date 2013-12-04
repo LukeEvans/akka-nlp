@@ -7,6 +7,7 @@ import akka.actor.ActorRef
 import com.winston.nlp.combinations.SentenceCombinations
 import com.winston.nlp.postProcessing.PostProcessor
 import com.winston.nlp.transport.ReductoResponse
+import scala.collection.JavaConversions._
 
 class PackagingActor extends Actor {
 	def receive = {
@@ -16,6 +17,10 @@ class PackagingActor extends Actor {
 	}
 
 	def processPackage(set:SentenceSet, origin:ActorRef) {
+	  
+	  set.sentences.toList map { s =>
+	    println(s.treeString)
+	  }
 	  
 		// Get highest combo
 		val combos = new SentenceCombinations(set.sentences);
