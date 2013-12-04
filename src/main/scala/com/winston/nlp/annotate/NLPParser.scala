@@ -22,28 +22,30 @@ class NLPParser {
 	var parseProcessor:StanfordCoreNLP = null;
 	
 	def init() {
-//	  parseProcessor = new StanfordCoreNLP(parseProps)
+	  parseProcessor = new StanfordCoreNLP(parseProps)
 	  println("--Parser Created");
 	}
 	
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
-//		var document = new Annotation(sentence.value);
-//
-//		parseProcessor.annotate(document)
-//
-//		var list = document.get(classOf[SentencesAnnotation])
-//		var trees = new ArrayList[String];
-//
-//		for(m <- list){
-//			trees.add(m.get(classOf[TreeAnnotation]).toString());
-//		}
-//
-//		if (trees.size() > 0) {
-//			sentence.putTree(trees.get(0));
-//		} 
-		
-	    sentence.putTree("(ROOT (S (NP (PRP It)) (VP (VBZ 's) (NP (NP (NN kind)) (PP (IN of) (NP (NN fun))) (S (VP (TO to) (VP (VB do) (NP (DT the) (JJ impossible))))))) (. .)))")
+		var document = new Annotation(sentence.value);
+
+		parseProcessor.annotate(document)
+
+		var list = document.get(classOf[SentencesAnnotation])
+		var trees = new ArrayList[String];
+
+		for(m <- list){
+			trees.add(m.get(classOf[TreeAnnotation]).toString());
+		}
+
+		if (trees.size() > 0) {
+			sentence.putTree(trees.get(0));
+		} 
+	   
 		SentenceContainer(sentence)
+		
+//	    sentence.putTree("(ROOT (S (NP (PRP It)) (VP (VBZ 's) (NP (NP (NN kind)) (PP (IN of) (NP (NN fun))) (S (VP (TO to) (VP (VB do) (NP (DT the) (JJ impossible))))))) (. .)))")
+//		SentenceContainer(sentence)
 	}
 }
