@@ -19,6 +19,7 @@ class ReductoRequest extends TransportMessage {
 	var sentences:Int = 3
 	var decay:Boolean = true
 	var separationRules = true
+	var batchSize = 1
 	
 	@transient
 	val mapper = new ObjectMapper()
@@ -42,6 +43,7 @@ class ReductoRequest extends TransportMessage {
 	  sentences = if (!reqJson.path("sentences").isMissingNode()) reqJson.path("sentences").asInt() else 3
 	  decay = if (!reqJson.path("decay").isMissingNode()) reqJson.path("decay").asBoolean() else true
 	  separationRules = if (!reqJson.path("separationRules").isMissingNode()) reqJson.path("separationRules").asBoolean() else true
+	  batchSize = if (!reqJson.path("batchSize").isMissingNode()) reqJson.path("batchSize").asInt() else 1
 	  
   	  request_type = rt;
 	}
@@ -59,6 +61,7 @@ class ReductoRequest extends TransportMessage {
 	  sentences = if (request.uri.query.get("sentences") != null) request.uri.query.get("sentences").get.toInt else 3
 	  decay = if (request.uri.query.get("decay") != null) request.uri.query.get("decay").get.toBoolean else true
 	  separationRules = if (request.uri.query.get("separationRules") != null) request.uri.query.get("separationRules").get.toBoolean else true
+	  batchSize = if (request.uri.query.get("batchSize") != null) request.uri.query.get("batchSize").get.toInt else 1
 	  
 	  request_type = rt;
 	}

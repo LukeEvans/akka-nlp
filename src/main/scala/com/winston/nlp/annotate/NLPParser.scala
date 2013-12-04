@@ -18,7 +18,7 @@ class NLPParser {
     val maxLen:java.lang.Integer = 2;
 	var parseProps = new Properties()
 	parseProps.put("annotators", "tokenize, ssplit, pos, parse")
-	parseProps.put("parser.maxlen", maxLen)
+	parseProps.put("parse.maxlen", "30")
 	var parseProcessor:StanfordCoreNLP = null;
 	
 	def init() {
@@ -47,5 +47,37 @@ class NLPParser {
 		
 //	    sentence.putTree("(ROOT (S (NP (PRP It)) (VP (VBZ 's) (NP (NP (NN kind)) (PP (IN of) (NP (NN fun))) (S (VP (TO to) (VP (VB do) (NP (DT the) (JJ impossible))))))) (. .)))")
 //		SentenceContainer(sentence)
+	}
+	
+	def batchProcess(splitSentences:ArrayList[NLPSentence]): ArrayList[NLPSentence] = {
+	  	// Split text into managable chunks
+		val docList = new ArrayList[Annotation]();
+		val sentences = new ArrayList[NLPSentence]();
+
+		// Build list of annotations
+		splitSentences.toList map { s => 
+		  docList.add(new Annotation(s.grabValue));
+		}
+
+		// Annotate all docs
+		parseProcessor.annotate(docList);
+		
+		docList.toList map { document =>
+			val list = document.get(classOf[SentencesAnnotation]);
+			
+			list.toList map { m =>
+				var sentence = new NLPSentence(m.get(classOf[TextAnnotation]));
+				sentence.index = sentences.size();
+				
+				for (t <- m.get(classOf[TokensAnnotation])) {
+					sentence.addWord(t.get(classOf[TextAnnotation]));
+				}
+				
+				sentence.putTree(m.get(classOf[TreeAnnotation]).toString())
+				sentences.add(sentence)
+			}
+		}
+		
+		return sentences;
 	}
 }

@@ -24,6 +24,8 @@ case class SetContainer(set:SentenceSet) extends request
 
 // Sentence 
 case class SentenceContainer(sentence:NLPSentence) extends request
+case class BatchSentenceContainer(list:ArrayList[NLPSentence], batchSize:Int) extends request
+case class BatchSentenceContainerResponse(list:List[SentenceContainer]) extends response
 
 // Term frequency response
 case class SingleTermFrequency(word:String, count:Long) extends request

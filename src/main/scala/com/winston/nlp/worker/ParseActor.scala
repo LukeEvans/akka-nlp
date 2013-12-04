@@ -21,6 +21,8 @@ class ParseActor extends Actor {
 	  	case InitRequest => 
 	  	  parser.init(); 
 		case sc:SentenceContainer => sender ! parser.parseProcess(sc.sentence)
+		case BatchSentenceContainer(list, size) => 
+		  sender ! parser.batchProcess(list)
 	}
 	
 	
