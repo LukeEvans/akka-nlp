@@ -77,7 +77,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
 		      
-		       origin ! SetContainer(set)
+		       origin ! SetContainer(newSet)
 		    }
 		    
 		 case Failure(failure) => println(failure)
