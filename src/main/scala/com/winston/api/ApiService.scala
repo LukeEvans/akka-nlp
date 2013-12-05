@@ -38,6 +38,7 @@ import com.winston.nlp.worker.PackagingActor
 import com.winston.nlp.worker.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.transport.ReductoResponse
+import akka.routing.RoundRobinRouter
 
 class ApiActor extends Actor with ApiService {
   def actorRefFactory = context
@@ -77,8 +78,8 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 trait ApiService extends HttpService {
   
   // Easy role change for debugging
-  val role = "reducto-backend"
-  val default_parallelization = 5
+  val role = "reducto-frontend"
+  val default_parallelization = 1
     
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -87,8 +88,15 @@ trait ApiService extends HttpService {
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "splitRouter")
 	  
+//  // Parsing router
+//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
+//	ClusterRouterSettings(
+//	totalInstances = 100, maxInstancesPerNode = 5,
+//	allowLocalRoutees = true, useRole = Some(role)))),
+//	name = "parseRouter")
+	
   // Parsing router
-  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
+  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = default_parallelization,
 	allowLocalRoutees = true, useRole = Some(role)))),

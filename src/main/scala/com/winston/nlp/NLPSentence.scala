@@ -16,6 +16,7 @@ class NLPSentence extends TransportMessage {
 	var predecayed_weight:Double = 0
 	var weight:Double = 0
 	var treeString:String = null;
+	var parseInfo:String = null;
 	
 	def this(s:String, buildWords:Boolean){
 	  this()
@@ -159,6 +160,7 @@ class NLPSentence extends TransportMessage {
 	  newSentence.index = index
 	  newSentence.treeString = treeString
 	  newSentence.weight = weight
+	  newSentence.parseInfo = parseInfo
 	  
 	  for( word <- words){
 	    newSentence.words.add(word.copy())
