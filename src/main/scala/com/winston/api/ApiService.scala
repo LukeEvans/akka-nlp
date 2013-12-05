@@ -78,8 +78,10 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 trait ApiService extends HttpService {
   
   // Easy role change for debugging
-  val role = "reducto-backend"
-  val default_parallelization = 5
+  val role = "reducto-frontend"
+  val parse_role = "reducto-frontend"
+  val default_parallelization = 1
+  val parse_parallelization = 1
     
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -88,19 +90,19 @@ trait ApiService extends HttpService {
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "splitRouter")
 	  
+  // Parsing router
+  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+	ClusterRouterSettings(
+	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
+	allowLocalRoutees = true, useRole = Some(parse_role)))),
+	name = "parseRouter")
+	
 //  // Parsing router
-//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
+//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 //	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 5,
+//	totalInstances = 100, maxInstancesPerNode = default_parallelization,
 //	allowLocalRoutees = true, useRole = Some(role)))),
 //	name = "parseRouter")
-	
-  // Parsing router
-  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
-	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = default_parallelization,
-	allowLocalRoutees = true, useRole = Some(role)))),
-	name = "parseRouter")
 
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
