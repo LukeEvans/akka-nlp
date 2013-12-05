@@ -90,19 +90,19 @@ trait ApiService extends HttpService {
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "splitRouter")
 	  
+//  // Parsing router
+//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+//	ClusterRouterSettings(
+//	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
+//	allowLocalRoutees = true, useRole = Some(parse_role)))),
+//	name = "parseRouter")
+	
   // Parsing router
-  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
-	allowLocalRoutees = true, useRole = Some(parse_role)))),
+	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "parseRouter")
-	
-//  // Parsing router
-//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
-//	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = default_parallelization,
-//	allowLocalRoutees = true, useRole = Some(role)))),
-//	name = "parseRouter")
 
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
