@@ -23,7 +23,6 @@ import scala.util.Failure
 import com.winston.nlp.NLPSentence
 import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
-import com.winston.nlp.transport.ReductoRequest
 import akka.routing.FromConfig
 
 
@@ -86,8 +85,8 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     
     // Process Request
     def process(request: ReductoRequest, origin: ActorRef) {
-    	implicit val timeout = Timeout(500 seconds);
-		import context.dispatcher
+    	implicit val timeout = Timeout(5 second);
+//		import context.dispatcher
 		
 		// Split sentences
 		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
