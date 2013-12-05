@@ -101,7 +101,7 @@ trait ApiService extends HttpService {
   val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
-	allowLocalRoutees = true, useRole = Some(role)))),
+	allowLocalRoutees = true, useRole = Some(parse_role)))),
 	name = "parseRouter")
 
   // Search router
