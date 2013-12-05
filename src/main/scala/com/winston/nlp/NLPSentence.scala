@@ -80,7 +80,8 @@ class NLPSentence extends TransportMessage {
 	}
 	
 	def putTree(t:String) {
-	  treeString = t;
+	  val translated = t.replaceAll("\\(TOP", "\\(ROOT")
+	  treeString = translated;
 	}
 	
 	def caluculateWeight(location:Int, decay:Boolean){

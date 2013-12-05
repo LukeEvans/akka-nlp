@@ -33,6 +33,4 @@ class ParseActor extends Actor {
 		  
 		  sender ! returnSentenceContainer
 	}
-	
-	
 }
