@@ -11,11 +11,11 @@ class ParseDaemon(args:Array[String]) extends Bootable {
 
 	println("IP: " + ip)
 	
-	val config =
-      (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
-      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-parse]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
-      
+    val config = ConfigFactory.parseString("akka.cluster.roles = [reducto-parse]\nakka.remote.netty.tcp.hostname=\""+ip+"\"").withFallback(ConfigFactory.load("reducto"))
+        
     val system = ActorSystem("NLPClusterSystem-0-1", config)
+    
+    println("Parse node running...")	  
     
 	def startup(){
 	}
@@ -27,8 +27,16 @@ class ParseDaemon(args:Array[String]) extends Bootable {
 
 object ParseDaemon {
 	def main(args:Array[String]){
-		var bootstrap = new ParseDaemon(args)
-		bootstrap.startup()
-		println("Parse node running...")
+	  
+	  var nodeNumber = 1
+	  
+	  if (args.length > 0) {
+	    nodeNumber = args(0).toInt
+	  }
+	  
+	  for (i <- 0 to nodeNumber - 1) {
+		  var bootstrap = new ParseDaemon(args)
+		  bootstrap.startup()
+	  }
 	}
 }
