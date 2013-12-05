@@ -11,6 +11,11 @@ import edu.stanford.nlp.pipeline.Annotation
 import java.util.ArrayList
 import com.winston.nlp.NLPSentence
 import com.winston.nlp.transport.messages._
+import java.io.ByteArrayInputStream
+import scala.io.Source
+import edu.stanford.nlp.trees.PennTreeReader
+import java.io.StringReader
+import edu.stanford.nlp.trees.Tree
 
 
 
@@ -28,6 +33,24 @@ class NLPParser {
 	
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
+	  ////////////////////////////////////////////
+	  // Testing
+	  ////////////////////////////////////////////	
+	  val openTree = "(TOP (S (S (NP (DT The) (NNP Pennsylvania) (NN official)) (VP (VBD was) (ADVP (RB just)) (VP (VBG talking) (PP (IN about) (NP (CD one) (NN area,)))))) (CC but) (S (NP (PRP he)) (VP (VBD summed) (PRT (RP up)) (NP (NP (DT a) (NN winter) (NN storm)) (SBAR (WHNP (WDT that)) (S (VP (VBD struck) (NP (NP (RB much)) (PP (IN of) (NP (DT the) (JJ eastern) (NNP United) (NNP States)))) (PP (IN on) (NP (NNP Wednesday.)))))))))))"
+	  val s = new StringReader(openTree)
+	  val ptr = new PennTreeReader(s);
+	  val t = ptr.readTree()
+	  
+	  val stanfordTree = "(ROOT (S (S (NP (DT The) (NNP Pennsylvania) (NN official)) (VP (VBD was) (ADVP (RB just)) (VP (VBG talking) (PP (IN about) (NP (CD one) (NN area)))))) (, ,) (CC but) (S (NP (PRP he)) (VP (VBD summed) (PRT (RP up)) (NP (NP (DT a) (NN winter) (NN storm)) (SBAR (WHNP (WDT that)) (S (VP (VBD struck) (NP (NP (RB much)) (PP (IN of) (NP (DT the) (JJ eastern) (NNP United) (NNPS States)))) (PP (IN on) (NP (NNP Wednesday))))))))) (. .)))"
+	  
+	    
+	  val tree:Tree = Tree.valueOf(t.toString());
+	  val stree:Tree = Tree.valueOf(stanfordTree);
+	  
+	  ////////////////////////////////////////////
+	  // Testing
+	  ////////////////////////////////////////////		  
+	  
 		var document = new Annotation(sentence.value);
 
 		parseProcessor.annotate(document)

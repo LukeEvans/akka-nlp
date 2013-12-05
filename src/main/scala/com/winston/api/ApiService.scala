@@ -78,9 +78,9 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 trait ApiService extends HttpService {
   
   // Easy role change for debugging
-  val role = "reducto-backend"
-  val parse_role = "reducto-parse"
-  val default_parallelization = 5
+  val role = "reducto-frontend"
+  val parse_role = "reducto-frontend"
+  val default_parallelization = 1
   val parse_parallelization = 1
     
   // Splitting router
