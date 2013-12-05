@@ -81,7 +81,7 @@ trait ApiService extends HttpService {
   val role = "reducto-backend"
   val parse_role = "reducto-parse"
   val default_parallelization = 5
-  val parse_parallelization = 2
+  val parse_parallelization = 10
     
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
