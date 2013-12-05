@@ -227,7 +227,7 @@ trait ApiService extends HttpService {
                 }
         }~
         path(RestPath) { path =>
-          getFromFile(System.getProperty("user.dir") + "/src/main/resources/" + path)
+          getFromFile(System.getProperty("user.dir") + "/src/main/resources/loader/" + path)
         }
 }
 
