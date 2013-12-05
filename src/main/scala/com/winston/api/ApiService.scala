@@ -79,6 +79,7 @@ trait ApiService extends HttpService {
   
   // Easy role change for debugging
   val role = "reducto-backend"
+  val parse_role = "reducto-parse"
   val default_parallelization = 5
     
   // Splitting router
@@ -88,19 +89,19 @@ trait ApiService extends HttpService {
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "splitRouter")
 	  
-//  // Parsing router
-//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
-//	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 5,
-//	allowLocalRoutees = true, useRole = Some(role)))),
-//	name = "parseRouter")
-	
   // Parsing router
-  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
 	totalInstances = 100, maxInstancesPerNode = default_parallelization,
-	allowLocalRoutees = true, useRole = Some(role)))),
+	allowLocalRoutees = true, useRole = Some(parse_role)))),
 	name = "parseRouter")
+	
+//  // Parsing router
+//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+//	ClusterRouterSettings(
+//	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+//	allowLocalRoutees = true, useRole = Some(role)))),
+//	name = "parseRouter")
 
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
