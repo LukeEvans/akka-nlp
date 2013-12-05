@@ -79,9 +79,9 @@ trait ApiService extends HttpService {
   
   // Easy role change for debugging
   val role = "reducto-backend"
-  val parse_role = "reducto-parse"
+  val parse_role = "reducto-backend"
   val default_parallelization = 5
-  val parse_parallelization = 3
+  val parse_parallelization = 5
     
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -227,7 +227,8 @@ trait ApiService extends HttpService {
                 }
         }~
         path(RestPath) { path =>
-          getFromFile(System.getProperty("user.dir") + "/src/main/resources/loader/" + path)
+          val resourcePath = System.getProperty("user.dir") + "/src/main/resources/loader/" + path
+          getFromFile(resourcePath)
         }
 }
 
