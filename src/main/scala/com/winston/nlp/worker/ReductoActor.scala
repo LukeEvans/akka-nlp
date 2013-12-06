@@ -25,6 +25,13 @@ import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
 import com.winston.nlp.transport.ReductoRequest
 import akka.routing.FromConfig
+import java.io.FileInputStream
+import java.io.InputStream
+import java.io.FileInputStream
+import opennlp.tools.parser.ParserModel
+import opennlp.tools.parser.Parser
+import opennlp.tools.parser.ParserFactory
+import opennlp.tools.cmdline.parser.ParserTool
 
 
 class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
@@ -43,6 +50,19 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
+		
+		
+//		var modelIn:InputStream =  new FileInputStream("/Users/kevincolin/Development/Winston/projects/akka-nlp/src/main/resources/en-parser-chunking.bin")
+//		
+//		var model:ParserModel = new ParserModel(modelIn)
+//		
+//		var parser:Parser = ParserFactory.create(model)
+//		
+//		var sentence = "The quick brown fox jumps over the lazy dog."
+//		
+//		var parse = ParserTool.parseLine(sentence, parser, 1)
+//		
+//		parse(0).show()
 		
 		// Split sentences
 		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
@@ -84,6 +104,9 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
                       numSentences = 1
                     }
               }
+		      else{
+		        numSentences = request.sentences
+		      }
 
 		      val futureResult = (packageRouter ? SetContainer(newSet, numSentences.toInt)).mapTo[ResponseContainer];
 		      
