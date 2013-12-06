@@ -104,7 +104,7 @@ class ApiBoot(args: Array[String]) extends Bootable {
     	  ClusterRouterConfig(RoundRobinRouter(), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
-    	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+    	  allowLocalRoutees = false, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
     		 
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)

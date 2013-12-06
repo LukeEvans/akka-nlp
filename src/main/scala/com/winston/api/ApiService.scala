@@ -80,7 +80,7 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 
 trait ApiService extends HttpService {
   
-  implicit val timeout = Timeout(5 seconds);
+  private implicit val timeout = Timeout(5 seconds);
   implicit val reductoRouter:ActorRef
   
     // Mapper        
