@@ -81,6 +81,7 @@ trait ApiService extends HttpService {
   val role = "reducto-backend"
   val parse_role = "reducto-backend"
   val default_parallelization = 5
+  val search_parallelization = 3
   val parse_parallelization = 2
     
   // Splitting router
@@ -107,7 +108,7 @@ trait ApiService extends HttpService {
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+	totalInstances = 100, maxInstancesPerNode = search_parallelization,
 	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "elasticSearchRouter")
 	  
