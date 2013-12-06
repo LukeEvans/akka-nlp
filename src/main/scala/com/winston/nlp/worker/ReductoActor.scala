@@ -88,6 +88,8 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(5 second);
 		
+    	println("Text: " + request.text)
+    	
 		// Split sentences
 		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
 		
@@ -124,6 +126,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		      
 		      futureResult map { result =>
 			  	origin ! result
+			  	println("Result: " + result.resp.summary)
 			  }			      
 		    }
 		    
