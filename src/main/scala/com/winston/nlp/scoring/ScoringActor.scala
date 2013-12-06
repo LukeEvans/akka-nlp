@@ -33,8 +33,6 @@ class ScoringActor(searchRouter:ActorRef) extends Actor {
 		implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
-		println("Scoring: " + set.sentences.size())
-		
 		val futureTD = (searchRouter ? LongContainer(0)).mapTo[LongContainer]
 		val futureSP = (searchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
 		val futureFQ = (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
@@ -72,7 +70,6 @@ class ScoringActor(searchRouter:ActorRef) extends Actor {
 			set.calculateWeight;
 			
 			origin ! SetContainer(set)
-			println("Scored: " + set.sentences.size())
 		}
 	}
 }
