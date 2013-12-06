@@ -58,12 +58,35 @@ class NLPParser {
 		
 		val spans = tokenizer.tokenizePos(sentence.value)
 		
+//		for(idx <- 0 to spans.length-1){
+//		  try {
+//			val span = spans(idx);
+//			// flesh out the parse with individual token sub-parses 
+//			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
+//		  }
+//		}
+ 
 		for(idx <- 0 to spans.length-1){
 			val span = spans(idx);
-			// flesh out the parse with individual token sub-parses 
-			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
+//			scala.util.control.Exception.ignoring(classOf[Exception]) {
+				// flesh out the parse with individual token sub-parses 
+				parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
+//			}
 		}
- 
+		
+//		for(idx <- 0 to spans.length-1){
+//			  try {
+//				val span = spans(idx);
+//				try {
+//				// flesh out the parse with individual token sub-parses 
+//				parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
+//				} catch {
+//				case e:Exception => {}
+//				}
+//			  }
+//		} 
+		
+		
 		var actualParse = parser.parse(parse);
 		
 		val buffer = new StringBuffer();

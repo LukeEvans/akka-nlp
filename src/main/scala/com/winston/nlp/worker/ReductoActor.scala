@@ -24,6 +24,7 @@ import com.winston.nlp.NLPSentence
 import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
 import akka.routing.FromConfig
+import java.util.concurrent.TimeoutException
 
 
 class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
