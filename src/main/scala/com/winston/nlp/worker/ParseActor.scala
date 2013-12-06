@@ -26,6 +26,7 @@ class ParseActor extends Actor {
 
 	val parser = new NLPParser()
 	val name = Random.nextInt
+	var longest = 0.0;
 	
 	override def preStart() {
 	  println("--Creating Parser");
@@ -51,61 +52,15 @@ class ParseActor extends Actor {
 	  import context.dispatcher
 	  import akka.pattern.after
 	  
-	  val sc = parser.parseProcess(sentence)
-	  println(sc.sentence.treeString)
-	  origin ! sc
-	  
 	  val start = Platform.currentTime
+	  val sc = parser.parseProcess(sentence)
+	  val durr = Platform.currentTime - start
 	  
-//	  val delayed = after(200 millis, using = context.system.scheduler)(Future.failed(new Exception("OHNOES")))
-//	  val response = Future(parser.parseProcess(sentence))
+	  if (durr > longest) {
+	    longest = durr;
+	    println(name + "- " + sentence.index + " " + durr)
+	  }
 	  
-//	  val result = Future firstCompletedOf Seq(response, delayed)
-	  
-//	  result map { res =>
-//	    println(res)
-//	  }
-	  
-//	  result onComplete {
-//	    case Success(sc) => origin ! sc
-//	    case Failure(ex) =>
-//	      ex.getMessage() match {
-//	        case "OHNOES" =>
-//	          sentence.putTree("Timeout")
-//	          origin ! SentenceContainer(sentence)
-//	        case _ => 
-//	          println(ex)
-//	          sentence.putTree(ex.toString())
-//	          origin ! SentenceContainer(sentence)
-//	      }
-//	  }
-	  
-//	  val future = Future(parser.parseProcess(sentence))
-//	  
-//	  Future.firstCompletedOf(Seq(
-//			  myafter(1.second, using = context.system.scheduler)(Future.failed(new java.util.concurrent.TimeoutException("ohnoes"))),
-//			  future
-//)) onComplete { 
-//	    case Success(res) => 
-//	      println("res")
-//	      origin ! res
-//	    case Failure(fail) =>
-//	      println("fail")
-//	      sentence.putTree("fail")
-//	      origin ! SentenceContainer(sentence)
-//	      fail match {
-//	        case e: Exception => e.printStackTrace()
-//	        case _ => println("no idea")
-//	      }
-//	  }
+	  origin ! sc
 	}
-	
- def myafter[T](duration: FiniteDuration, using: Scheduler)(value: ⇒ Future[T])(implicit ec: ExecutionContext): Future[T] =
-    if (duration.isFinite() && duration.length < 1) {
-      try value catch { case NonFatal(t) => Future.failed(t) }
-    } else {
-      val p = Promise[T]()
-      using.scheduleOnce(duration) { p completeWith { try value catch { case NonFatal(t) ⇒ Future.failed(t) } } }
-      p.future
-    }
 }
