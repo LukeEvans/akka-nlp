@@ -35,11 +35,11 @@ class ApiBoot(args: Array[String]) extends Bootable {
 	  
 	  
 	    // Easy role change for debugging
-		  val role = "reducto-frontend"
-		  val parse_role = "reducto-frontend"
-		  val default_parallelization = 1
-		  val search_parallelization = 1
-		  val parse_parallelization = 1
+		  val role = "reducto-backend"
+		  val parse_role = "reducto-backend"
+		  val default_parallelization = 5
+		  val search_parallelization = 3
+		  val parse_parallelization = 2
 		    
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -104,7 +104,7 @@ class ApiBoot(args: Array[String]) extends Bootable {
     	  ClusterRouterConfig(RoundRobinRouter(), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
-    	  allowLocalRoutees = false, useRole = Some("reducto-frontend")))),
+    	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
     		 
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
