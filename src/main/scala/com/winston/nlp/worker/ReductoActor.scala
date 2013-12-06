@@ -96,6 +96,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		split onComplete {
 		  case Success(result) => 
 		    val set = result.set;
+		    println("Set size: " + set.sentences.size())
 		    
 		    // Parse sentences
 		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
@@ -114,6 +115,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		    } yield ReductoIntermediate(parsed, scored)
 		    
 		    resultFuture map { item =>
+		      println("Got parsed and scored")
 		      
 		      val newSet = item.scored.set;
 		      
@@ -125,8 +127,8 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		      val futureResult = (packageRouter ? SetContainer(newSet)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
-			  	origin ! result
-			  	println("Result: " + result.resp.summary)
+		        println("Result: " + result.resp.summary)
+		        origin ! result
 			  }			      
 		    }
 		    
