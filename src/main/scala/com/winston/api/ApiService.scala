@@ -141,6 +141,7 @@ trait ApiService extends HttpService {
                           entity(as[String]){ obj => 
                             val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "TEXT")
+                            println("Handling request")
                             complete {
                               reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
                                 container.resp.finishResponse(start, mapper) 
