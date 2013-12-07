@@ -19,13 +19,18 @@ import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.worker.PackagingActor
 
 
-class ApiBoot(args: Array[String]) extends Bootable {
+//class ApiBoot(args: Array[String]) extends Bootable {
+class ApiBoot extends Bootable {
 
 	val ip = IPTools.getPrivateIp();
       
 	println("IP: " + ip)
 	
-    val config = (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
+	
+//    val config = (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
+//      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+      
+	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
@@ -120,6 +125,6 @@ class ApiBoot(args: Array[String]) extends Bootable {
 
 object ApiApp {
    def main(args: Array[String]) = {
-     val api = new ApiBoot(args)
+     val api = new ApiBoot
    }
 }
