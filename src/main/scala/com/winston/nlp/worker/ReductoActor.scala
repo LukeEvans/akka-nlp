@@ -88,16 +88,13 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(5 second);
 		
-    	println("Text: " + request.text)
-    	
 		// Split sentences
 		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
 		  case Success(result) => 
 		    val set = result.set;
-		    println("Size: " + set.sentences.size())
-		    
+
 		    // Parse sentences
 		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
 		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
@@ -116,8 +113,6 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		    
 		    resultFuture map { item =>
 		      
-		      println("Parsed and scored")
-		      
 		      val newSet = item.scored.set;
 		      
 		      // Replace old sentences with new
@@ -129,7 +124,6 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		      
 		      futureResult map { result =>
 		        origin ! result
-		        println("Result: " + result.resp.summary)
 			  }			      
 		    }
 		    

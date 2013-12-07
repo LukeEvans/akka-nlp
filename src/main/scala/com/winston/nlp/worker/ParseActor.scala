@@ -56,8 +56,8 @@ class ParseActor extends Actor {
 	  val sc = parser.parseProcess(sentence)
 	  val durr = Platform.currentTime - start
 	  
-	  if (durr > -1) {
-//	    longest = durr;
+	  if (durr > longest) {
+	    longest = durr;
 	    println(name + "- " + sentence.index + " " + durr)
 	  }
 	  

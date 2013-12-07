@@ -19,13 +19,18 @@ import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.worker.PackagingActor
 
 
-class ApiBoot(args: Array[String]) extends Bootable {
+//class ApiBoot(args: Array[String]) extends Bootable {
+class ApiBoot extends Bootable {
 
 	val ip = IPTools.getPrivateIp();
       
 	println("IP: " + ip)
 	
-    val config = (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
+	
+//    val config = (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
+//      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+      
+	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
@@ -35,11 +40,11 @@ class ApiBoot(args: Array[String]) extends Bootable {
 	  
 	  
 	    // Easy role change for debugging
-		  val role = "reducto-frontend"
-		  val parse_role = "reducto-frontend"
-		  val default_parallelization = 1
-		  val search_parallelization = 1
-		  val parse_parallelization = 1
+		  val role = "reducto-backend"
+		  val parse_role = "reducto-backend"
+		  val default_parallelization = 5
+		  val search_parallelization = 3
+		  val parse_parallelization = 2
 		    
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -104,7 +109,7 @@ class ApiBoot(args: Array[String]) extends Bootable {
     	  ClusterRouterConfig(RoundRobinRouter(), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
-    	  allowLocalRoutees = false, useRole = Some("reducto-frontend")))),
+    	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
     		 
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
@@ -120,6 +125,6 @@ class ApiBoot(args: Array[String]) extends Bootable {
 
 object ApiApp {
    def main(args: Array[String]) = {
-     val api = new ApiBoot(args)
+     val api = new ApiBoot
    }
 }
