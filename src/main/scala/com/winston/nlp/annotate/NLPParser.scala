@@ -23,16 +23,20 @@ import opennlp.tools.util.Span
 import opennlp.tools.tokenize.Tokenizer
 import opennlp.tools.tokenize.TokenizerModel
 import opennlp.tools.tokenize.TokenizerME
+import com.winston.nlp.NLPWord
 
 
 
 class NLPParser {
+  
+	var currentPath = System.getProperty("user.dir")
+	
 	var parseProps = new Properties()
 	parseProps.put("annotators", "tokenize, ssplit, pos, parse")
 	var parseProcessor:StanfordCoreNLP = null;
-	var parseModelIn:InputStream =  new FileInputStream("/Users/kevincolin/Development/Winston/projects/akka-nlp/src/main/resources/en-parser-chunking.bin")	
+	var parseModelIn:InputStream =  new FileInputStream(currentPath + "/src/main/resources/en-parser-chunking.bin")
 	var tokenizer:Tokenizer = null;
-	var tokenModelIn:InputStream = new FileInputStream("/Users/kevincolin/Development/Winston/projects/akka-nlp/src/main/resources/en-token.bin");
+	var tokenModelIn:InputStream = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
 	var parseModel:ParserModel = null;
 	var tokenModel:TokenizerModel = null
 	var parser:Parser = null;
@@ -40,7 +44,7 @@ class NLPParser {
 	def init() {
 	  parseModel = new ParserModel(parseModelIn)
 	  parser = ParserFactory.create(parseModel)
-	  parseProcessor = new StanfordCoreNLP(parseProps)
+
 	  parseModelIn.close()
 	  
 	  tokenModel = new TokenizerModel(tokenModelIn);
@@ -52,45 +56,20 @@ class NLPParser {
 	
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
-		var document = new Annotation(sentence.value);
-
-		parseProcessor.annotate(document)
-
-		var list = document.get(classOf[SentencesAnnotation])
-		var trees = new ArrayList[String];
-
-		for(m <- list){
-			trees.add(m.get(classOf[TreeAnnotation]).toString());
-		}
-		
-		//var parse = ParserTool.parseLine(sentence.value, parser, 1)
-		
-		var parse = new Parse(sentence.value,
-			new Span(0, sentence.value.length),
-			AbstractBottomUpParser.INC_NODE,
-			1,
-			0)
-		
+		var parse = new Parse(sentence.value, new Span(0, sentence.value.length), AbstractBottomUpParser.INC_NODE, 1, 0)
 		val spans = tokenizer.tokenizePos(sentence.value)
 		
-		if (trees.size() > 0) {
-			println("Stanford tree: " + trees.get(0))
-		} 
 		for(idx <- 0 to spans.length-1){
 			val span = spans(idx);
-			// flesh out the parse with individual token sub-parses 
-			parse.insert(new Parse(sentence.value,
-            span,
-            AbstractBottomUpParser.TOK_NODE, 
-            0,
-            idx));
+			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
 		}
-		
- 
+
 		var actualParse = parser.parse(parse);
 		
-		print("opennlp:       ")
-		actualParse.show()
+		val buffer = new StringBuffer();
+		actualParse.show(buffer)
+		val treeString = buffer.toString();
+		sentence.putTree(treeString)
 		
 		SentenceContainer(sentence)
 	}

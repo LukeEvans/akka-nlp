@@ -37,6 +37,8 @@ import com.winston.nlp.worker.ParseActor
 import com.winston.nlp.worker.PackagingActor
 import com.winston.nlp.worker.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
+import com.winston.nlp.transport.ReductoResponse
+import akka.routing.RoundRobinRouter
 
 class ApiActor extends Actor with ApiService {
   def actorRefFactory = context
@@ -75,59 +77,53 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 
 trait ApiService extends HttpService {
   
+  // Easy role change for debugging
+  val role = "reducto-frontend"
+  val parse_role = "reducto-frontend"
+  val default_parallelization = 1
+  val parse_parallelization = 1
+    
   // Splitting router
   val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),	
+	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "splitRouter")
-	  
+	
   // Parsing router
-  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
+  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
+	allowLocalRoutees = true, useRole = Some(parse_role)))),
 	name = "parseRouter")
 
   // Search router
   val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "elasticSearchRouter")
 	  
   // Scoring router
   val scoringRouter = actorRefFactory.actorOf(Props(classOf[ScoringActor], elasticSearchRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "scoringRouter")
 
   // Package router
   val packageRouter = actorRefFactory.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+	allowLocalRoutees = true, useRole = Some(role)))),
 	name = "packageRouter")
   
   // Reducto Router
   val reductoRouter = actorRefFactory.actorOf(Props(classOf[ReductoActor],splitRouter, parseRouter, scoringRouter, packageRouter).withRouter(
    	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
    	ClusterRouterSettings(
-//    totalInstances = 100, maxInstancesPerNode = 3,
-//    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-   	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+   	totalInstances = 100, maxInstancesPerNode = default_parallelization,
+   	allowLocalRoutees = true, useRole = Some(role)))),
    	name = "reductoActors")
   
   // Mapper	
@@ -135,6 +131,8 @@ trait ApiService extends HttpService {
       mapper.registerModule(DefaultScalaModule)
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
        
+  implicit val timeout = Timeout(5 seconds);
+  
   val apiRoute =
         path(""){
           complete("Reducto API")
@@ -181,8 +179,7 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }
-                          
+                }~        
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => 
@@ -197,6 +194,22 @@ trait ApiService extends HttpService {
                   }        
                 }
         }~
+        path("hammer") {
+          post {
+            respondWithMediaType(MediaTypes.`application/json`){
+            	entity(as[String]){ obj =>
+            	  	val start = Platform.currentTime
+            		val request = new ReductoRequest(obj, "TEXT");
+                    complete {
+                    	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[SetContainer] map { res => 
+                    	    val container = new ReductoResponse()
+                    	    container.fake(start, res.set, mapper)
+                    	}
+                     }            		
+            	}
+            }
+          }
+        }~
         path("health"){
                 get{
                         complete{"OK."}
@@ -206,7 +219,8 @@ trait ApiService extends HttpService {
                 }
         }~
         path(RestPath) { path =>
-          getFromFile("/var/www/akka-public/" + path)
+          val resourcePath = System.getProperty("user.dir") + "/src/main/resources/loader/" + path
+          getFromFile(resourcePath)
         }
 }
 

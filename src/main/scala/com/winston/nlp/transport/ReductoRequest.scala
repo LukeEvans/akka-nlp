@@ -5,6 +5,10 @@ import spray.http.HttpRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import spray.httpx.unmarshalling._
 import spray.http._
+import org.apache.http.client.utils.URLEncodedUtils
+import com.fasterxml.jackson.databind.JsonNode
+import java.nio.charset.Charset
+import java.net.URI
 
 class ReductoRequest extends TransportMessage {
 
@@ -29,9 +33,16 @@ class ReductoRequest extends TransportMessage {
 	//================================================================================
 	def this(request:String, rt:String) {
 	  this()
+	  var cleanRequest:String = null
+	  var reqJson:JsonNode = null
+	  var full = "http://local:8080/text?" + request
+//	  try{
+//		  cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim();
+//		  reqJson = mapper.readTree(cleanRequest);
+//	  } 
+	  var list = URLEncodedUtils.parse(new URI(full), "UTF-8")
 	  
-	  var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim();
-	  val reqJson = mapper.readTree(cleanRequest);
+	  
 	  
 	  url = if (!reqJson.path("url").isMissingNode()) reqJson.path("url").asText() else null
 	  headline = if (!reqJson.path("headline").isMissingNode()) reqJson.path("headline").asText() else null

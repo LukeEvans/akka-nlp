@@ -52,7 +52,7 @@ class GlobalRuleProcessor extends TreeProcessor {
 		if (sentence == null || sentence.grabTree() == null) {
 			return sentence;
 		}
-
+		
 		var tree = sentence.grabTree().deepCopy();
 
 		// Parentheticals

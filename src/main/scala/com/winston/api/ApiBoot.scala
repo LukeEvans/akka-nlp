@@ -1,4 +1,4 @@
-	package com.winston.api
+package com.winston.api
 
 import akka.actor.{ActorSystem, Props}
 import akka.io.IO
@@ -32,7 +32,7 @@ class ApiBoot(args: Array[String]) extends Bootable {
     	  totalInstances = 100, maxInstancesPerNode = 1,
     	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
-    		 
+    		  
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
     }
   

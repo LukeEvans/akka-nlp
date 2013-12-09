@@ -23,15 +23,9 @@ import scala.util.Failure
 import com.winston.nlp.NLPSentence
 import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
-import com.winston.nlp.transport.ReductoRequest
 import akka.routing.FromConfig
-import java.io.FileInputStream
-import java.io.InputStream
-import java.io.FileInputStream
-import opennlp.tools.parser.ParserModel
-import opennlp.tools.parser.Parser
-import opennlp.tools.parser.ParserFactory
-import opennlp.tools.cmdline.parser.ParserTool
+import java.util.concurrent.TimeoutException
+
 
 
 class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
@@ -44,12 +38,56 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		case RequestContainer(request) =>
 		  val origin = sender;
 		  process(request, origin);
+		case HammerRequestContainer(request) =>
+		  val origin = sender;
+		  sentencesSize(request, origin)
 	}
 
+    def sentencesSize(request: ReductoRequest, origin: ActorRef) {
+    	implicit val timeout = Timeout(5 seconds);
+    	
+		// Split sentences
+		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
+		
+		split onComplete {
+		  case Success(result) => 
+		    val set = result.set;
+		    
+		    // Parse sentences
+		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
+		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+            }
+
+		    // Sequence list
+		    val futureParsed = Future.sequence(parseFutures)
+		    
+		     // Score the sentences
+		    val futureScored = (scoringRouter ? SetContainer(set, 0)).mapTo[SetContainer];
+		    
+		    val resultFuture =  for {
+		      parsed <- futureParsed
+		      scored <- futureScored
+		    } yield ReductoIntermediate(parsed, scored)
+		    
+		    resultFuture map { item =>
+		      
+		      val newSet = item.scored.set;
+		      
+		      // Replace old sentences with new
+		      item.parsed map { sc =>
+		        newSet.addTreeToSentence(sc.sentence)
+		      }
+		      
+		       origin ! SetContainer(newSet, 0)
+		    }
+		    
+		 case Failure(failure) => println(failure)
+		}
+    }
+    
     // Process Request
     def process(request: ReductoRequest, origin: ActorRef) {
-    	implicit val timeout = Timeout(500 seconds);
-		import context.dispatcher
+    	implicit val timeout = Timeout(5 second);
 		
 		
 //		var modelIn:InputStream =  new FileInputStream("/Users/kevincolin/Development/Winston/projects/akka-nlp/src/main/resources/en-parser-chunking.bin")
