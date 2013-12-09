@@ -74,29 +74,29 @@ class ElasticSearchActor extends HttpRequestActor {
 	// Process bulk
 	//================================================================================
 	def processBulk(wordList: List[String], origin: ActorRef) {
-//		val pending: LinkedHashMap[String, ActionFuture[CountResponse]] = new LinkedHashMap[String, ActionFuture[CountResponse]]();
-//	  
-//		// Send off all to execute
-//		wordList map { word =>
-//		  if (!pending.containsKey(word.toLowerCase())) {
-//		    pending.put(word.toLowerCase(), client.prepareCount("news", "twitter").setQuery(QueryBuilders.queryString(word).defaultField("text")).execute())
-//		  }
-//		}
-//		
-//		val wordMap: LinkedHashMap[String, Long] = new LinkedHashMap[String, Long]();
-//
-//		// Collect all
-//		wordList map { word =>
-//		  if (pending.containsKey(word.toLowerCase())) {
-//		    wordMap.put(word, pending.get(word.toLowerCase()).actionGet().getCount())
-//		  }
-//		}
-//		
-//		origin ! TermFrequencyResponse(wordMap.toMap)
+		val pending: LinkedHashMap[String, ActionFuture[CountResponse]] = new LinkedHashMap[String, ActionFuture[CountResponse]]();
 	  
-	  val wordMap: LinkedHashMap[String, Long] = new LinkedHashMap[String, Long]();
-	  wordList map { word => wordMap.put(word,1)}
-	  origin ! TermFrequencyResponse(wordMap.toMap)
+		// Send off all to execute
+		wordList map { word =>
+		  if (!pending.containsKey(word.toLowerCase())) {
+		    pending.put(word.toLowerCase(), client.prepareCount("news", "twitter").setQuery(QueryBuilders.queryString(word).defaultField("text")).execute())
+		  }
+		}
+		
+		val wordMap: LinkedHashMap[String, Long] = new LinkedHashMap[String, Long]();
+
+		// Collect all
+		wordList map { word =>
+		  if (pending.containsKey(word.toLowerCase())) {
+		    wordMap.put(word, pending.get(word.toLowerCase()).actionGet().getCount())
+		  }
+		}
+		
+		origin ! TermFrequencyResponse(wordMap.toMap)
+	  
+//	  val wordMap: LinkedHashMap[String, Long] = new LinkedHashMap[String, Long]();
+//	  wordList map { word => wordMap.put(word,1)}
+//	  origin ! TermFrequencyResponse(wordMap.toMap)
 	}
 	
 	def processTermSearch(text: String, origin:ActorRef) {

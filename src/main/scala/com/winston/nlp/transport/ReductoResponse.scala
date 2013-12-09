@@ -46,6 +46,7 @@ class ReductoResponse extends TransportMessage {
 	  val duration = stop - start
 	  time = duration + " ms"
 	  val jsonString = mapper.writeValueAsString(this)
+	  println(jsonString)
 	  jsonString;
 	}
 	

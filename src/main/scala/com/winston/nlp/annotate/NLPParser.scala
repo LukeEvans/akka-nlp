@@ -61,6 +61,7 @@ class NLPParser {
 		
 		for(idx <- 0 to spans.length-1){
 			val span = spans(idx);
+			// flesh out the parse with individual token sub-parses 
 			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
 		}
 

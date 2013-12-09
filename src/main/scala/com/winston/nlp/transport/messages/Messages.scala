@@ -23,7 +23,7 @@ case class HammerRequestContainer(req:ReductoRequest) extends request
 case class SetContainer(set:SentenceSet, number:Int) extends request
 
 // Sentence 
-case class SentenceContainer(sentence:NLPSentence) extends request
+case class SentenceContainer(val sentence:NLPSentence) extends request
 
 // Term frequency response
 case class SingleTermFrequency(word:String, count:Long) extends request
