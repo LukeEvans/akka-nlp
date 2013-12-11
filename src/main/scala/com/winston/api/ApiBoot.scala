@@ -40,11 +40,11 @@ class ApiBoot extends Bootable {
 	  
 	  
 	    // Easy role change for debugging
-		  val role = "reducto-backend"
-		  val parse_role = "reducto-backend"
-		  val default_parallelization = 5
-		  val search_parallelization = 3
-		  val parse_parallelization = 2
+		  val role = "reducto-frontend"
+		  val parse_role = "reducto-frontend"
+		  val default_parallelization = 1
+		  val search_parallelization = 1
+		  val parse_parallelization = 1
 		    
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
