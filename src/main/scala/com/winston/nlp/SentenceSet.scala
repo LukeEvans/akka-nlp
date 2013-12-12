@@ -42,6 +42,7 @@ class SentenceSet(h:String, ft:String) extends TransportMessage {
 	def addTreeToSentence(sentence:NLPSentence) {
 	  if (sentence.index < sentences.size()) {
 	    sentences.get(sentence.index).treeString = sentence.treeString;
+	    sentences.get(sentence.index).parseInfo = sentence.parseInfo;
 	  }	
 	}
 	

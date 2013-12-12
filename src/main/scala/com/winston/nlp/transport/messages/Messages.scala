@@ -17,12 +17,13 @@ trait response;
 // Reducto Request and Response
 case class RequestContainer(req:ReductoRequest) extends request
 case class ResponseContainer(resp:ReductoResponse) extends response
+case class HammerRequestContainer(req:ReductoRequest) extends request
 
 // Sentence set messages
-case class SetContainer(set:SentenceSet) extends request
+case class SetContainer(val set:SentenceSet) extends request
 
 // Sentence 
-case class SentenceContainer(sentence:NLPSentence) extends request
+case class SentenceContainer(val sentence:NLPSentence) extends request
 
 // Term frequency response
 case class SingleTermFrequency(word:String, count:Long) extends request

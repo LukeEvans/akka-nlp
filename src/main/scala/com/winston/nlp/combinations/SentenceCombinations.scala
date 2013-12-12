@@ -37,19 +37,17 @@ class SentenceCombinations {
 	def getHighestCombo(numSentences:Int, sentence:Boolean):SentenceCombination = {
 	  var combos:ArrayList[SentenceCombination] = generateCombinations(numSentences, sentence)
 	  
-	  // Sort the combos
+//	  var newCombos:ArrayList[SentenceCombination] = new ArrayList[SentenceCombination]
+//	  
+//	  // Add all valid combos
+//	  for(combo <- combos){
+//	    val validator = new Validator(combo.sentenceNumbers, nlpSentences);
+//	    if(validator.validate()){
+//			newCombos.add(combo);
+//		}
+//	  }
 	  
-	  var newCombos:ArrayList[SentenceCombination] = new ArrayList[SentenceCombination]
-	  
-	  // Add all valid combos
-	  for(combo <- combos){
-	    val validator = new Validator(combo.sentenceNumbers, nlpSentences);
-	    if(validator.validate()){
-			newCombos.add(combo);
-		}
-	  }
-	  
-	  return findHighestMMRCombo(scores, newCombos)
+	  return findHighestMMRCombo(scores, combos)
 	}
 		
 	def generateCombinations(limit:Int, sentence:Boolean): ArrayList[SentenceCombination] = {
