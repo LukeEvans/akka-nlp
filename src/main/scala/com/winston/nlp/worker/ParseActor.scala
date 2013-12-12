@@ -21,15 +21,25 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Promise
 import scala.util.Success
 import scala.util.Failure
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import akka.cluster.ClusterEvent.MemberRemoved
+import akka.actor.ActorLogging
+import akka.cluster.ClusterEvent.UnreachableMember
+import akka.cluster.ClusterEvent.CurrentClusterState
+import akka.cluster.ClusterEvent.MemberUp
+import akka.cluster.Cluster
+import akka.actor.Props
 
 class ParseActor extends Actor {
 
 	val parser = new NLPParser()
 	val name = Random.nextInt
 	var longest = 0.0;
+	//val clusterListener = context.system.actorOf(Props[ClusterListener], name = "clusterListener")
 	
 	override def preStart() {
 	  println("--Creating Parser");
+	  //Cluster(context.system).subscribe(clusterListener, classOf[ClusterDomainEvent])
       self ! InitRequest
 	}
 	

@@ -105,8 +105,7 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }
-                          
+                }~            
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => 

@@ -24,6 +24,13 @@ import opennlp.tools.tokenize.Tokenizer
 import opennlp.tools.tokenize.TokenizerModel
 import opennlp.tools.tokenize.TokenizerME
 import com.winston.nlp.NLPWord
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import akka.cluster.ClusterEvent.MemberRemoved
+import akka.actor.ActorLogging
+import akka.cluster.ClusterEvent.UnreachableMember
+import akka.cluster.ClusterEvent.CurrentClusterState
+import akka.cluster.ClusterEvent.MemberUp
+import akka.actor.Actor
 
 
 

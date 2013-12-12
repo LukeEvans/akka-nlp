@@ -33,16 +33,9 @@ class ReductoRequest extends TransportMessage {
 	//================================================================================
 	def this(request:String, rt:String) {
 	  this()
-	  var cleanRequest:String = null
-	  var reqJson:JsonNode = null
-	  var full = "http://local:8080/text?" + request
-//	  try{
-//		  cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim();
-//		  reqJson = mapper.readTree(cleanRequest);
-//	  } 
-	  var list = URLEncodedUtils.parse(new URI(full), "UTF-8")
-	  
-	  
+
+	  var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim();
+	  var reqJson = mapper.readTree(cleanRequest);
 	  
 	  url = if (!reqJson.path("url").isMissingNode()) reqJson.path("url").asText() else null
 	  headline = if (!reqJson.path("headline").isMissingNode()) reqJson.path("headline").asText() else null
@@ -61,6 +54,11 @@ class ReductoRequest extends TransportMessage {
 	
 	def this(request:HttpRequest, rt:String) {
 	  this()
+	  
+//	  var cleanRequest:String = null
+//	  var reqJson:JsonNode = null
+//	  var full = "http://local:8080/text?" + request
+//	  var list = URLEncodedUtils.parse(new URI(full), "UTF-8")
 	  
 	  url = if (request.uri.query.get("url") != null) request.uri.query.get("url").get else null
 	  headline = if (request.uri.query.get("headline") != null) request.uri.query.get("headline").get else null
