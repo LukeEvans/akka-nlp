@@ -8,7 +8,7 @@
   gather_facts: true
   tasks:
       - name: Copy project jar
-        copy: src=../target/scala-2.10/nlp-akka_2.10-0.1.jar dest=/usr/lib/akka/deploy
+        copy: src=../target/scala-2.10/nlp-akka_2.10-0.1.jar dest=/usr/local/akka/deploy
 
       - name: Run Akka
-        command: /usr/lib/akka/bin/akka com.winston.api.ApiBoot
+        command: /usr/local/akka/bin/akka com.winston.api.ApiBoot

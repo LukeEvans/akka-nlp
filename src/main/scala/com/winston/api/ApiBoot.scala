@@ -26,9 +26,19 @@ class ApiBoot extends Bootable {
       
 	println("IP: " + ip)
 	
-	
-//    val config = (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
-//      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+	val cfg = """
+  akka {
+      cluster {
+        seed-nodes = [
+            "akka.tcp://clustertest@${ip}:2551"
+          ]
+      }     
+  }    
+
+"""
+	  
+//    val config = (if (ip.equalsIgnoreCase("127.0.0.1")) ConfigFactory.parseString(cfg) else ConfigFactory.empty)
+//      .withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.port=2551\nakka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
 	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
