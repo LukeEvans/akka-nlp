@@ -26,20 +26,6 @@ class ApiBoot extends Bootable {
       
 	println("IP: " + ip)
 	
-	val cfg = """
-  akka {
-      cluster {
-        seed-nodes = [
-            "akka.tcp://clustertest@${ip}:2551"
-          ]
-      }     
-  }    
-
-"""
-	  
-//    val config = (if (ip.equalsIgnoreCase("127.0.0.1")) ConfigFactory.parseString(cfg) else ConfigFactory.empty)
-//      .withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.port=2551\nakka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
-      
 	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
@@ -63,13 +49,6 @@ class ApiBoot extends Bootable {
 			allowLocalRoutees = true, useRole = Some(role)))),
 			name = "splitRouter")
 			  
-		//  // Parsing router
-		//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-		//	ClusterRouterSettings(
-		//	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
-		//	allowLocalRoutees = true, useRole = Some(parse_role)))),
-		//	name = "parseRouter")
-			
 		  // Parsing router
 		  val parseRouter = system.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
@@ -106,17 +85,9 @@ class ApiBoot extends Bootable {
 		   	allowLocalRoutees = true, useRole = Some(role)))),
 		   	name = "reductoActors")
    	
-//		// Actor actually handling the requests
-//   		val service = system.actorOf(Props(classOf[ApiActor], reductoRouter).withRouter(
-//    	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-//    	  ClusterRouterSettings(
-//    	  totalInstances = 100, maxInstancesPerNode = 1,
-//    	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-//    	  name = "serviceRouter")
-		   	
 		// Actor actually handling the requests
    		val service = system.actorOf(Props(classOf[ApiActor], reductoRouter).withRouter(
-    	  ClusterRouterConfig(RoundRobinRouter(), 
+    	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
     	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
