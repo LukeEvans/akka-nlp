@@ -176,7 +176,7 @@ trait ApiService extends HttpService {
                 }
         }~
         path(RestPath) { path =>
-          val resourcePath = System.getProperty("user.dir") + "/src/main/resources/loader/" + path
+          val resourcePath = System.getProperty("user.dir") + "/config/loader/" + path
           getFromFile(resourcePath)
         }
 }
