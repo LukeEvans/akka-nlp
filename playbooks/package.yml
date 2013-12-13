@@ -1,3 +1,5 @@
+---
+
 - name: Package Project
   hosts: localhost
   user: root
