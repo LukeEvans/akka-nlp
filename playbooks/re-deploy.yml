@@ -23,11 +23,18 @@
   user: ubuntu
   sudo: true
   gather_facts: false
+
   tasks:
-      - name: Run Frontend
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot &
-        async: 450000
-        poll: 0
+    - name: Run Frontend
+      command: /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot
+      async: 450000
+      poll: 0
+
+#  tasks:
+#      - name: Run Frontend
+#        command: nohup /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot &
+#        async: 450000
+#        poll: 0
 
 
 - name: Re-deploy Backend
@@ -39,7 +46,13 @@
   gather_facts: false
   tasks:
       - name: Run Backend
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+        command: /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon
         async: 450000
-        poll: 0
+        poll: 0  
+        
+#  tasks:
+#      - name: Run Backend
+#        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+#        async: 450000
+#        poll: 0
 
