@@ -4,8 +4,6 @@
   gather_facts: false
   sudo: true
 
-  vars:
-
   tasks:
 
   	- name: Make Ansible directory
