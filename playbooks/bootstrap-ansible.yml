@@ -1,0 +1,19 @@
+- name: Bootstrap Ansible
+  hosts: localhost
+  user: root
+  gather_facts: false
+  sudo: true
+
+  vars:
+
+  tasks:
+
+  	- name: Make Ansible directory
+  	  local_action: shell mkdir /etc/ansible/
+  	  ignore_errors: yes
+
+    - name: Copy ec2.py hosts file
+      local_action: shell cp files/hosts /etc/ansible/
+      
+    - name: Copy ec2.ini file
+      local_action: shell cp files/ec2.ini /etc/ansible/

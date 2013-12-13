@@ -26,7 +26,7 @@ class ApiBoot extends Bootable {
       
 	println("IP: " + ip)
 	
-	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
+	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
@@ -36,11 +36,11 @@ class ApiBoot extends Bootable {
 	  
 	  
 	    // Easy role change for debugging
-		  val role = "reducto-frontend"
-		  val parse_role = "reducto-frontend"
-		  val default_parallelization = 1
-		  val search_parallelization = 1
-		  val parse_parallelization = 1
+          val role = "reducto-backend"
+          val parse_role = "reducto-backend"
+          val default_parallelization = 5
+          val search_parallelization = 2
+          val parse_parallelization = 2
 		    
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
