@@ -1,12 +1,12 @@
 ---
 
-- name: Re-deploy
+- name: Kill-Dist
   hosts:
   - tag_Name_reducto-frontend-01
   - tag_Name_reducto-backend-01
   user: ubuntu
   sudo: true
-  gather_facts: true
+  gather_facts: false
   tasks:
       - name: Kill previous run
         command: killall java
@@ -15,5 +15,31 @@
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
-      - name: Run Frontend Akka
+
+- name: Re-deploy Frontend
+  hosts:
+  - tag_Name_reducto-frontend-01
+  
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  tasks:
+      - name: Run Frontend
         command: nohup /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot &
+        async: 45
+        poll: 0
+
+
+- name: Re-deploy Backend
+  hosts:
+  - tag_Name_reducto-backend-01
+  
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  tasks:
+      - name: Run Frontend
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+        async: 45
+        poll: 0
+
