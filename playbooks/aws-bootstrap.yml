@@ -16,3 +16,6 @@
 
     - name: Copy ec2.ini file
       local_action: shell cp files/ec2.ini /etc/ansible/
+
+    - name: Tell ec2 inventory we want aws internal ip
+      local_action: lineinfile dest=/etc/ansible/ec2.ini regexp='^\sdestination_variable =' line='destination_variable = private_dns_name'
