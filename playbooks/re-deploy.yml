@@ -26,7 +26,7 @@
   tasks:
       - name: Run Frontend
         command: nohup /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot &
-        async: 45
+        async: 450000
         poll: 0
 
 
@@ -38,8 +38,8 @@
   sudo: true
   gather_facts: false
   tasks:
-      - name: Run Frontend
+      - name: Run Backend
         command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
-        async: 45
+        async: 450000
         poll: 0
 
