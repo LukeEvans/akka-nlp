@@ -7,6 +7,13 @@
   sudo: true
 
   tasks:
+
+    - name: Get sbt .deb file
+      get_url: url=http://downloads.typesafe.com/akka/akka-2.2.3.zip dest=/tmp/ mode=0440
+
+    - name: Add .deb file 
+      local_action: shell cd /tmp && dpkg -i sbt.deb && apt-get update && apt-get -y install sbt && rm /tmp/sbt.deb
+
     - name: Make Ansible directory
       local_action: shell mkdir /etc/ansible/
       ignore_errors: yes
