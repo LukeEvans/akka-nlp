@@ -10,7 +10,8 @@
   tasks:
       - name: Kill previous run
         command: killall java
-        
+        ignore_errors: yes
+
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
