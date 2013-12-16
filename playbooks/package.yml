@@ -8,8 +8,8 @@
   vars:
 
     # Parallelization Hints
-    default_parallelization: 10
-    search_parallelization: 4
+    default_parallelization: 5
+    search_parallelization: 2
     parse_parallelization: 4
 
     # Roles
