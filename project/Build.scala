@@ -25,7 +25,6 @@ object ReductoBuild extends Build {
     scalaVersion := ScalaVersion,
     crossPaths   := false,
     organizationName := "Reactor Inc."
-//    organizationHomepage := Some(url("http://www.typesafe.com"))
   )
   
   lazy val defaultSettings = buildSettings ++ Seq(
