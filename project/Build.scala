@@ -13,7 +13,7 @@ object ReductoBuild extends Build {
     base = file("."),
     settings = defaultSettings ++ AkkaKernelPlugin.distSettings ++ Seq(
       libraryDependencies ++= Dependencies.reductoKernel,
-      distJvmOptions in Dist := "-Xms256M -Xmx1024M",
+      distJvmOptions in Dist := "-Xms1024M -Xmx2048M",
       outputDirectory in Dist := file("target/reducto-dist")
       
     )
