@@ -67,4 +67,4 @@
         shell: rm /tmp/java.sh
 
       - name: Reboot
-        command: /sbin/reboot -t now
+        shell: reboot
