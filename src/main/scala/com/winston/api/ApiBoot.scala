@@ -35,11 +35,7 @@ class ApiBoot extends Bootable {
       
 	println("IP: " + ip)
 	
-	
-//    val config = (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
-//      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
-      
-	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
+	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
   
 	
@@ -50,22 +46,19 @@ class ApiBoot extends Bootable {
 	  
 	  
 	    // Easy role change for debugging
-		  val role = "reducto-backend"
-		  val parse_role = "reducto-backend"
-		  val default_parallelization = 5
-		  val search_parallelization = 3
-		  val parse_parallelization = 2
-//		  val default_parallelization = 1
-//		  val search_parallelization = 1
-//		  val parse_parallelization = 1
-		  
+          val role = "reducto-backend"
+          val parse_role = "reducto-backend"
+          val default_parallelization = 10
+          val search_parallelization = 4
+          val parse_parallelization = 4
+
 		  // URLExtraction Router
 		  val URLExtractorRouter = system.actorOf(Props[URLExtractorActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 1, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 			name = "URLExtractorRouter")
-		  
+			
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props(classOf[SplitActor], URLExtractorRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 			ClusterRouterSettings(
@@ -73,13 +66,6 @@ class ApiBoot extends Bootable {
 			allowLocalRoutees = true, useRole = Some(role)))),
 			name = "splitRouter")
 			  
-		//  // Parsing router
-		//  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-		//	ClusterRouterSettings(
-		//	totalInstances = 100, maxInstancesPerNode = parse_parallelization,
-		//	allowLocalRoutees = true, useRole = Some(parse_role)))),
-		//	name = "parseRouter")
-			
 		  // Parsing router
 		  val parseRouter = system.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
@@ -116,19 +102,11 @@ class ApiBoot extends Bootable {
 		   	allowLocalRoutees = true, useRole = Some(role)))),
 		   	name = "reductoActors")
    	
-//		// Actor actually handling the requests
-//   		val service = system.actorOf(Props(classOf[ApiActor], reductoRouter).withRouter(
-//    	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-//    	  ClusterRouterSettings(
-//    	  totalInstances = 100, maxInstancesPerNode = 1,
-//    	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-//    	  name = "serviceRouter")
-		   	
 		// Actor actually handling the requests
    		val service = system.actorOf(Props(classOf[ApiActor], reductoRouter).withRouter(
-    	  ClusterRouterConfig(RoundRobinRouter(), 
+    	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
-    	  totalInstances = 100, maxInstancesPerNode = 1,
+    	  totalInstances = 100, maxInstancesPerNode = 3,
     	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
     		  
