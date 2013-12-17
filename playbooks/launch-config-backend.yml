@@ -9,13 +9,13 @@
     security_group: Akka
 
     # Instace types
-    backend_instance_type: hs1.8xlarge
+    backend_instance_type: m1.xlarge
 
     # Image (Ubuntu 12.04)
     image: ami-a73264ce 
 
     # Instance Counts
-    backend_count: 1
+    backend_count: 10
 
     # Region
     region: us-east-1
@@ -65,3 +65,6 @@
 
       - name: Cleanup Java install
         shell: rm /tmp/java.sh
+
+      - name: Reboot
+        command: /sbin/reboot -t now
