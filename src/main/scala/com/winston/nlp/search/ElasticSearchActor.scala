@@ -1,21 +1,26 @@
 package com.winston.nlp.search
 
-import akka.actor.Actor
-import akka.actor.ActorRef
-import org.elasticsearch.common.settings.ImmutableSettings
-import com.winston.nlp.http.HttpRequestActor
 import java.util.ArrayList
-import com.winston.nlp.transport.messages._
-import org.elasticsearch.client.Client
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import java.util.LinkedHashMap
+import scala.collection.JavaConversions._
+import scala.concurrent.duration._
 import org.elasticsearch.action.ActionFuture
 import org.elasticsearch.action.count.CountResponse
-import scala.collection.JavaConversions._
+import org.elasticsearch.client.Client
+import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.index.query.QueryBuilders
+import com.winston.nlp.http.HttpRequestActor
+import com.winston.nlp.transport.messages._
+import akka.actor.Actor
+import akka.actor.ActorRef
+import akka.pattern.CircuitBreaker
+import akka.pattern.pipe
+import akka.event.Logging
+import akka.actor.ActorLogging
 
-class ElasticSearchActor extends HttpRequestActor {
+class ElasticSearchActor extends HttpRequestActor with ActorLogging{
 	
 	val totalCountEndpoint = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count";
 	val queryCountEndpoint = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:";
@@ -28,7 +33,6 @@ class ElasticSearchActor extends HttpRequestActor {
 	var stopPhrases = new ArrayList[String];
 	var totalDocuments: Long = 0;
 	
-	
 	// Elasticsearch client 
 	var client: Client = null;
 	
@@ -36,7 +40,7 @@ class ElasticSearchActor extends HttpRequestActor {
 	  println("--Creating ES Bulker");
 	  self ! InitRequest
 	}
-		
+	
 	override def postStop() {
 	  println("--Stopped ES Bulker");
 	}
@@ -100,7 +104,7 @@ class ElasticSearchActor extends HttpRequestActor {
 	}
 	
 	def processTermSearch(text: String, origin:ActorRef) {
-		val uri = queryCountEndpoint + text
+		val uri = queryCountEndpoint + java.net.URLEncoder.encode(text, "UTF-8")
 		val node = processRequest(HttpObject(uri, null, null, "GET"), null)
 		val freq = SingleTermFrequency(text, node.path("count").asLong());
 		origin ! freq

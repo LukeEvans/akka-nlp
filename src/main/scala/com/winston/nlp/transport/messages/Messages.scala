@@ -10,6 +10,7 @@ import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
 import com.winston.nlp.transport.ReductoResponse
 import reflect.ClassTag
+import com.winston.nlp.transport.ErrorResponse
 
 trait request;
 trait response;
@@ -20,7 +21,7 @@ case class ResponseContainer(resp:ReductoResponse) extends response
 case class HammerRequestContainer(req:ReductoRequest) extends request
 
 // Sentence set messages
-case class SetContainer(val set:SentenceSet) extends request
+case class SetContainer(set:SentenceSet, number:Int) extends request
 
 // Sentence 
 case class SentenceContainer(val sentence:NLPSentence) extends request
@@ -42,3 +43,10 @@ case class StopPhrasesObject(phrases:ArrayList[String] = new ArrayList[String]) 
 
 // Long Container
 case class LongContainer(long:Long) extends request
+
+// Url String Container
+case class URLContainer(url:String) extends request
+case class URLTextResponse(extractionTuple:(String, String)) extends request
+
+// Circuit Break Exception
+case class CircuitBreakException(message:ErrorResponse) extends response

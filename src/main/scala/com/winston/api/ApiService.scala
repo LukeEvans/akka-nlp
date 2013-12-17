@@ -99,23 +99,57 @@ trait ApiService extends HttpService {
                             val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "URL")
                             complete {
-                              reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
-                                container.resp.finishResponse(start, mapper);
-                              }
+//                              reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
+//                                container.resp.finishResponse(start, mapper);
+//                              }
+                            	var obj = reductoRouter.ask(RequestContainer(request))(100.seconds)
+                            	  
+                            	obj.map{
+                            		item =>
+                            		item match{
+                            			case circuitBreak:CircuitBreakException =>{
+                            				var except = obj.mapTo[CircuitBreakException]
+                            				except map{
+                            				  circuit => circuit.message.finishResponse(start, mapper)
+                            				}
+                            			}
+                            			case contain:ResponseContainer =>{
+                            			  var objMap = obj.mapTo[ResponseContainer]
+                            			  objMap map{
+                            			    container => container.resp.finishResponse(start, mapper)
+                            			  }
+                            			}
+                            		}	
+                            	}
                             }
                           }
                   }        
-                }
-                          
+                }~            
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => 
                             val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "URL")
                             complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
+                            	var obj = reductoRouter.ask(RequestContainer(request))(100.seconds)
+                            	  
+                            	obj.map{
+                            		item =>
+                            		item match{
+                            			case circuitBreak:CircuitBreakException =>{
+                            				var except = obj.mapTo[CircuitBreakException]
+                            				except map{
+                            				  circuit => circuit.message.finishResponse(start, mapper)
+                            				}
+                            			}
+                            			case contain:ResponseContainer =>{
+                            			  var objMap = obj.mapTo[ResponseContainer]
+                            			  objMap map{
+                            			    container => container.resp.finishResponse(start, mapper)
+                            			  }
+                            			}
+                            		}	
+                            	}
                             }
                           }
                   }        
@@ -128,24 +162,58 @@ trait ApiService extends HttpService {
                             val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "TEXT")
                             complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
+//                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+//                                container.resp.finishResponse(start, mapper) 
+//                              }
+                            	var obj = reductoRouter.ask(RequestContainer(request))(100.seconds)
+                            				
+                            	obj map{
+                            		item =>
+                            		item match{
+                            			case circuitBreak:CircuitBreakException =>{
+                            				var except = obj.mapTo[CircuitBreakException]
+                            				except map{
+                            					circuit => circuit.message.finishResponse(start, mapper)
+                            				}
+                            			}
+                            			case container:ResponseContainer =>{
+                            				var objMap = obj.mapTo[ResponseContainer]
+                            				objMap map{
+                            					contain => contain.resp.finishResponse(start, mapper)
+                            				}
+                            			}
+                            		}	
+                            	}
                             }
                           }
                   }        
-                }
-                          
+                }~        
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => 
                             val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "TEXT")
                             println("Handling request")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
+                            complete {                          	
+                            	var obj = reductoRouter.ask(RequestContainer(request))(100.seconds)
+                            				
+                            	obj map{
+                            		item =>
+                            		item match{
+                            			case circuitBreak:CircuitBreakException =>{
+                            				var except = obj.mapTo[CircuitBreakException]
+                            				except map{
+                            					circuit => circuit.message.finishResponse(start, mapper)
+                            				}
+                            			}
+                            			case container:ResponseContainer =>{
+                            				var objMap = obj.mapTo[ResponseContainer]
+                            				objMap map{
+                            					contain => contain.resp.finishResponse(start, mapper)
+                            				}
+                            			}
+                            		}	
+                            	}
                             }
                           }
                   }        

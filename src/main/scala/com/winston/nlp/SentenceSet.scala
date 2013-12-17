@@ -163,4 +163,12 @@ class SentenceSet(h:String, ft:String) extends TransportMessage {
 	def setDecay(d:Boolean) {
 	  decay = d;
 	}
+	
+	def print(){
+	  println("Headline: "+ headline)
+	  println("sentences")
+	  for(sentence<-sentences){
+	    sentence.print
+	  }
+	}
 }

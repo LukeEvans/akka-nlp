@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import akka.kernel.Bootable
 import com.reactor.nlp.utilities.IPTools
-import com.reactor.nlp.config.SystemCreator
+//import com.reactor.nlp.config.SystemCreator
 
 class BackendDaemon extends Bootable {
 	val ip = IPTools.getPrivateIp();

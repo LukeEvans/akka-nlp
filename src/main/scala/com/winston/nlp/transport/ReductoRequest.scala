@@ -5,6 +5,10 @@ import spray.http.HttpRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import spray.httpx.unmarshalling._
 import spray.http._
+import org.apache.http.client.utils.URLEncodedUtils
+import com.fasterxml.jackson.databind.JsonNode
+import java.nio.charset.Charset
+import java.net.URI
 
 class ReductoRequest extends TransportMessage {
 
@@ -19,6 +23,7 @@ class ReductoRequest extends TransportMessage {
 	var sentences:Int = 3
 	var decay:Boolean = true
 	var separationRules = true
+	var ratio:Double = 0
 	
 	@transient
 	val mapper = new ObjectMapper()
@@ -28,9 +33,9 @@ class ReductoRequest extends TransportMessage {
 	//================================================================================
 	def this(request:String, rt:String) {
 	  this()
-	  
+
 	  var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim();
-	  val reqJson = mapper.readTree(cleanRequest);
+	  var reqJson = mapper.readTree(cleanRequest);
 	  
 	  url = if (!reqJson.path("url").isMissingNode()) reqJson.path("url").asText() else null
 	  headline = if (!reqJson.path("headline").isMissingNode()) reqJson.path("headline").asText() else null
@@ -42,12 +47,18 @@ class ReductoRequest extends TransportMessage {
 	  sentences = if (!reqJson.path("sentences").isMissingNode()) reqJson.path("sentences").asInt() else 3
 	  decay = if (!reqJson.path("decay").isMissingNode()) reqJson.path("decay").asBoolean() else true
 	  separationRules = if (!reqJson.path("separationRules").isMissingNode()) reqJson.path("separationRules").asBoolean() else true
+	  ratio = if(!reqJson.path("ratio").isMissingNode()) reqJson.path("ratio").asDouble() else 0
 	  
   	  request_type = rt;
 	}
 	
 	def this(request:HttpRequest, rt:String) {
 	  this()
+	  
+//	  var cleanRequest:String = null
+//	  var reqJson:JsonNode = null
+//	  var full = "http://local:8080/text?" + request
+//	  var list = URLEncodedUtils.parse(new URI(full), "UTF-8")
 	  
 	  url = if (request.uri.query.get("url") != null) request.uri.query.get("url").get else null
 	  headline = if (request.uri.query.get("headline") != null) request.uri.query.get("headline").get else null
@@ -59,6 +70,7 @@ class ReductoRequest extends TransportMessage {
 	  sentences = if (request.uri.query.get("sentences") != null) request.uri.query.get("sentences").get.toInt else 3
 	  decay = if (request.uri.query.get("decay") != null) request.uri.query.get("decay").get.toBoolean else true
 	  separationRules = if (request.uri.query.get("separationRules") != null) request.uri.query.get("separationRules").get.toBoolean else true
+	  ratio = if(request.uri.query.get("ratio")!= null) request.uri.query.get("ratio").get.toDouble else 0
 	  
 	  request_type = rt;
 	}

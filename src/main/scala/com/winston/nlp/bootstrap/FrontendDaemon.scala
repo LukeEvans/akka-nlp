@@ -5,6 +5,10 @@ import com.typesafe.config.ConfigFactory
 import akka.kernel.Bootable
 import com.reactor.nlp.utilities.IPTools
 import com.reactor.nlp.config.SystemCreator
+import akka.actor.Props
+import com.winston.nlp.listener.Listener
+import akka.cluster.Cluster
+import akka.cluster.ClusterEvent.ClusterDomainEvent
 
 class FrontendDaemon(args:Array[String]) extends Bootable {
 	val ip = IPTools.getPrivateIp();
@@ -14,8 +18,12 @@ class FrontendDaemon(args:Array[String]) extends Bootable {
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
     val system = ActorSystem("NLPClusterSystem-0-1", config)
-    
+      
 	def startup(){
+	  val clusterListener = system.actorOf(Props(classOf[Listener], system),
+      name = "clusterListener")
+    
+      Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
 	}
 
 	def shutdown(){

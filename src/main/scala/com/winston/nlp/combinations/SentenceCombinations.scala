@@ -20,6 +20,7 @@ class SentenceCombinations {
 	
 	def this(nlpSentences:ArrayList[NLPSentence]){
 	  this()
+	  
 	  sentences = new ArrayList[String]
 	  scores = new ArrayList[Double]
 	  
@@ -200,5 +201,19 @@ class SentenceCombinations {
 	    }
 	  }
 	  return score
+	}
+	
+	def print(){
+	  println()
+	  println("Sentences: ")
+	  for(sentence<-sentences)
+	    println(sentence)
+	  println("NLPSentences: ")
+	  for(nlpSentence<-nlpSentences)
+	    nlpSentence.print
+	  println("scores")
+	  for(score<-scores)
+		 println(score)
+	  println()
 	}
 }

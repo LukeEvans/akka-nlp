@@ -2,8 +2,11 @@ package com.winston.nlp.postProcessing
 
 import java.util.ArrayList
 import com.winston.nlp.NLPSentence
+import com.winston.nlp.NLPWord
 import edu.stanford.nlp.trees.Tree
 import scala.collection.JavaConversions._
+import com.winston.utlities.Tools
+import com.winston.nlp.NLPSentence
 
 class GlobalRuleProcessor extends TreeProcessor {
 
@@ -49,7 +52,7 @@ class GlobalRuleProcessor extends TreeProcessor {
 		if (sentence == null || sentence.grabTree() == null) {
 			return sentence;
 		}
-
+		
 		var tree = sentence.grabTree().deepCopy();
 
 		// Parentheticals
@@ -61,7 +64,11 @@ class GlobalRuleProcessor extends TreeProcessor {
 		// Cardinals like ...,27.
 		tree = cardinals(tree);
 		
-		return new NLPSentence(tree, sentence);
+		var nlpSentence = reconstructSentence(sentence.words, tree)
+		nlpSentence.index = sentence.index
+		nlpSentence.treeString = tree.toString()
+		return nlpSentence
+		//return new NLPSentence(tree, sentence);
 	}
 
 	//================================================================================
@@ -110,5 +117,46 @@ class GlobalRuleProcessor extends TreeProcessor {
 		tree = tsurgeonScript(tree, 10, "__=del ,, /,/=comma .. (/said/=said . /\\./)", "excise del said", "prune comma said");
 		tree = tsurgeonScript(tree, 10, "__=del ,, /,/=comma .. (/reports/=rp . /\\./)", "excise del said", "prune comma rp");
 		return tree;
+	}
+	
+	//================================================================================
+	// Reconstruct Sentence
+	//================================================================================
+	def reconstructSentence(words:ArrayList[NLPWord], tree:Tree):NLPSentence = {
+		if(words.isEmpty || words == null || tree == null)
+			return null;
+	  
+		var leaves:java.util.List[Tree] = tree.getLeaves()
+		var newTree = tree
+		var newWords = new ArrayList[NLPWord]();
+		
+		var i:Int = 0
+		var j:Int = 0;
+		while(i < leaves.size() && j < words.size()){
+			var leafString = leaves.get(i).value
+			var wordString = words.get(j).grabValue();
+			if(leafString.equalsIgnoreCase(wordString)){
+				var word = new NLPWord(leaves.get(i).toString());
+				if(j != 0 && words.get(j-1).endIndex == words.get(j).startIndex){
+					var endIndex = newWords.get(newWords.size() - 1).endIndex;
+					word.startIndex = endIndex;
+					word.endIndex = words.get(j).endIndex;
+					word.originalText = words.get(j).originalText
+				}
+				else{
+					word.startIndex = words.get(j).startIndex;
+					word.endIndex = words.get(j).endIndex;
+					word.originalText = words.get(j).originalText
+				}
+				newWords.add(word);
+				i += 1;
+				j += 1;
+			}
+			else{
+				j += 1;
+			}
+		}
+		var sentenceString = Tools.getStringFromList(newWords);
+		return new NLPSentence(sentenceString, newWords);
 	}
 }

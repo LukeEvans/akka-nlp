@@ -23,6 +23,14 @@ import opennlp.tools.util.Span
 import opennlp.tools.tokenize.Tokenizer
 import opennlp.tools.tokenize.TokenizerModel
 import opennlp.tools.tokenize.TokenizerME
+import com.winston.nlp.NLPWord
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import akka.cluster.ClusterEvent.MemberRemoved
+import akka.actor.ActorLogging
+import akka.cluster.ClusterEvent.UnreachableMember
+import akka.cluster.ClusterEvent.CurrentClusterState
+import akka.cluster.ClusterEvent.MemberUp
+import akka.actor.Actor
 
 
 
@@ -43,6 +51,7 @@ class NLPParser {
 	def init() {
 	  parseModel = new ParserModel(parseModelIn)
 	  parser = ParserFactory.create(parseModel)
+
 	  parseModelIn.close()
 	  
 	  tokenModel = new TokenizerModel(tokenModelIn);
@@ -55,7 +64,6 @@ class NLPParser {
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
 		var parse = new Parse(sentence.value, new Span(0, sentence.value.length), AbstractBottomUpParser.INC_NODE, 1, 0)
-		
 		val spans = tokenizer.tokenizePos(sentence.value)
 		
 		for(idx <- 0 to spans.length-1){
@@ -63,7 +71,7 @@ class NLPParser {
 			// flesh out the parse with individual token sub-parses 
 			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
 		}
-		
+
 		var actualParse = parser.parse(parse);
 		
 		val buffer = new StringBuffer();

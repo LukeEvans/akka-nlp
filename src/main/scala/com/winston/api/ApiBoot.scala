@@ -17,6 +17,15 @@ import akka.routing.RoundRobinRouter
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.worker.PackagingActor
+import akka.actor.ActorLogging
+import akka.actor.Actor
+import akka.cluster.ClusterEvent.CurrentClusterState
+import akka.cluster.ClusterEvent.MemberRemoved
+import akka.cluster.ClusterEvent.UnreachableMember
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import akka.cluster.ClusterEvent.MemberUp
+import com.winston.nlp.listener.Listener
+import com.winston.nlp.worker.URLExtractorActor
 
 
 //class ApiBoot(args: Array[String]) extends Bootable {
@@ -28,9 +37,10 @@ class ApiBoot extends Bootable {
 	
 	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
-      
+  
+	
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
-        
+    
     //#registerOnUp
     Cluster(system) registerOnMemberUp {
 	  
@@ -41,9 +51,16 @@ class ApiBoot extends Bootable {
           val default_parallelization = 10
           val search_parallelization = 4
           val parse_parallelization = 4
-		    
+
+		  // URLExtraction Router
+		  val URLExtractorRouter = system.actorOf(Props[URLExtractorActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+			ClusterRouterSettings(
+			totalInstances = 1, maxInstancesPerNode = 1,
+			allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+			name = "URLExtractorRouter")
+			
 		  // Splitting router
-		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+		  val splitRouter = system.actorOf(Props(classOf[SplitActor], URLExtractorRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = default_parallelization,
 			allowLocalRoutees = true, useRole = Some(role)))),
@@ -52,7 +69,7 @@ class ApiBoot extends Bootable {
 		  // Parsing router
 		  val parseRouter = system.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
-			totalInstances = 100, maxInstancesPerNode = parse_parallelization,
+			totalInstances = 1, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some(parse_role)))),
 			name = "parseRouter")
 		
@@ -92,11 +109,15 @@ class ApiBoot extends Bootable {
     	  totalInstances = 100, maxInstancesPerNode = 3,
     	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
-    		 
+    		  
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
     }
+	
   
     def startup(){
+	      val clusterListener = system.actorOf(Props(classOf[Listener], system),
+	    		  name = "clusterListener")
+	      Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
 	}
 
 	def shutdown(){
@@ -107,5 +128,6 @@ class ApiBoot extends Bootable {
 object ApiApp {
    def main(args: Array[String]) = {
      val api = new ApiBoot
+     api.startup
    }
 }

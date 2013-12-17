@@ -136,6 +136,7 @@ object SystemCreator {
 	// Create remote client system
 	//================================================================================
     private def createRemoteClientSystem(name: String, hostName: String, port: String) : ActorSystem = {
+      //Change nodes line to: nodes = ["akka.tcp://DaemonSystem@10.147.157.30:2552", "akka.tcp://DaemonSystem@10.179.1.7:2552", "akka.tcp://DaemonSystem@10.145.140.70:2552"] 
        val string: Config = ConfigFactory.parseString(
            s""" 
              akka {
@@ -146,7 +147,7 @@ object SystemCreator {
            					router = "round-robin" 
                 			nr-of-instances = 1
            					target { 
-              					nodes = ["akka.tcp://DaemonSystem@10.147.157.30:2552", "akka.tcp://DaemonSystem@10.179.1.7:2552", "akka.tcp://DaemonSystem@10.145.140.70:2552"] 
+              					nodes = ["akka.tcp://DaemonSystem@127.0.0.1:2552", "akka.tcp://DaemonSystem@127.0.0.1:2552", "akka.tcp://DaemonSystem@127.0.0.1:2552"] 
            					} 
            				}
         
