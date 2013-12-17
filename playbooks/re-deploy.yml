@@ -43,3 +43,19 @@
         command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
         async: 450000
         poll: 0  
+
+      - name: Run Backend 2
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run Backend 3
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run Backend 4
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+        async: 450000
+        poll: 0  
+
