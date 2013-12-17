@@ -8,9 +8,9 @@
   vars:
 
     # Parallelization Hints
-    default_parallelization: 1
-    search_parallelization: 1
-    parse_parallelization: 1
+    default_parallelization: 5
+    search_parallelization: 2
+    parse_parallelization: 2
 
     # Roles
     role: reducto-backend
