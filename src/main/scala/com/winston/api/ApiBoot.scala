@@ -40,8 +40,8 @@ class ApiBoot extends Bootable {
 	  
 	      // Easy role change for debugging
           val worker_role = "worker_role"
-          val default_parallelization = 1
-          val score_parallelization = 1
+          val default_parallelization = 5
+          val score_parallelization = 2
           val parse_parallelization = 1
 		    
 		  // Splitting master
@@ -77,7 +77,7 @@ class ApiBoot extends Bootable {
 		   	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 		   	ClusterRouterSettings(
 		   	totalInstances = 100, maxInstancesPerNode = default_parallelization,
-		   	allowLocalRoutees = true, useRole = Some(worker_role)))),
+		   	allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
 		   	name = "reductoActors")
    	
 		// Actor actually handling the requests
