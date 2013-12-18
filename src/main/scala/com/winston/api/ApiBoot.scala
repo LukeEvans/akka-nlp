@@ -76,8 +76,8 @@ class ApiBoot extends Bootable {
 		  val reductoRouter = system.actorOf(Props(classOf[ReductoActor],splitMaster, parseMaster, scoringMaster, packagingMaster).withRouter(
 		   	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 		   	ClusterRouterSettings(
-		   	totalInstances = 100, maxInstancesPerNode = default_parallelization,
-		   	allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+		   	totalInstances = 100, maxInstancesPerNode = 3,
+		   	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
 		   	name = "reductoActors")
    	
 		// Actor actually handling the requests
