@@ -38,37 +38,35 @@ class ApiBoot extends Bootable {
     //#registerOnUp
     Cluster(system) registerOnMemberUp {
 	  
-	  
-	    // Easy role change for debugging
-          val role = "reducto-backend"
-          val parse_role = "reducto-backend"
+	      // Easy role change for debugging
+          val worker_role = "reducto-worker"
           val default_parallelization = 1
-          val search_parallelization = 1
+          val score_parallelization = 1
           val parse_parallelization = 1
 		    
 		  // Splitting master
-		  val splitMaster = system.actorOf(Props[SplitMaster].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
+		  val splitMaster = system.actorOf(Props(classOf[SplitMaster], default_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
-			totalInstances = 100, maxInstancesPerNode = default_parallelization,
+			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
 			name = "splitMaster")
 
 		  // Parsing master
-		  val parseMaster = system.actorOf(Props[ParseMaster].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+		  val parseMaster = system.actorOf(Props(classOf[ParseMaster], parse_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
 			name = "parseMaster")
 			
 		  // Scoring master
-		  val scoringMaster = system.actorOf(Props[ScoringMaster].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+		  val scoringMaster = system.actorOf(Props(classOf[ScoringMaster], score_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
 			name = "scoringMaster")
 	
 		  // Packaging master
-		  val packagingMaster = system.actorOf(Props[PackagingMaster].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+		  val packagingMaster = system.actorOf(Props(classOf[PackagingMaster], default_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
@@ -79,7 +77,7 @@ class ApiBoot extends Bootable {
 		   	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 		   	ClusterRouterSettings(
 		   	totalInstances = 100, maxInstancesPerNode = default_parallelization,
-		   	allowLocalRoutees = true, useRole = Some(role)))),
+		   	allowLocalRoutees = true, useRole = Some(worker_role)))),
 		   	name = "reductoActors")
    	
 		// Actor actually handling the requests
