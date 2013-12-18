@@ -1,6 +1,5 @@
-package com.winston.nlp.worker
+package com.winston.nlp.parse
 
-import com.winston.nlp.annotate.NLPParser
 import com.winston.nlp.transport.messages._
 import scala.concurrent.duration._
 import akka.actor.Actor
@@ -8,19 +7,7 @@ import scala.compat.Platform
 import scala.util.Random
 import com.winston.nlp.NLPSentence
 import akka.actor.ActorRef
-import scala.concurrent.Future
-import akka.util.Timeout
-import scala.util.Success
-import scala.util.Failure
-import scala.concurrent.Await
-import scala.util.Success
-import scala.util.Failure
-import scala.util.control.NonFatal
-import akka.actor.Scheduler
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Promise
-import scala.util.Success
-import scala.util.Failure
+import akka.actor.actorRef2Scala
 
 class ParseActor extends Actor {
 

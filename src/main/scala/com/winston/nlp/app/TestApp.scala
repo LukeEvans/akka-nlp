@@ -12,7 +12,7 @@ import com.reactor.nlp.utilities.IPTools
 import com.winston.nlp.worker.SplitActor
 import akka.routing.FromConfig
 import com.winston.nlp.transport.messages._
-import com.winston.nlp.worker.ParseActor
+import com.winston.nlp.parse.ParseActor
 import akka.actor.Inbox
 import scala.concurrent.duration._
 import com.winston.utlities.Tools

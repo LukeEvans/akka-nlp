@@ -27,11 +27,11 @@ import akka.routing.FromConfig
 import java.util.concurrent.TimeoutException
 
 
-class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
+class ReductoActor(splitRouter:ActorRef, parseMaster:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
-    println("\n\n\n\nstarting reducto\n\n\n\n")
+    println("\n\n\n\nStarting Reducto\n\n\n\n")
 	  
 	def receive = {
 		case RequestContainer(request) =>
@@ -54,7 +54,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		    
 		    // Parse sentences
 		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
-		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+		    	(parseMaster ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
             }
 
 		    // Sequence list
@@ -97,7 +97,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 
 		    // Parse sentences
 		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
-		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+		    	(parseMaster ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
             }
 
 		    // Sequence list

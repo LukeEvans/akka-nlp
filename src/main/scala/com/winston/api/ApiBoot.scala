@@ -12,11 +12,12 @@ import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
 import akka.kernel.Bootable
 import com.winston.nlp.worker.SplitActor
-import com.winston.nlp.worker.ParseActor
+import com.winston.nlp.parse.ParseActor
 import akka.routing.RoundRobinRouter
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.worker.PackagingActor
+import com.winston.nlp.parse.ParseMaster
 
 
 //class ApiBoot(args: Array[String]) extends Bootable {
@@ -38,9 +39,9 @@ class ApiBoot extends Bootable {
 	    // Easy role change for debugging
           val role = "reducto-backend"
           val parse_role = "reducto-backend"
-          val default_parallelization = 10
-          val search_parallelization = 4
-          val parse_parallelization = 4
+          val default_parallelization = 1
+          val search_parallelization = 1
+          val parse_parallelization = 1
 		    
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -49,13 +50,20 @@ class ApiBoot extends Bootable {
 			allowLocalRoutees = true, useRole = Some(role)))),
 			name = "splitRouter")
 			  
-		  // Parsing router
-		  val parseRouter = system.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
-			ClusterRouterSettings(
-			totalInstances = 100, maxInstancesPerNode = parse_parallelization,
-			allowLocalRoutees = true, useRole = Some(parse_role)))),
-			name = "parseRouter")
+//		  // Parsing router
+//		  val parseRouter = system.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+//			ClusterRouterSettings(
+//			totalInstances = 100, maxInstancesPerNode = parse_parallelization,
+//			allowLocalRoutees = true, useRole = Some(parse_role)))),
+//			name = "parseRouter")
 		
+		  // Parsing master
+		  val parseMaster = system.actorOf(Props[ParseMaster].withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+			ClusterRouterSettings(
+			totalInstances = 100, maxInstancesPerNode = 1,
+			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+			name = "parseMaster")
+			
 		  // Search router
 		  val elasticSearchRouter = system.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 			ClusterRouterSettings(
@@ -78,7 +86,7 @@ class ApiBoot extends Bootable {
 			name = "packageRouter")
 		  
 		  // Reducto Router
-		  val reductoRouter = system.actorOf(Props(classOf[ReductoActor],splitRouter, parseRouter, scoringRouter, packageRouter).withRouter(
+		  val reductoRouter = system.actorOf(Props(classOf[ReductoActor],splitRouter, parseMaster, scoringRouter, packageRouter).withRouter(
 		   	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 		   	ClusterRouterSettings(
 		   	totalInstances = 100, maxInstancesPerNode = default_parallelization,

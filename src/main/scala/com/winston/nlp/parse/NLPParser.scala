@@ -1,14 +1,8 @@
-package com.winston.nlp.annotate
-
-import scala.collection.mutable.ArrayBuffer
+package com.winston.nlp.parse
 import scala.collection.JavaConversions._
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
-import edu.stanford.nlp.util.CoreMap
-import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation
 import java.util.Properties
 import edu.stanford.nlp.ling.CoreAnnotations._
-import edu.stanford.nlp.pipeline.Annotation
-import java.util.ArrayList
 import com.winston.nlp.NLPSentence
 import com.winston.nlp.transport.messages._
 import java.io.InputStream
@@ -16,7 +10,6 @@ import java.io.FileInputStream
 import opennlp.tools.parser.ParserModel
 import opennlp.tools.parser.Parser
 import opennlp.tools.parser.ParserFactory
-import opennlp.tools.cmdline.parser.ParserTool
 import opennlp.tools.parser.Parse
 import opennlp.tools.parser.AbstractBottomUpParser
 import opennlp.tools.util.Span
@@ -54,27 +47,27 @@ class NLPParser {
 	
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
-//		var parse = new Parse(sentence.value, new Span(0, sentence.value.length), AbstractBottomUpParser.INC_NODE, 1, 0)
-//		
-//		val spans = tokenizer.tokenizePos(sentence.value)
-//		
-//		for(idx <- 0 to spans.length-1){
-//			val span = spans(idx);
-//			// flesh out the parse with individual token sub-parses 
-//			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
-//		}
-//		
-//		var actualParse = parser.parse(parse);
-//		
-//		val buffer = new StringBuffer();
-//		actualParse.show(buffer)
-//		val treeString = buffer.toString();
-//		sentence.putTree(treeString)
-//		
-//		SentenceContainer(sentence)
+		var parse = new Parse(sentence.value, new Span(0, sentence.value.length), AbstractBottomUpParser.INC_NODE, 1, 0)
+		
+		val spans = tokenizer.tokenizePos(sentence.value)
+		
+		for(idx <- 0 to spans.length-1){
+			val span = spans(idx);
+			// flesh out the parse with individual token sub-parses 
+			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
+		}
+		
+		var actualParse = parser.parse(parse);
+		
+		val buffer = new StringBuffer();
+		actualParse.show(buffer)
+		val treeString = buffer.toString();
+		sentence.putTree(treeString)
+		
+		SentenceContainer(sentence)
 	  
-	  val newSentence = sentence.copy;
-	  newSentence.putTree("(ROOT (S (NP (PRP It)) (VP (VBZ 's) (NP (NP (NN kind)) (PP (IN of) (NP (NN fun))) (S (VP (TO to) (VP (VB do) (NP (DT the) (JJ impossible))))))) (. .)))")
-	  SentenceContainer(newSentence)
+//	  val newSentence = sentence.copy;
+//	  newSentence.putTree("(ROOT (S (NP (PRP It)) (VP (VBZ 's) (NP (NP (NN kind)) (PP (IN of) (NP (NN fun))) (S (VP (TO to) (VP (VB do) (NP (DT the) (JJ impossible))))))) (. .)))")
+//	  SentenceContainer(newSentence)
 	}
 }
