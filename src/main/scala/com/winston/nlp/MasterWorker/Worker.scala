@@ -1,26 +1,24 @@
-package com.winston.nlp.worker
+package com.winston.nlp.MasterWorker
 
 import akka.actor.ActorLogging
-import akka.actor.ActorPath
-import com.winston.nlp.transport.messages.MasterWorkerProtocol
 import akka.actor.Actor
 import akka.actor.ActorRef
-import MasterWorkerProtocol._
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
+import akka.actor.actorRef2Scala
 
-abstract class Worker(masterLocation: ActorPath) extends Actor with ActorLogging {
- 
-  // We need to know where the master is
-  val master = context.actorSelection(masterLocation)
+abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
  
   // This is how our derivations will interact with us.  It
   // allows dervations to complete work asynchronously
-  case class WorkComplete(result: Any)
+//  case class WorkComplete(result: Any)
  
   // Required to be implemented
   def doWork(workSender: ActorRef, work: Any): Unit
  
   // Notify the Master that we're alive
-  override def preStart() = master ! WorkerCreated(self)
+  override def preStart() {
+    master ! WorkerCreated(self)
+  }
  
   // This is the state we're in when we're working on something.
   // In this state we can deal with messages in a much more

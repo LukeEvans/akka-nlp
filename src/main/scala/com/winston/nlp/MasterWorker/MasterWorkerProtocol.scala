@@ -1,4 +1,4 @@
-package com.winston.nlp.transport.messages
+package com.winston.nlp.MasterWorker
 
 import akka.actor.ActorRef
 
@@ -13,4 +13,7 @@ object MasterWorkerProtocol {
   case class WorkToBeDone(work: Any)
   case object WorkIsReady
   case object NoWorkToBeDone
+  
+  // Messages between Workers and their Actors
+  case class WorkComplete(msg: Any)
 }

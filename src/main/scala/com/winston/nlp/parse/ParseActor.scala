@@ -8,8 +8,9 @@ import scala.util.Random
 import com.winston.nlp.NLPSentence
 import akka.actor.ActorRef
 import akka.actor.actorRef2Scala
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
-class ParseActor extends Actor {
+class ParseActor(manager: ActorRef) extends Actor {
 
 	val parser = new NLPParser()
 	val name = Random.nextInt
@@ -48,6 +49,8 @@ class ParseActor extends Actor {
 	    println(name + "- " + sentence.index + " " + durr)
 	  }
 	  
-	  origin ! sc
+//	  origin ! sc
+	  origin.tell(sc, manager)
+	  manager ! WorkComplete("Done")
 	}
 }

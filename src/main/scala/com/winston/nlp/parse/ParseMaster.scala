@@ -4,12 +4,12 @@ import akka.actor.Terminated
 import akka.actor.ActorLogging
 import akka.actor.Actor
 import akka.actor.ActorRef
-import com.winston.nlp.transport.messages.MasterWorkerProtocol._
 import akka.actor.Props
 import akka.cluster.routing.ClusterRouterConfig
 import akka.routing.RoundRobinRouter
 import akka.cluster.routing.ClusterRouterSettings
 import scala.collection.mutable.{Map, Queue}
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
 class ParseMaster extends Actor with ActorLogging {
 	
@@ -23,9 +23,9 @@ class ParseMaster extends Actor with ActorLogging {
   val workQ = Queue.empty[Tuple2[ActorRef, Any]]
  
   // Parsing router
-  val parseRouter = context.actorOf(Props(classOf[ParseWorker], self.path).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+  val parseRouter = context.actorOf(Props(classOf[ParseWorker], self).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
-	  totalInstances = 100, maxInstancesPerNode = 2,
+	  totalInstances = 100, maxInstancesPerNode = 1,
 	  allowLocalRoutees = true, useRole = Some("reducto-backend")))),
 	  name = "parseRouter")
 			
@@ -87,7 +87,7 @@ class ParseMaster extends Actor with ActorLogging {
  
     // Anything other than our own protocol is "work to be done"
     case work =>
-      log.info("Queueing {}", work)
+     // log.info("Queueing {}", work)
       workQ.enqueue(sender -> work)
       notifyWorkers()
   }

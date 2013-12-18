@@ -97,7 +97,7 @@ class ApiBoot extends Bootable {
    		val service = system.actorOf(Props(classOf[ApiActor], reductoRouter).withRouter(
     	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
-    	  totalInstances = 100, maxInstancesPerNode = 3,
+    	  totalInstances = 100, maxInstancesPerNode = 1,
     	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
     		 

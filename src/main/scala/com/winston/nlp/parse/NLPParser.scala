@@ -26,9 +26,24 @@ class NLPParser {
 	var parseProps = new Properties()
 	parseProps.put("annotators", "tokenize, ssplit, pos, parse")
 	var parseProcessor:StanfordCoreNLP = null;
-	var parseModelIn:InputStream =  new FileInputStream("/usr/local/reducto-dist" + "/config/en-parser-chunking.bin")
+	
+	var parseModelIn:InputStream = null;
+	
+	try {
+		parseModelIn =  new FileInputStream("/usr/local/reducto-dist" + "/config/en-parser-chunking.bin")
+	} catch {
+	  	case e: Exception => parseModelIn =  new FileInputStream(currentPath + "/src/main/resources/en-parser-chunking.bin")
+	}
+	
+	var tokenModelIn:InputStream = null;
+	
+	try { 
+		tokenModelIn = new FileInputStream("/usr/local/reducto-dist" + "/config/en-token.bin");
+	} catch {
+	  	case e: Exception => tokenModelIn = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
+	}
+	
 	var tokenizer:Tokenizer = null;
-	var tokenModelIn:InputStream = new FileInputStream("/usr/local/reducto-dist" + "/config/en-token.bin");
 	var parseModel:ParserModel = null;
 	var tokenModel:TokenizerModel = null
 	var parser:Parser = null;
