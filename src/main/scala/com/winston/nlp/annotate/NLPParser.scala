@@ -33,9 +33,9 @@ class NLPParser {
 	var parseProps = new Properties()
 	parseProps.put("annotators", "tokenize, ssplit, pos, parse")
 	var parseProcessor:StanfordCoreNLP = null;
-	var parseModelIn:InputStream =  new FileInputStream(currentPath + "/config/en-parser-chunking.bin")
+	var parseModelIn:InputStream =  new FileInputStream("/usr/local/reducto-dist" + "/config/en-parser-chunking.bin")
 	var tokenizer:Tokenizer = null;
-	var tokenModelIn:InputStream = new FileInputStream(currentPath + "/config/en-token.bin");
+	var tokenModelIn:InputStream = new FileInputStream("/usr/local/reducto-dist" + "/config/en-token.bin");
 	var parseModel:ParserModel = null;
 	var tokenModel:TokenizerModel = null
 	var parser:Parser = null;
@@ -54,23 +54,27 @@ class NLPParser {
 	
 	def parseProcess(sentence:NLPSentence): SentenceContainer = {
 
-		var parse = new Parse(sentence.value, new Span(0, sentence.value.length), AbstractBottomUpParser.INC_NODE, 1, 0)
-		
-		val spans = tokenizer.tokenizePos(sentence.value)
-		
-		for(idx <- 0 to spans.length-1){
-			val span = spans(idx);
-			// flesh out the parse with individual token sub-parses 
-			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
-		}
-		
-		var actualParse = parser.parse(parse);
-		
-		val buffer = new StringBuffer();
-		actualParse.show(buffer)
-		val treeString = buffer.toString();
-		sentence.putTree(treeString)
-		
-		SentenceContainer(sentence)
+//		var parse = new Parse(sentence.value, new Span(0, sentence.value.length), AbstractBottomUpParser.INC_NODE, 1, 0)
+//		
+//		val spans = tokenizer.tokenizePos(sentence.value)
+//		
+//		for(idx <- 0 to spans.length-1){
+//			val span = spans(idx);
+//			// flesh out the parse with individual token sub-parses 
+//			parse.insert(new Parse(sentence.value, span, AbstractBottomUpParser.TOK_NODE, 0, idx));
+//		}
+//		
+//		var actualParse = parser.parse(parse);
+//		
+//		val buffer = new StringBuffer();
+//		actualParse.show(buffer)
+//		val treeString = buffer.toString();
+//		sentence.putTree(treeString)
+//		
+//		SentenceContainer(sentence)
+	  
+	  val newSentence = sentence.copy;
+	  newSentence.putTree("(ROOT (S (NP (PRP It)) (VP (VBZ 's) (NP (NP (NN kind)) (PP (IN of) (NP (NN fun))) (S (VP (TO to) (VP (VB do) (NP (DT the) (JJ impossible))))))) (. .)))")
+	  SentenceContainer(newSentence)
 	}
 }

@@ -26,7 +26,7 @@ class ApiBoot extends Bootable {
       
 	println("IP: " + ip)
 	
-	val config = (if (true) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${2551}") else ConfigFactory.empty)
+	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
@@ -36,11 +36,11 @@ class ApiBoot extends Bootable {
 	  
 	  
 	    // Easy role change for debugging
-		  val role = "reducto-frontend"
-		  val parse_role = "reducto-frontend"
-		  val default_parallelization = 1
-		  val search_parallelization = 1
-		  val parse_parallelization = 1
+          val role = "reducto-backend"
+          val parse_role = "reducto-backend"
+          val default_parallelization = 10
+          val search_parallelization = 4
+          val parse_parallelization = 4
 		    
 		  // Splitting router
 		  val splitRouter = system.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
@@ -89,7 +89,7 @@ class ApiBoot extends Bootable {
    		val service = system.actorOf(Props(classOf[ApiActor], reductoRouter).withRouter(
     	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
-    	  totalInstances = 100, maxInstancesPerNode = 1,
+    	  totalInstances = 100, maxInstancesPerNode = 3,
     	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
     	  name = "serviceRouter")
     		 
