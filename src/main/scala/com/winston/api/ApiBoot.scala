@@ -73,28 +73,6 @@ class ApiBoot extends Bootable {
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
 			name = "packagingMaster")
-			
-			
-//		  // Search router
-//		  val elasticSearchRouter = system.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-//			ClusterRouterSettings(
-//			totalInstances = 100, maxInstancesPerNode = search_parallelization,
-//			allowLocalRoutees = true, useRole = Some(role)))),
-//			name = "elasticSearchRouter")
-			  
-//		  // Scoring router
-//		  val scoringRouter = system.actorOf(Props(classOf[ScoringActor], elasticSearchRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-//			ClusterRouterSettings(
-//			totalInstances = 100, maxInstancesPerNode = default_parallelization,
-//			allowLocalRoutees = true, useRole = Some(role)))),
-//			name = "scoringRouter")
-		
-//		  // Package router
-//		  val packageRouter = system.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-//			ClusterRouterSettings(
-//			totalInstances = 100, maxInstancesPerNode = default_parallelization,
-//			allowLocalRoutees = true, useRole = Some(role)))),
-//			name = "packageRouter")
 		  
 		  // Reducto Router
 		  val reductoRouter = system.actorOf(Props(classOf[ReductoActor],splitMaster, parseMaster, scoringMaster, packagingMaster).withRouter(
