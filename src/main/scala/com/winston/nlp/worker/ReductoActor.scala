@@ -27,7 +27,7 @@ import akka.routing.FromConfig
 import java.util.concurrent.TimeoutException
 
 
-class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packageRouter:ActorRef) extends Actor { 
+class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
@@ -120,7 +120,7 @@ class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:Act
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
 
-		      val futureResult = (packageRouter ? SetContainer(newSet)).mapTo[ResponseContainer];
+		      val futureResult = (packagingMaster ? SetContainer(newSet)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
 		        origin ! result
