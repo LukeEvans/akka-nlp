@@ -1,30 +1,16 @@
-package com.winston.nlp.worker
+package com.winston.nlp.pipeline
 
 import akka.actor._
-import akka.pattern.ask
 import akka.util.Timeout
+import akka.pattern.ask
 import com.winston.nlp.transport.messages._
 import scala.concurrent.duration._
-import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.winston.nlp.SentenceSet
 import scala.collection.JavaConversions._
-import com.winston.nlp.scoring.ScoringActor
-import akka.routing.RoundRobinRouter
-import akka.cluster.routing.ClusterRouterConfig
-import akka.cluster.routing.AdaptiveLoadBalancingRouter
-import akka.cluster.routing.ClusterRouterSettings
-import com.winston.nlp.scoring.ScoringActor
-import akka.routing.Broadcast
-import com.winston.nlp.combinations.SentenceCombinations
 import scala.util.Success
 import scala.util.Failure
-import com.winston.nlp.NLPSentence
-import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
-import akka.routing.FromConfig
-import java.util.concurrent.TimeoutException
 
 
 class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef) extends Actor { 

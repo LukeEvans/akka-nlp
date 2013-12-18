@@ -6,7 +6,7 @@ import spray.can.Http
 import com.reactor.nlp.utilities.IPTools
 import com.typesafe.config.ConfigFactory
 import akka.cluster.Cluster
-import com.winston.nlp.worker.ReductoActor
+import com.winston.nlp.pipeline.ReductoActor
 import akka.cluster.routing.ClusterRouterConfig
 import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
@@ -39,7 +39,7 @@ class ApiBoot extends Bootable {
     Cluster(system) registerOnMemberUp {
 	  
 	      // Easy role change for debugging
-          val worker_role = "reducto-worker"
+          val worker_role = "worker_role"
           val default_parallelization = 1
           val score_parallelization = 1
           val parse_parallelization = 1

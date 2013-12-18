@@ -24,6 +24,8 @@ class ScoringActor(manager:ActorRef, searchRouter:ActorRef) extends Actor {
   
 	val termFrequencyRouter = context.actorOf(Props(classOf[TermFrequencyActor],searchRouter).withRouter(RoundRobinRouter(nrOfInstances = 1)));
 	
+	manager ! ReadyForWork
+	
 	def receive = {
 		case set: SetContainer =>
 		  val origin = sender;

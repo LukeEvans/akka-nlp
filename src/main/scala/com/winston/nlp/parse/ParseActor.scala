@@ -28,6 +28,7 @@ class ParseActor(manager: ActorRef) extends Actor {
 	def receive = {
 	  	case InitRequest => 
 	  	  parser.init(); 
+	  	  manager ! ReadyForWork
 		case sc:SentenceContainer =>
 		  val origin = sender;
 		  processWithTimeout(sc.sentence, origin)

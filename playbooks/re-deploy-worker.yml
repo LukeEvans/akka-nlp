@@ -2,7 +2,7 @@
 
 - name: Re-deploy Single
   hosts:
-  - tag_Name_reducto-backend-01
+  - tag_Name_reducto-worker-01
   user: ubuntu
   sudo: true
   gather_facts: false
@@ -14,8 +14,8 @@
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
-      - name: Run Backend 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+      - name: Run Worker 1
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
         async: 450000
         poll: 0  
 

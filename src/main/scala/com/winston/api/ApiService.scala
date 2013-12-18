@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.winston.nlp.SummaryResult
-import com.winston.nlp.worker.ReductoActor
+import com.winston.nlp.pipeline.ReductoActor
 import akka.actor._
 import akka.actor.ActorRef
 import akka.actor.Props

@@ -16,4 +16,5 @@ object MasterWorkerProtocol {
   
   // Messages between Workers and their Actors
   case class WorkComplete(msg: Any)
+  case object ReadyForWork
 }

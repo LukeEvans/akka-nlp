@@ -8,6 +8,8 @@ import akka.actor.actorRef2Scala
 
 abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
  
+  var readyForWork = false
+  
   // Required to be implemented
   def doWork(workSender: ActorRef, work: Any): Unit
  
@@ -16,6 +18,12 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
     master ! WorkerCreated(self)
   }
  
+  def requestWork() {
+	  if (readyForWork) {
+	    master ! WorkerRequestsWork(self)
+	  }
+  }
+  
   // This is the state we're in when we're working on something.
   // In this state we can deal with messages in a much more
   // reasonable manner
@@ -29,9 +37,8 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
       log.error("Yikes. Master told me to do work, while I'm working.")
     // Our derivation has completed its task
     case WorkComplete(result) =>
-      log.info("Complete. Going idle")
       master ! WorkIsDone(self)
-      master ! WorkerRequestsWork(self)
+      requestWork()
       // We're idle now
       context.become(idle)
   }
@@ -42,7 +49,7 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
   def idle: Receive = {
     // Master says there's work to be done, let's ask for it
     case WorkIsReady =>
-      master ! WorkerRequestsWork(self)
+      requestWork()
     // Send the work off to the implementation
     case WorkToBeDone(work) =>
       doWork(sender, work)
@@ -50,6 +57,10 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
     // We asked for it, but either someone else got it first, or
     // there's literally no work to be done
     case NoWorkToBeDone =>
+    // Indicate that we're ready to start working
+    case ReadyForWork =>
+      readyForWork = true
+      requestWork()
   }
  
   def receive = idle

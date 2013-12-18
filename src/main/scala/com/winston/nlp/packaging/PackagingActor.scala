@@ -11,6 +11,9 @@ import akka.actor.actorRef2Scala
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
 class PackagingActor(manager: ActorRef) extends Actor {
+  
+	manager ! ReadyForWork
+  
 	def receive = {
 		case set: SetContainer =>
 		  val origin = sender;

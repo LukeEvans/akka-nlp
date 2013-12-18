@@ -18,7 +18,9 @@ class SplitActor(manager: ActorRef) extends Actor {
 	}
 	
 	def receive = {
-	  	case InitRequest => splitter.init(); 
+	  	case InitRequest => 
+	  	  splitter.init()
+	  	  manager ! ReadyForWork
 		case RequestContainer(request) => 
 		  sender.tell(splitter.splitProcess(request), manager)
 		  manager ! WorkComplete("Done")
