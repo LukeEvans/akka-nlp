@@ -44,7 +44,6 @@ class Master extends Actor with ActorLogging {
     // currently doing anything, and we've got something to do,
     // give it to him.
     case WorkerRequestsWork(worker) =>
-      log.info("Worker requests work: {}", worker)
       if (workers.contains(worker)) {
         if (workQ.isEmpty)
           worker ! NoWorkToBeDone

@@ -15,8 +15,9 @@ import akka.cluster.routing.ClusterRouterConfig
 import akka.cluster.routing.AdaptiveLoadBalancingRouter
 import akka.cluster.routing.ClusterRouterSettings
 import com.winston.nlp.transport.messages._
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
-class ScoringActor(searchRouter:ActorRef) extends Actor {
+class ScoringActor(manager:ActorRef, searchRouter:ActorRef) extends Actor {
 
 	// Case class for future compositions
     case class ScoringIntermediateObject(totalDocs:LongContainer, stopPhrases:StopPhrasesObject, frequencies:TermFrequencyResponse);
@@ -69,7 +70,8 @@ class ScoringActor(searchRouter:ActorRef) extends Actor {
 			// Calculate weight
 			set.calculateWeight;
 			
-			origin ! SetContainer(set)
+			origin.tell(SetContainer(set), manager)
+			manager ! WorkComplete("Done")
 		}
 	}
 }

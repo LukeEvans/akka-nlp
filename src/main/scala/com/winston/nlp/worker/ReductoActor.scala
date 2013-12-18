@@ -27,7 +27,7 @@ import akka.routing.FromConfig
 import java.util.concurrent.TimeoutException
 
 
-class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
+class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packageRouter:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
@@ -61,7 +61,7 @@ class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringRouter:Act
 		    val futureParsed = Future.sequence(parseFutures)
 		    
 		     // Score the sentences
-		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+		    val futureScored = (scoringMaster ? SetContainer(set)).mapTo[SetContainer];
 		    
 		    val resultFuture =  for {
 		      parsed <- futureParsed
@@ -104,7 +104,7 @@ class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringRouter:Act
 		    val futureParsed = Future.sequence(parseFutures)
 		    
 		    // Score the sentences
-		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+		    val futureScored = (scoringMaster ? SetContainer(set)).mapTo[SetContainer];
 		    
 		    val resultFuture =  for {
 		      parsed <- futureParsed

@@ -29,6 +29,7 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
       log.error("Yikes. Master told me to do work, while I'm working.")
     // Our derivation has completed its task
     case WorkComplete(result) =>
+      log.info("Complete. Going idle")
       master ! WorkIsDone(self)
       master ! WorkerRequestsWork(self)
       // We're idle now
