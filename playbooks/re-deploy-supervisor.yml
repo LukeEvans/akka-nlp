@@ -16,6 +16,6 @@
         copy: src=../target/reducto-dist dest=/usr/local/
 
       - name: Run Supervisor Akka
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.SupervisorDaemon &
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.Supervisor &
         async: 450000
         poll: 0
