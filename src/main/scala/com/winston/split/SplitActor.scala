@@ -1,12 +1,10 @@
-package com.winston.nlp.worker
+package com.winston.split
 
 import akka.actor._
-import akka.pattern.Patterns
-import akka.util.Timeout
-import com.winston.nlp.annotate.NLPSplitter
 import com.winston.nlp.transport.messages._
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
-class SplitActor extends Actor {
+class SplitActor(manager: ActorRef) extends Actor {
 
 	val splitter = new NLPSplitter();
 
@@ -21,6 +19,8 @@ class SplitActor extends Actor {
 	
 	def receive = {
 	  	case InitRequest => splitter.init(); 
-		case RequestContainer(request) => sender ! splitter.splitProcess(request);
+		case RequestContainer(request) => 
+		  sender.tell(splitter.splitProcess(request), manager)
+		  manager ! WorkComplete("Done")
 	}
 }

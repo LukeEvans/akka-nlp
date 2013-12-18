@@ -21,16 +21,6 @@ class ParseWorker(master: ActorRef) extends Worker(master) {
   // Handle work
   def doWork(workSender: ActorRef, msg: Any): Unit = {
       parseActor.tell(msg, workSender)
-//    implicit val timeout = Timeout(5 seconds);
-//    
-//    val futureParse = parseActor ? msg
-//    
-//    futureParse pipeTo workSender
-//    
-//    futureParse map { parse =>
-//      self ! WorkComplete(parse)
-////      workSender ! parse
-//    }
   }
     
 }

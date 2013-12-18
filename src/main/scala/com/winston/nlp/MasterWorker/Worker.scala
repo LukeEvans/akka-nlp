@@ -8,10 +8,6 @@ import akka.actor.actorRef2Scala
 
 abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
  
-  // This is how our derivations will interact with us.  It
-  // allows dervations to complete work asynchronously
-//  case class WorkComplete(result: Any)
- 
   // Required to be implemented
   def doWork(workSender: ActorRef, work: Any): Unit
  
@@ -33,7 +29,6 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
       log.error("Yikes. Master told me to do work, while I'm working.")
     // Our derivation has completed its task
     case WorkComplete(result) =>
-      log.info("Work is complete.  Result {}.", result)
       master ! WorkIsDone(self)
       master ! WorkerRequestsWork(self)
       // We're idle now
@@ -46,11 +41,9 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
   def idle: Receive = {
     // Master says there's work to be done, let's ask for it
     case WorkIsReady =>
-      log.info("Requesting work")
       master ! WorkerRequestsWork(self)
     // Send the work off to the implementation
     case WorkToBeDone(work) =>
-      log.info("Got work {}", work)
       doWork(sender, work)
       context.become(working(work))
     // We asked for it, but either someone else got it first, or

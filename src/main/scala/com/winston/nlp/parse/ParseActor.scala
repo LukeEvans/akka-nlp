@@ -49,7 +49,6 @@ class ParseActor(manager: ActorRef) extends Actor {
 	    println(name + "- " + sentence.index + " " + durr)
 	  }
 	  
-//	  origin ! sc
 	  origin.tell(sc, manager)
 	  manager ! WorkComplete("Done")
 	}

@@ -27,7 +27,7 @@ import akka.routing.FromConfig
 import java.util.concurrent.TimeoutException
 
 
-class ReductoActor(splitRouter:ActorRef, parseMaster:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
+class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
@@ -46,7 +46,7 @@ class ReductoActor(splitRouter:ActorRef, parseMaster:ActorRef, scoringRouter:Act
     	implicit val timeout = Timeout(5 seconds);
     	
 		// Split sentences
-		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
+		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
 		  case Success(result) => 
@@ -89,7 +89,7 @@ class ReductoActor(splitRouter:ActorRef, parseMaster:ActorRef, scoringRouter:Act
     	implicit val timeout = Timeout(5 second);
 		
 		// Split sentences
-		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
+		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
 		  case Success(result) => 

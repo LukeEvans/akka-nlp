@@ -35,7 +35,7 @@ import akka.pattern.AskTimeoutException
 import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.parse.ParseActor
 import com.winston.nlp.worker.PackagingActor
-import com.winston.nlp.worker.SplitActor
+import com.winston.split.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.transport.ReductoResponse
 import akka.routing.RoundRobinRouter
