@@ -22,7 +22,7 @@
     min_worker: 1
 
     # Seed node ip
-    seed_ip: 10.181.132.24
+    seed_ip: 10.170.37.27
 
   tasks:
 
