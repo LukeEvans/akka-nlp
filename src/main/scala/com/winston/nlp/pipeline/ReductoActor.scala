@@ -107,7 +107,6 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
 		      // Replace old sentences with new
 		      item.parsed map { sc =>
 		        newSet.addTreeToSentence(sc.sentence)
-		        println("added tree")
 		      }
 
 		      val futureResult = (packagingMaster ? SetContainer(newSet)).mapTo[ResponseContainer];
