@@ -28,7 +28,7 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
 		  val error = Error("Request timeout")
 		  val errString = mapper.writeValueAsString(error)
 		  log.error(errString)
-		  complete(GatewayTimeout, errString)
+		  complete(OK, errString)
 		case _ => 
 		  log.error("Got a message that I've never even heard of!")
 		  stop(self)
