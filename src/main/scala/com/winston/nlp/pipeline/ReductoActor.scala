@@ -11,14 +11,17 @@ import scala.collection.JavaConversions._
 import scala.util.Success
 import scala.util.Failure
 import com.winston.nlp.transport.ReductoRequest
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
 
-class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef) extends Actor { 
+class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
     println("\n\n\n\nStarting Reducto\n\n\n\n")
 	  
+    manager ! ReadyForWork
+    
 	def receive = {
 		case RequestContainer(request) =>
 		  val origin = sender;
@@ -63,7 +66,8 @@ class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:Act
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
 		      
-		       origin ! SetContainer(newSet)
+		      origin.tell(SetContainer(newSet), manager)
+		      manager ! WorkComplete("Done")
 		    }
 		    
 		 case Failure(failure) => println(failure)
@@ -78,7 +82,7 @@ class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:Act
 		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
-		  case Success(result) => 
+		  case Success(result) =>
 		    val set = result.set;
 
 		    // Parse sentences
@@ -98,18 +102,19 @@ class ReductoActor(splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:Act
 		    } yield ReductoIntermediate(parsed, scored)
 		    
 		    resultFuture map { item =>
-		      
 		      val newSet = item.scored.set;
 		      
 		      // Replace old sentences with new
 		      item.parsed map { sc =>
 		        newSet.addTreeToSentence(sc.sentence)
+		        println("added tree")
 		      }
 
 		      val futureResult = (packagingMaster ? SetContainer(newSet)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
-		        origin ! result
+		        origin.tell(result, manager)
+		        manager ! WorkComplete("Done")
 			  }			      
 		    }
 		    

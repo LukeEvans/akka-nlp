@@ -11,16 +11,24 @@ import akka.actor.OneForOneStrategy
 import akka.actor.SupervisorStrategy.Stop
 import akka.actor.ActorLogging
 import com.fasterxml.jackson.databind.ObjectMapper
+import akka.actor.ReceiveTimeout
 
 class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper) extends Actor with ActorLogging {
     
+    case class Error(status: String)
+    
     import context._
     
-	setReceiveTimeout(2.seconds)
+	setReceiveTimeout(20.seconds)
   
 	def receive = {
 		case ResponseContainer(response) =>
 		  complete(OK, response.finishResponse(startTime, mapper))
+		case ReceiveTimeout => 
+		  val error = Error("Request timeout")
+		  val errString = mapper.writeValueAsString(error)
+		  log.error(errString)
+		  complete(GatewayTimeout, errString)
 		case _ => 
 		  log.error("Got a message that I've never even heard of!")
 		  stop(self)

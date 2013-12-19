@@ -161,7 +161,7 @@ trait ApiService extends HttpService {
                     complete {
                     	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[SetContainer] map { res => 
                     	    val container = new ReductoResponse()
-                    	    container.fake(start, res.set, mapper)
+                    	    container.finishSetResponse(start, res.set, mapper)
                     	}
                      }            		
             	}
