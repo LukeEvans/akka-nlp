@@ -19,7 +19,7 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
     
     import context._
     
-	setReceiveTimeout(20.seconds)
+	setReceiveTimeout(2.seconds)
   
 	def receive = {
 		case ResponseContainer(response) =>
