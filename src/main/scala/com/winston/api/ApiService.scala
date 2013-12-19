@@ -28,7 +28,6 @@ import spray.util.LoggingContext
 import com.winston.nlp.transport.ReductoRequest
 import com.fasterxml.jackson.core.JsonParseException
 import scala.compat.Platform
-import com.winston.nlp.transport.ReductoResponse
 import com.winston.nlp.transport.messages._
 import reflect.ClassTag
 import akka.pattern.AskTimeoutException
@@ -138,15 +137,17 @@ trait ApiService extends HttpService {
                           
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){ obj => 
-                            val start = Platform.currentTime
+                          entity(as[String]){ obj => ctx =>
+//                            val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "TEXT")
                             println("Handling request")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
-                            }
+                            initiateRequest(request, ctx)
+                            
+//                            complete {
+//                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+//                                container.resp.finishResponse(start, mapper) 
+//                              }
+//                            }
                           }
                   }        
                 }
@@ -179,5 +180,13 @@ trait ApiService extends HttpService {
           val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path
           getFromFile(resourcePath)
         }
+        
+        def initiateRequest(request:ReductoRequest, ctx: RequestContext) {
+        	val start = Platform.currentTime
+        	val tempActor = actorRefFactory.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
+        	
+        	reductoRouter.tell(RequestContainer(request), tempActor)
+        }
+        
 }
 

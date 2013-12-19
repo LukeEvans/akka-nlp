@@ -50,6 +50,12 @@ class ReductoResponse extends TransportMessage {
 	  jsonString;
 	}
 	
+	def markCompleteTime(start:Long) {
+		val stop = Platform.currentTime
+		val duration = stop - start
+	    time = duration + " ms"
+	}
+	
 	def fake(start:Long, res:SentenceSet, mapper:ObjectMapper): String = {
 	  val stop = Platform.currentTime
 	  val duration = stop - start

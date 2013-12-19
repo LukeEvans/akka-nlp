@@ -39,9 +39,9 @@ class ApiBoot extends Bootable {
     Cluster(system) registerOnMemberUp {
 	  
 	      // Easy role change for debugging
-          val worker_role = "worker_role"
-          val default_parallelization = 5
-          val score_parallelization = 2
+          val worker_role = "reducto-worker"
+          val default_parallelization = 1
+          val score_parallelization = 1
           val parse_parallelization = 1
 		    
 		  // Splitting master
