@@ -15,7 +15,7 @@
     image: ami-a73264ce 
 
     # Instance Counts
-    worker_count: 10
+    worker_count: 5
 
     # Region
     region: us-east-1
