@@ -19,7 +19,7 @@ class ReductoMaster(parallel:Int, role:String, split:ActorRef, parse:ActorRef, s
   // Reducto router
   val reductoRouter = context.actorOf(Props(classOf[ReductoWorker], self, split, parse, score, pack).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
-	  totalInstances = 100, maxInstancesPerNode = parallel,
+	  totalInstances = 1000, maxInstancesPerNode = parallel,
 	  allowLocalRoutees = true, useRole = Some(role)))),
 	  name = "reductoRouter")
 	  

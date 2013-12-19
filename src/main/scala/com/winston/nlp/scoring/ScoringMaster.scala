@@ -19,7 +19,7 @@ class ScoringMaster(parallel:Int, role:String) extends Master {
   // Scoring router
   val scoringRouter = context.actorOf(Props(classOf[ScoringWorker], self).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
-	  totalInstances = 100, maxInstancesPerNode = parallel,
+	  totalInstances = 1000, maxInstancesPerNode = parallel,
 	  allowLocalRoutees = true, useRole = Some(role)))),
 	  name = "scoringRouter")
 	  

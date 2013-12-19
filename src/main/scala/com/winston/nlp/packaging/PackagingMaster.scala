@@ -19,7 +19,7 @@ class PackagingMaster(parallel:Int, role:String) extends Master {
   // Packaging router
   val packagingRouter = context.actorOf(Props(classOf[PackagingWorker], self).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
-	  totalInstances = 100, maxInstancesPerNode = parallel,
+	  totalInstances = 1000, maxInstancesPerNode = parallel,
 	  allowLocalRoutees = true, useRole = Some(role)))),
 	  name = "packagingRouter")
 	  

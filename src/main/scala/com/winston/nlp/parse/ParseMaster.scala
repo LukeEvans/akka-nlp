@@ -19,7 +19,7 @@ class ParseMaster(parallel:Int, role:String) extends Master {
   // Parsing router
   val parseRouter = context.actorOf(Props(classOf[ParseWorker], self).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
-	  totalInstances = 100, maxInstancesPerNode = parallel,
+	  totalInstances = 1000, maxInstancesPerNode = parallel,
 	  allowLocalRoutees = true, useRole = Some(role)))),
 	  name = "parseRouter")
 	  
