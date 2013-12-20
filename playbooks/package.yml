@@ -8,9 +8,9 @@
   vars:
 
     # Parallelization Hints
-    default_parallelization: 5
+    default_parallelization: 1
     score_parallelization: 2
-    parse_parallelization: 1
+    parse_parallelization: 5
 
     # Roles
     worker_role: reducto-worker

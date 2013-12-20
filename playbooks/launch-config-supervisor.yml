@@ -66,5 +66,8 @@
       - name: Cleanup Java install
         shell: rm /tmp/java.sh
 
+      - name: Download and install datadog agent
+        shell: DD_API_KEY=217d46871a163b76bb1755077a84fa12 bash -c "$(wget -qO- http://dtdg.co/agent-install-ubuntu)"
+
       - name: Reboot
         shell: reboot
