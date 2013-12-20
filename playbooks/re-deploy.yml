@@ -70,7 +70,7 @@
         async: 450000
         poll: 0 
 
-        - name: Run parser 5
+      - name: Run parser 5
         command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
         async: 450000
         poll: 0 
