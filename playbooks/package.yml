@@ -8,7 +8,7 @@
   vars:
 
     # Parallelization Hints
-    default_parallelization: 1
+    default_parallelization: 5
     score_parallelization: 2
     parse_parallelization: 5
 
