@@ -12,12 +12,17 @@ import akka.actor.SupervisorStrategy.Stop
 import akka.actor.ActorLogging
 import com.fasterxml.jackson.databind.ObjectMapper
 import akka.actor.ReceiveTimeout
+import com.winston.monitoring.MonitoredActor
+import scala.compat.Platform
 
-class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper) extends Actor with ActorLogging {
+class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper) extends MonitoredActor("per-request-actor") with ActorLogging {
     
     case class Error(status: String)
     
     import context._
+    
+    // Increment count for per request actors
+    statsd.increment("per-requst-actors")
     
 	setReceiveTimeout(2.seconds)
   
@@ -37,6 +42,11 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
     // Handle the completing of Responses
     def complete(status: StatusCode, obj: String) = {
     	ctx.complete(status, obj)
+    	
+    	// Push time to datadog
+    	statsd.histogram("response.time", Platform.currentTime - startTime)
+    	statsd.decrement("per-requst-actors")
+    	
     	stop(self)
     }
     

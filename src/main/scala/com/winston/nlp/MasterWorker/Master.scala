@@ -13,22 +13,12 @@ import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 import com.timgroup.statsd.StatsDClient
 import com.timgroup.statsd.NonBlockingStatsDClient
 import scala.concurrent.duration._
+import com.winston.monitoring.MonitoredActor
 
-class Master(serviceName:String) extends Actor with ActorLogging {
+class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorLogging {
 	
   // We'll use the current dispatcher for the execution context.
   implicit val ec = context.dispatcher
-  
-  // Tags
-  val tags:Array[String] = Array("tag:" + serviceName)
-  
-  // Datadog client
-  val statsd = new NonBlockingStatsDClient(
-    "reducto-1", 				                    /* prefix to any stats; may be null or empty string */
-    "localhost",					    			/* common case: localhost */
-    8125,   		                                /* port */
-    tags								            /* DataDog extension: Constant tags, always applied */
-  )
   
   val cancellable =
   context.system.scheduler.schedule(5 seconds,
@@ -59,9 +49,8 @@ class Master(serviceName:String) extends Actor with ActorLogging {
     log.info("Workers size {}", workers.size)
     log.info("Work size {}", workQ.size)
     
-    statsd.recordGaugeValue("testy.westy", workers.size);
-    statsd.recordGaugeValue("wasa.bear", workQ.size)
-    statsd.increment("lily.potter")
+    statsd.recordGaugeValue("workers.count", workers.size);
+    statsd.recordGaugeValue("work.size", workQ.size)
   }
   
   
