@@ -41,6 +41,7 @@ class ApiBoot extends Bootable {
 	  
 	      // Easy role change for debugging
           val worker_role = "reducto-frontend"
+          val parser_role = "reducto-parser"
           val supervisor_role = "reducto-frontend"
           val default_parallelization = 1
           val score_parallelization = 1
@@ -54,7 +55,7 @@ class ApiBoot extends Bootable {
 			name = "splitMaster")
 
 		  // Parsing master
-		  val parseMaster = system.actorOf(Props(classOf[ParseMaster], parse_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+		  val parseMaster = system.actorOf(Props(classOf[ParseMaster], parse_parallelization, parser_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some(supervisor_role)))),

@@ -50,17 +50,22 @@
         async: 450000
         poll: 0  
 
-      - name: Run worker 3
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
-        async: 450000
-        poll: 0  
-
-      - name: Run worker 4
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
-        async: 450000
-        poll: 0  
-
       - name: Run parser 1
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run parser 2
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run parser 3
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0 
+
+      - name: Run parser 4
         command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
         async: 450000
         poll: 0 

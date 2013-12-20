@@ -14,6 +14,7 @@
 
     # Roles
     worker_role: reducto-worker
+    parser_role: reducto-parser
     supervisor_role: reducto-supervisor
 
     # Minimum Role instances
@@ -30,6 +31,9 @@
     # API Boot
     - name: Modify Worker Role name
       local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val worker_role' line='          val worker_role = "{{worker_role}}"'
+
+    - name: Modify Parser Role name
+      local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val parser_role' line='          val parser_role = "{{parser_role}}"'
 
     - name: Modify Supervisor Role name
       local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val supervisor_role' line='          val supervisor_role = "{{supervisor_role}}"'      

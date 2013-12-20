@@ -16,13 +16,11 @@ class ParseMaster(parallel:Int, role:String) extends Master("parse-master") {
 	
   log.info("Parse master starting...")
   
-  val roles = "[reducto-worker, reducto-parser]"
-    
   // Parsing router
   val parseRouter = context.actorOf(Props(classOf[ParseWorker], self).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
 	  totalInstances = 1000, maxInstancesPerNode = parallel,
-	  allowLocalRoutees = true, useRole = Some(roles)))),
+	  allowLocalRoutees = true, useRole = Some(role)))),
 	  name = "parseRouter")
 	  
 }
