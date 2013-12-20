@@ -12,7 +12,7 @@ import scala.collection.mutable.{Map, Queue}
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 import com.winston.nlp.MasterWorker.Master
 
-class ParseMaster(parallel:Int, role:String) extends Master {
+class ParseMaster(parallel:Int, role:String) extends Master("parse-master") {
 	
   log.info("Parse master starting...")
   

@@ -6,7 +6,7 @@ import akka.cluster.routing.ClusterRouterConfig
 import akka.routing.RoundRobinRouter
 import akka.cluster.routing.ClusterRouterSettings
 
-class SplitMaster(parallel:Int, role:String) extends Master {
+class SplitMaster(parallel:Int, role:String) extends Master("split-master") {
 
    log.info("Split master starting...")
   

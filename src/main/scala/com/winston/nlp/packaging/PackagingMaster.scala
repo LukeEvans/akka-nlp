@@ -12,7 +12,7 @@ import scala.collection.mutable.{Map, Queue}
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 import com.winston.nlp.MasterWorker.Master
 
-class PackagingMaster(parallel:Int, role:String) extends Master {
+class PackagingMaster(parallel:Int, role:String) extends Master("packaging-master") {
 	
   log.info("Packaging master starting...")
   

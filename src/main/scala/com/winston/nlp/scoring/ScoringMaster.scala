@@ -12,7 +12,7 @@ import scala.collection.mutable.{Map, Queue}
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 import com.winston.nlp.MasterWorker.Master
 
-class ScoringMaster(parallel:Int, role:String) extends Master {
+class ScoringMaster(parallel:Int, role:String) extends Master("scoring-master") {
 	
   log.info("Scoring master starting...")
   
