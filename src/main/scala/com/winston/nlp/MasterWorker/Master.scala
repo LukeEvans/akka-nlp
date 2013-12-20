@@ -51,6 +51,19 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
     
     statsd.recordGaugeValue("workers.count", workers.size);
     statsd.recordGaugeValue("work.size", workQ.size)
+    
+    var busyWorkers = 0
+    var idleWorkers = 0
+    
+    workers.foreach {
+      case (worker, m) =>
+        if (m.isEmpty) idleWorkers += 1
+        else busyWorkers += 1
+      case _ =>
+    }
+    
+    statsd.recordGaugeValue("idle.workers", idleWorkers)
+    statsd.recordGaugeValue("busy.workers", busyWorkers)
   }
   
   
