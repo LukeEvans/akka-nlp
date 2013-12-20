@@ -80,6 +80,16 @@
         async: 450000
         poll: 0 
 
+      - name: Run parser 7
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0 
+
+      - name: Run parser 8
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0 
+
 - name: Re-deploy Supervisor
   hosts:
   - tag_Name_reducto-supervisor-01
