@@ -22,7 +22,7 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
     import context._
     
     // Increment count for per request actors
-    statsd.increment("per-requst-actors")
+    statsd.count("per-requst-actors", 1)
     
 	setReceiveTimeout(2.seconds)
   
@@ -45,7 +45,7 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
     	
     	// Push time to datadog
     	statsd.histogram("response.time", Platform.currentTime - startTime)
-    	statsd.decrement("per-requst-actors")
+    	statsd.count("per-requst-actors", -1)
     	
     	stop(self)
     }

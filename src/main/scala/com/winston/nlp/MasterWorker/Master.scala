@@ -22,7 +22,7 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
   
   val cancellable =
   context.system.scheduler.schedule(5 seconds,
-    5 seconds,
+    500 milliseconds,
     self,
     GetStats)
     
@@ -98,7 +98,7 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
         log.error("Blurgh! {} said it's done work but we didn't know about him", worker)
       else
         workers += (worker -> None)
- 
+      
     // A worker died.  If he was doing anything then we need
     // to give it to someone else so we just add it back to the
     // master and let things progress as usual
