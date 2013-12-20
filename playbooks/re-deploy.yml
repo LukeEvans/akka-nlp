@@ -60,6 +60,16 @@
         async: 450000
         poll: 0  
 
+      - name: Run worker 5
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run worker 6
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
+        async: 450000
+        poll: 0  
+
 - name: Re-deploy Supervisor
   hosts:
   - tag_Name_reducto-supervisor-01

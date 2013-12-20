@@ -50,6 +50,8 @@ libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.0"
 
 libraryDependencies += "org.apache.opennlp" % "opennlp-tools" % "1.5.3"
 
+libraryDependencies += "com.indeed" % "java-dogstatsd-client" % "2.0.7"
+
 libraryDependencies ++= {
   val akkaV = "2.2.3"
   val sprayV = "1.2-RC4"

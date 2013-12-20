@@ -10,9 +10,32 @@ import akka.routing.RoundRobinRouter
 import akka.cluster.routing.ClusterRouterSettings
 import scala.collection.mutable.{Map, Queue}
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
+import com.timgroup.statsd.StatsDClient
+import com.timgroup.statsd.NonBlockingStatsDClient
+import scala.concurrent.duration._
 
 class Master extends Actor with ActorLogging {
 	
+  // We'll use the current dispatcher for the execution context.
+  implicit val ec = context.dispatcher
+  
+  // Tags
+  val tags:Array[String] = Array("tag:damnson")
+  
+  // Datadog client
+  val statsd = new NonBlockingStatsDClient(
+    "testywesty",                          /* prefix to any stats; may be null or empty string */
+    "localhost",					    /* common case: localhost */
+    8125,                                   /* port */
+    tags						            /* DataDog extension: Constant tags, always applied */
+  )
+  
+  val cancellable =
+  context.system.scheduler.schedule(5 seconds,
+    5 seconds,
+    self,
+    GetStats)
+    
   // Holds known workers and what they may be working on
   val workers = Map.empty[ActorRef, Option[Tuple2[ActorRef, Any]]]
   
@@ -31,6 +54,17 @@ class Master extends Actor with ActorLogging {
     }
   }
  
+  // Log stats to datadog
+  def getStats() {	
+    log.info("Workers size {}", workers.size)
+    log.info("Work size {}", workQ.size)
+    
+    statsd.recordGaugeValue("testy.westy", workers.size);
+    statsd.recordGaugeValue("wasa.bear", workQ.size)
+    statsd.increment("lily.potter")
+  }
+  
+  
   def receive = {
     // Worker is alive. Add him to the list, watch him for
     // death, and let him know if there's work to be done
@@ -74,7 +108,10 @@ class Master extends Actor with ActorLogging {
         self.tell(work, workSender)
       }
       workers -= worker
- 
+    
+    // Get stats. Print things like average response times, work queue size, and worker queue size
+    case GetStats => getStats
+      
     // Anything other than our own protocol is "work to be done"
     case work =>
      // log.info("Queueing {}", work)

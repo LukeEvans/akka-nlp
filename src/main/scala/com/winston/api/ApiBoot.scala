@@ -40,7 +40,8 @@ class ApiBoot extends Bootable {
     Cluster(system) registerOnMemberUp {
 	  
 	      // Easy role change for debugging
-          val worker_role = "reducto-worker"
+          val worker_role = "reducto-frontend"
+          val supervisor_role = "reducto-frontend"
           val default_parallelization = 1
           val score_parallelization = 1
           val parse_parallelization = 1
@@ -49,35 +50,35 @@ class ApiBoot extends Bootable {
 		  val splitMaster = system.actorOf(Props(classOf[SplitMaster], default_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
-			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "splitMaster")
 
 		  // Parsing master
 		  val parseMaster = system.actorOf(Props(classOf[ParseMaster], parse_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
-			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "parseMaster")
 			
 		  // Scoring master
 		  val scoringMaster = system.actorOf(Props(classOf[ScoringMaster], score_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
-			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "scoringMaster")
 	
 		  // Packaging master
 		  val packagingMaster = system.actorOf(Props(classOf[PackagingMaster], default_parallelization, worker_role).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
-			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "packagingMaster")
 		  
 		  // Recuto master
 		  val reductoMaster = system.actorOf(Props(classOf[ReductoMaster], default_parallelization, worker_role, splitMaster, parseMaster, scoringMaster, packagingMaster).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
-			allowLocalRoutees = true, useRole = Some("reducto-supervisor")))),
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "reductoMaster")
 			
 		// Actor actually handling the requests
