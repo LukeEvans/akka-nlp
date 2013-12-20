@@ -13,7 +13,8 @@
     parse_parallelization: 1
 
     # Roles
-    role: reducto-worker
+    worker_role: reducto-worker
+    supervisor_role: reducto-supervisor
 
     # Minimum Role instances
     min_number: 3
@@ -27,8 +28,11 @@
   tasks:
 
     # API Boot
-    - name: Modify Role name
-      local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val worker_role' line='          val worker_role = "{{role}}"'
+    - name: Modify Worker Role name
+      local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val worker_role' line='          val worker_role = "{{worker_role}}"'
+
+    - name: Modify Supervisor Role name
+      local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val supervisor_role' line='          val supervisor_role = "{{supervisor_role}}"'      
 
     - name: Modify default parallelization  
       local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val default_parallelization' line='          val default_parallelization = {{default_parallelization}}'
