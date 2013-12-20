@@ -22,7 +22,7 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
   
   val cancellable =
   context.system.scheduler.schedule(5 seconds,
-    500 milliseconds,
+    50 milliseconds,
     self,
     GetStats)
     
