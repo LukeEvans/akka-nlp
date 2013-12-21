@@ -34,8 +34,11 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
 		  val errString = mapper.writeValueAsString(error)
 		  log.error(errString)
 		  complete(OK, errString)
+		  statsd.histogram("request.timeout", 1)
+		  
 		case _ => 
 		  log.error("Got a message that I've never even heard of!")
+		  statsd.histogram("unrecognized.message", 1)
 		  stop(self)
 	}
 	

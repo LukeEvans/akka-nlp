@@ -33,6 +33,9 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
   // as the memory of who asked for it
   val workQ = Queue.empty[Tuple2[ActorRef, Any]]
  
+  // We'll use this to make sure we're adding all of the workers to the queue
+  var workerCreatedMessages = 0;
+  
   // Notifies workers that there's work available, provided they're
   // not already working on something
   def notifyWorkers(): Unit = {
@@ -75,6 +78,10 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
       context.watch(worker)
       workers += (worker -> None)
       notifyWorkers()
+      
+      // Send this info off to datadog
+      workerCreatedMessages += 1
+      statsd.recordGaugeValue("worker.created",workerCreatedMessages)
  
     // A worker wants more work.  If we know about him, he's not
     // currently doing anything, and we've got something to do,

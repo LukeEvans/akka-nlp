@@ -66,5 +66,11 @@
       - name: Cleanup Java install
         shell: rm /tmp/java.sh
 
+      - name: Modify soft ulimit
+        lineinfile: dest=/test/test.conf regexp='^' line='ubuntu           soft    nofile          9000' state=present
+
+      - name: Modify hard ulimit
+        lineinfile: dest=/test/test.conf regexp='^' line='ubuntu           hard    nofile          9000' state=present
+
       - name: Reboot
         shell: reboot
