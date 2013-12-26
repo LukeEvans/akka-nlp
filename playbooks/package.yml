@@ -26,6 +26,9 @@
     # Seed node ip
     seed_ip: 10.180.219.32
 
+    # Redis address
+    redis_address = reducto-words.1hm814.0001.use1.cache.amazonaws.com
+
   tasks:
 
     # API Boot
@@ -47,6 +50,9 @@
     - name: Modify parse parallelization
       local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val parse_parallelization' line='          val parse_parallelization = {{parse_parallelization}}'
 
+    # Redis
+    - name: Point to redis machinemain/resources/reducto.con
+      local_action: lineinfile dest=../src/main/scala/com/winston/nlp/search/RedisSearchActor regexp='^\s*val jedis =' line='val jedis = new Jedis("{{redis_address}}");'
 
     # Reducto Config
     - name: Modify min number of roles
