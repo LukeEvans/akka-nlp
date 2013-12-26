@@ -51,8 +51,8 @@
       local_action: lineinfile dest=../src/main/scala/com/winston/api/ApiBoot.scala regexp='^\s*val parse_parallelization' line='          val parse_parallelization = {{parse_parallelization}}'
 
     # Redis
-    - name: Point to redis machinemain/resources/reducto.con
-      local_action: lineinfile dest=../src/main/scala/com/winston/nlp/search/RedisSearchActor regexp='^\s*val jedis =' line='val jedis = new Jedis("{{redis_address}}");'
+    - name: Point to redis machine
+      local_action: lineinfile dest=../src/main/scala/com/winston/nlp/search/RedisSearchActor.scala regexp='^\s*val jedis =' line='val jedis = new Jedis("{{redis_address}}");'
 
     # Reducto Config
     - name: Modify min number of roles
