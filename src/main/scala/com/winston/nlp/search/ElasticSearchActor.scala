@@ -59,8 +59,8 @@ class ElasticSearchActor extends HttpRequestActor {
 		case sp:StopPhrasesObject =>
 		  val origin = sender;
 		  processStopPhrases(origin);
-		  
 	}
+	
 	//================================================================================
 	// Init 
 	//================================================================================

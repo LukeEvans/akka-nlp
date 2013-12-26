@@ -6,7 +6,7 @@ import akka.actor.ActorRef
 import scala.collection.JavaConversions._
 import akka.util.Timeout
 import scala.concurrent.duration._
-import akka.pattern.ask
+import akka.pattern.{ ask, pipe }
 import java.util.ArrayList
 import scala.concurrent.Await
 import akka.actor.Status.Failure
@@ -39,11 +39,9 @@ class TermFrequencyActor(searchRouter:ActorRef) extends Actor {
   	  
   	  // Send to ElasticSearch Bulk 
   	  val frequencyFuture = (searchRouter ? TermFrequencyBulkReq(wordList.toList)).mapTo[TermFrequencyResponse]
-  	  
-  	  // Return
-  	  frequencyFuture map { result =>
-  		  origin ! result
-  	  }
+
+  	  // Pipe result
+  	  frequencyFuture pipeTo origin
   	  
   	}
 }

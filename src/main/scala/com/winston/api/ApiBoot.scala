@@ -41,7 +41,7 @@ class ApiBoot extends Bootable {
 	  
 	      // Easy role change for debugging
           val worker_role = "reducto-frontend"
-          val parser_role = "reducto-parser"
+          val parser_role = "reducto-frontend"
           val supervisor_role = "reducto-frontend"
           val default_parallelization = 1
           val score_parallelization = 1
@@ -83,7 +83,7 @@ class ApiBoot extends Bootable {
 			name = "reductoMaster")
 			
 		// Actor actually handling the requests
-   		val service = system.actorOf(Props(classOf[ApiActor], reductoMaster).withRouter(
+   		val service = system.actorOf(Props(classOf[ApiActor], reductoMaster).withRouter(	
     	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
