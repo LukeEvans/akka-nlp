@@ -1,38 +1,27 @@
-package com.winston.nlp.worker
+package com.winston.nlp.pipeline
 
 import akka.actor._
-import akka.pattern.ask
 import akka.util.Timeout
+import akka.pattern.ask
 import com.winston.nlp.transport.messages._
 import scala.concurrent.duration._
-import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.winston.nlp.SentenceSet
 import scala.collection.JavaConversions._
-import com.winston.nlp.scoring.ScoringActor
-import akka.routing.RoundRobinRouter
-import akka.cluster.routing.ClusterRouterConfig
-import akka.cluster.routing.AdaptiveLoadBalancingRouter
-import akka.cluster.routing.ClusterRouterSettings
-import com.winston.nlp.scoring.ScoringActor
-import akka.routing.Broadcast
-import com.winston.nlp.combinations.SentenceCombinations
 import scala.util.Success
 import scala.util.Failure
-import com.winston.nlp.NLPSentence
-import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
-import akka.routing.FromConfig
-import java.util.concurrent.TimeoutException
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
 
-class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:ActorRef, packageRouter:ActorRef) extends Actor { 
+class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
-    println("\n\n\n\nstarting reducto\n\n\n\n")
+    println("\n\n\n\nStarting Reducto\n\n\n\n")
 	  
+    manager ! ReadyForWork
+    
 	def receive = {
 		case RequestContainer(request) =>
 		  val origin = sender;
@@ -46,7 +35,7 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     	implicit val timeout = Timeout(5 seconds);
     	
 		// Split sentences
-		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
+		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
 		  case Success(result) => 
@@ -54,14 +43,14 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		    
 		    // Parse sentences
 		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
-		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+		    	(parseMaster ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
             }
 
 		    // Sequence list
 		    val futureParsed = Future.sequence(parseFutures)
 		    
 		     // Score the sentences
-		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+		    val futureScored = (scoringMaster ? SetContainer(set)).mapTo[SetContainer];
 		    
 		    val resultFuture =  for {
 		      parsed <- futureParsed
@@ -77,7 +66,8 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
 		      
-		       origin ! SetContainer(newSet)
+		      origin.tell(SetContainer(newSet), manager)
+		      manager ! WorkComplete("Done")
 		    }
 		    
 		 case Failure(failure) => println(failure)
@@ -89,22 +79,22 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
     	implicit val timeout = Timeout(5 second);
 		
 		// Split sentences
-		val split = (splitRouter ? RequestContainer(request)).mapTo[SetContainer];
+		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
 		split onComplete {
-		  case Success(result) => 
+		  case Success(result) =>
 		    val set = result.set;
 
 		    // Parse sentences
 		    val parseFutures: List[Future[SentenceContainer]] = set.sentences.toList map { sentence =>
-		    	(parseRouter ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
+		    	(parseMaster ? SentenceContainer(sentence.copy)).mapTo[SentenceContainer]
             }
 
 		    // Sequence list
 		    val futureParsed = Future.sequence(parseFutures)
 		    
 		    // Score the sentences
-		    val futureScored = (scoringRouter ? SetContainer(set)).mapTo[SetContainer];
+		    val futureScored = (scoringMaster ? SetContainer(set)).mapTo[SetContainer];
 		    
 		    val resultFuture =  for {
 		      parsed <- futureParsed
@@ -112,7 +102,6 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		    } yield ReductoIntermediate(parsed, scored)
 		    
 		    resultFuture map { item =>
-		      
 		      val newSet = item.scored.set;
 		      
 		      // Replace old sentences with new
@@ -120,10 +109,11 @@ class ReductoActor(splitRouter:ActorRef, parseRouter:ActorRef, scoringRouter:Act
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
 
-		      val futureResult = (packageRouter ? SetContainer(newSet)).mapTo[ResponseContainer];
+		      val futureResult = (packagingMaster ? SetContainer(newSet)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
-		        origin ! result
+		        origin.tell(result, manager)
+		        manager ! WorkComplete("Done")
 			  }			      
 		    }
 		    

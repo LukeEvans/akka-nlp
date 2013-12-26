@@ -1,6 +1,5 @@
-package com.winston.nlp.worker
+package com.winston.nlp.parse
 
-import com.winston.nlp.annotate.NLPParser
 import com.winston.nlp.transport.messages._
 import scala.concurrent.duration._
 import akka.actor.Actor
@@ -8,21 +7,10 @@ import scala.compat.Platform
 import scala.util.Random
 import com.winston.nlp.NLPSentence
 import akka.actor.ActorRef
-import scala.concurrent.Future
-import akka.util.Timeout
-import scala.util.Success
-import scala.util.Failure
-import scala.concurrent.Await
-import scala.util.Success
-import scala.util.Failure
-import scala.util.control.NonFatal
-import akka.actor.Scheduler
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Promise
-import scala.util.Success
-import scala.util.Failure
+import akka.actor.actorRef2Scala
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
-class ParseActor extends Actor {
+class ParseActor(manager: ActorRef) extends Actor {
 
 	val parser = new NLPParser()
 	val name = Random.nextInt
@@ -40,6 +28,7 @@ class ParseActor extends Actor {
 	def receive = {
 	  	case InitRequest => 
 	  	  parser.init(); 
+	  	  manager ! ReadyForWork
 		case sc:SentenceContainer =>
 		  val origin = sender;
 		  processWithTimeout(sc.sentence, origin)
@@ -61,6 +50,7 @@ class ParseActor extends Actor {
 	    println(name + "- " + sentence.index + " " + durr)
 	  }
 	  
-	  origin ! sc
+	  origin.tell(sc, manager)
+	  manager ! WorkComplete("Done")
 	}
 }

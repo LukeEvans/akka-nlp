@@ -1,4 +1,4 @@
-package com.winston.nlp.worker
+package com.winston.nlp.packaging
 
 import akka.actor.Actor
 import com.winston.nlp.SentenceSet
@@ -7,8 +7,13 @@ import akka.actor.ActorRef
 import com.winston.nlp.combinations.SentenceCombinations
 import com.winston.nlp.postProcessing.PostProcessor
 import com.winston.nlp.transport.ReductoResponse
+import akka.actor.actorRef2Scala
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
-class PackagingActor extends Actor {
+class PackagingActor(manager: ActorRef) extends Actor {
+  
+	manager ! ReadyForWork
+  
 	def receive = {
 		case set: SetContainer =>
 		  val origin = sender;
@@ -24,6 +29,7 @@ class PackagingActor extends Actor {
 		val processor = new PostProcessor(combo, set)
 		val result = processor.process;
 		
-		origin ! ResponseContainer(new ReductoResponse(result))
+		origin.tell(ResponseContainer(new ReductoResponse(result)), manager)
+		manager ! WorkComplete("Done")
 	}
 }

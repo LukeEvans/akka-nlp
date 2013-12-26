@@ -1,12 +1,13 @@
 ---
 
-- name: Re-deploy Single
+- name: Deploy Supervisor
   hosts:
-  - tag_Name_reducto-backend-01
+  - tag_Name_reducto-supervisor-01
   user: ubuntu
   sudo: true
   gather_facts: false
   tasks:
+      
       - name: Kill previous run
         command: killall java
         ignore_errors: yes
@@ -14,8 +15,7 @@
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
-      - name: Run Backend 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+      - name: Run Supervisor Akka
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.Supervisor &
         async: 450000
-        poll: 0  
-
+        poll: 0

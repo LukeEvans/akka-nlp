@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.winston.nlp.SummaryResult
-import com.winston.nlp.worker.ReductoActor
+import com.winston.nlp.pipeline.ReductoActor
 import akka.actor._
 import akka.actor.ActorRef
 import akka.actor.Props
@@ -28,14 +28,13 @@ import spray.util.LoggingContext
 import com.winston.nlp.transport.ReductoRequest
 import com.fasterxml.jackson.core.JsonParseException
 import scala.compat.Platform
-import com.winston.nlp.transport.ReductoResponse
 import com.winston.nlp.transport.messages._
 import reflect.ClassTag
 import akka.pattern.AskTimeoutException
 import com.winston.nlp.scoring.ScoringActor
-import com.winston.nlp.worker.ParseActor
-import com.winston.nlp.worker.PackagingActor
-import com.winston.nlp.worker.SplitActor
+import com.winston.nlp.parse.ParseActor
+import com.winston.nlp.packaging.PackagingActor
+import com.winston.split.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.transport.ReductoResponse
 import akka.routing.RoundRobinRouter
@@ -138,15 +137,17 @@ trait ApiService extends HttpService {
                           
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){ obj => 
-                            val start = Platform.currentTime
+                          entity(as[String]){ obj => ctx =>
+//                            val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "TEXT")
                             println("Handling request")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
-                            }
+                            initiateRequest(request, ctx)
+                            
+//                            complete {
+//                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
+//                                container.resp.finishResponse(start, mapper) 
+//                              }
+//                            }
                           }
                   }        
                 }
@@ -160,7 +161,7 @@ trait ApiService extends HttpService {
                     complete {
                     	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[SetContainer] map { res => 
                     	    val container = new ReductoResponse()
-                    	    container.fake(start, res.set, mapper)
+                    	    container.finishSetResponse(start, res.set, mapper)
                     	}
                      }            		
             	}
@@ -179,5 +180,13 @@ trait ApiService extends HttpService {
           val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path
           getFromFile(resourcePath)
         }
+        
+        def initiateRequest(request:ReductoRequest, ctx: RequestContext) {
+        	val start = Platform.currentTime
+        	val tempActor = actorRefFactory.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
+        	
+        	reductoRouter.tell(RequestContainer(request), tempActor)
+        }
+        
 }
 

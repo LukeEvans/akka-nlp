@@ -3,7 +3,9 @@
 - name: Kill-Dist
   hosts:
   - tag_Name_reducto-frontend-01
-  - tag_Name_reducto-backend-01
+  - tag_Name_reducto-worker-01
+  - tag_Name_reducto-supervisor-01
+  - tag_Name_reducto-parser-01
   user: ubuntu
   sudo: true
   gather_facts: false
@@ -31,30 +33,83 @@
       poll: 0
 
 
-- name: Re-deploy Backend
+- name: Re-deploy Worker
   hosts:
-  - tag_Name_reducto-backend-01
+  - tag_Name_reducto-worker-01
   
   user: ubuntu
   sudo: true
   gather_facts: false
   tasks:
-      - name: Run Backend 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+      - name: Run worker 1
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
         async: 450000
         poll: 0  
 
-      - name: Run Backend 2
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+      - name: Run worker 2
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
         async: 450000
         poll: 0  
 
-      - name: Run Backend 3
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+      - name: Run parser 1
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
         async: 450000
         poll: 0  
 
-      - name: Run Backend 4
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.BackendDaemon &
+      - name: Run parser 2
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run parser 3
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0 
+
+      - name: Run parser 4
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0 
+
+
+- name: Re-deploy Parser
+  hosts:
+  - tag_Name_reducto-parser-01
+  
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  tasks:
+      - name: Run parser 1
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run parser 2
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run parser 3
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+      - name: Run parser 4
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
+        async: 450000
+        poll: 0  
+
+
+- name: Re-deploy Supervisor
+  hosts:
+  - tag_Name_reducto-supervisor-01
+  
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  tasks:
+      - name: Run supervisor 1
+        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.Supervisor &
         async: 450000
         poll: 0  

@@ -1,4 +1,4 @@
-- name: Launce Instances
+- name: Launch Frontend Instances
   hosts: local 
   connection: local
   user: root
@@ -9,26 +9,26 @@
     security_group: Akka
 
     # Instace types
-    seed_instance_type: m1.xlarge
+    frontend_instance_type: hs1.8xlarge
 
     # Image (Ubuntu 12.04)
     image: ami-a73264ce 
 
     # Instance Counts
-    seed_count: 1
+    frontend_count: 1
 
     # Region
     region: us-east-1
 
   user: ubuntu
   tasks:
-
-    # Seed
-    - name: Launch seed instances
-      local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{seed_instance_type}} image={{image}} wait=true count={{seed_count}} region={{region}} instance_tags='{"Name":"reducto-seed-01"}'
+ 
+    # Frontend
+    - name: Launch frontend instances
+      local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{frontend_instance_type}} image={{image}} wait=true count={{frontend_count}} region={{region}} instance_tags='{"Name":"reducto-frontend-01"}'
       register: ec2
-    - name: Add all seed instance public IPs to host group
-      local_action: add_host hostname={{item.public_ip}} groupname=launched ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/Users/levans/.ssh/Akka.pem
+    - name: Add all worker instance public IPs to host group
+      local_action: add_host hostname={{item.public_ip}} groupname=launched ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/.ssh/Akka.pem
       with_items: ec2.instances
     - name: Create volumes and attach
       local_action: ec2_vol instance={{item.id}} volume_size=8 region={{region}} device_name=xvdf
@@ -65,6 +65,12 @@
 
       - name: Cleanup Java install
         shell: rm /tmp/java.sh
+
+      - name: Modify soft ulimit
+        lineinfile: dest=/test/test.conf regexp='^' line='ubuntu           soft    nofile          9000' state=present
+
+      - name: Modify hard ulimit
+        lineinfile: dest=/test/test.conf regexp='^' line='ubuntu           hard    nofile          9000' state=present
 
       - name: Reboot
         shell: reboot
