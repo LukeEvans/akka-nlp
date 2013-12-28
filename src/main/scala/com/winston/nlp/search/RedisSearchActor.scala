@@ -19,7 +19,8 @@ class RedisSearchActor extends Actor {
   	var totalDocuments: Long = 0;
   	var stopPhrases = new ArrayList[String];
   	
-	val jedis = new Jedis("reducto-words.1hm814.0001.use1.cache.amazonaws.com");
+//	val jedis = new Jedis("reducto-words.1hm814.0001.use1.cache.amazonaws.com");
+	val jedis = new Jedis("localhost");
   	
   	implicit val ec = context.dispatcher
   	case object RefreshTick
@@ -44,18 +45,21 @@ class RedisSearchActor extends Actor {
 	}
   	
   	def refresh() {
-  	  
-  		// Refresh stop phrases
-  		val stops = jedis.lrange("stop_list", 0, -1)
-  		stopPhrases.clear()
-  		
-  		stops map { word =>
-  			stopPhrases.add(word)
+  		try{
+	  		// Refresh stop phrases
+	  		val stops = jedis.lrange("stop_list", 0, -1)
+	  		stopPhrases.clear()
+	  		
+	  		stops map { word =>
+	  			stopPhrases.add(word)
+	  		}
+	  		
+	  		// Refresh Total docs
+	  		totalDocuments = jedis.get("reducto-total-docs").toLong
+  		}catch{
+  		case e:Exception =>
+  		    e.printStackTrace()
   		}
-  		
-  		// Refresh Total docs
-  		totalDocuments = jedis.get("reducto-total-docs").toLong
-  		
   	}
   	
   	def processBulk(words:List[String], origin:ActorRef) {

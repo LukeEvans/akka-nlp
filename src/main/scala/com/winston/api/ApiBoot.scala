@@ -22,6 +22,7 @@ import com.winston.split.SplitMaster
 import com.winston.nlp.scoring.ScoringMaster
 import com.winston.nlp.packaging.PackagingMaster
 import com.winston.nlp.pipeline.ReductoMaster
+import com.winston.urlextraction.URLExtractorActor
 
 
 //class ApiBoot(args: Array[String]) extends Bootable {
@@ -75,8 +76,15 @@ class ApiBoot extends Bootable {
 			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "packagingMaster")
 		  
+		  // url extractor 
+		  val urlExtractorRouter = system.actorOf(Props(classOf[URLExtractorActor]).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+			ClusterRouterSettings(
+			totalInstances = 100, maxInstancesPerNode = 1,
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
+			name = "urlExtractorActor")
+		  
 		  // Recuto master
-		  val reductoMaster = system.actorOf(Props(classOf[ReductoMaster], default_parallelization, worker_role, splitMaster, parseMaster, scoringMaster, packagingMaster).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+		  val reductoMaster = system.actorOf(Props(classOf[ReductoMaster], default_parallelization, worker_role, splitMaster, parseMaster, scoringMaster, packagingMaster, urlExtractorRouter).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
