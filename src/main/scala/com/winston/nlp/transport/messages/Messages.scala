@@ -10,6 +10,9 @@ import com.winston.nlp.SummaryResult
 import com.winston.nlp.transport.ReductoRequest
 import com.winston.nlp.transport.ReductoResponse
 import reflect.ClassTag
+import spray.routing.RequestContext
+import com.fasterxml.jackson.databind.ObjectMapper
+import spray.routing.RequestContext
 
 trait request;
 trait response;
@@ -42,3 +45,10 @@ case class StopPhrasesObject(phrases:ArrayList[String] = new ArrayList[String]) 
 
 // Long Container
 case class LongContainer(long:Long) extends request
+
+// Error
+case class Error(status: String)
+
+// Dispatch messages
+case class DispatchRequest(request:RequestContainer, ctx:RequestContext, mapper:ObjectMapper)
+case class OverloadedDispatchRequest(message:Any)
