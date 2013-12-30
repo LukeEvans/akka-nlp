@@ -12,12 +12,12 @@ import scala.collection.mutable.{Map, Queue}
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 import com.winston.nlp.MasterWorker.Master
 
-class ReductoMaster(parallel:Int, role:String, split:ActorRef, parse:ActorRef, score:ActorRef, pack:ActorRef) extends Master("reducto-master") {
+class ReductoMaster(parallel:Int, role:String, split:ActorRef, parse:ActorRef, score:ActorRef, pack:ActorRef, url:ActorRef) extends Master("reducto-master") {
 	
   log.info("Reducto pipeline master starting...")
   
   // Reducto router
-  val reductoRouter = context.actorOf(Props(classOf[ReductoWorker], self, split, parse, score, pack).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+  val reductoRouter = context.actorOf(Props(classOf[ReductoWorker], self, split, parse, score, pack, url).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(
 	  totalInstances = 1000, maxInstancesPerNode = parallel,
 	  allowLocalRoutees = true, useRole = Some(role)))),
