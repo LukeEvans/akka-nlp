@@ -48,7 +48,7 @@ class ApiActor(reducto:ActorRef) extends Actor with ApiService {
   println("Starting API Service actor...")
   val reductoRouter = reducto
   val dispatcher = actorRefFactory.actorOf(Props(classOf[Dispatcher], reductoRouter), "dispatcher")
-  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(2, 10 seconds))))
+  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, 1 seconds))))
   
   // Set the target
   throttler ! SetTarget(Some(dispatcher))

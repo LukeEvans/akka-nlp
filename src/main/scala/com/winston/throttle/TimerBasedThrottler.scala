@@ -22,9 +22,7 @@ object TimerBasedThrottler {
   private[throttle] case class Message(message: Any, sender: ActorRef)
 
   // The data of the FSM
-  private[throttle] sealed case class Data(target: Option[ActorRef],
-                                           callsLeftInThisPeriod: Int,
-                                           queue: Q[Message])
+  private[throttle] sealed case class Data(target: Option[ActorRef], callsLeftInThisPeriod: Int, queue: Q[Message])
 }
 
 /**
@@ -105,8 +103,7 @@ class TimerBasedThrottler(var rate: Rate) extends Actor with Throttler with Logg
     case Event(Queue(msg), d @ Data(None, _, queue)) =>
       stay using d.copy(queue = queue.enqueue(Message(msg, context.sender)))
     case Event(Queue(msg), d @ Data(Some(_), _, Seq())) =>
-      println("Idle Queue 2")
-      goto(Active) using deliverMessages(d.copy(queue = Q(Message(msg, context.sender))))
+      goto(Active) using deliverMessages(d.copy(queue = Q(Message(msg, context.sender)), callsLeftInThisPeriod = rate.numberOfCalls))
     // Note: The case Event(Queue(msg), t @ Data(Some(_), _, _, Seq(_*))) should never happen here.
   }
 
@@ -130,11 +127,10 @@ class TimerBasedThrottler(var rate: Rate) extends Actor with Throttler with Logg
     // Queue a message (when we cannot send messages in the current period anymore)
     case Event(Queue(msg), d @ Data(_, 0, queue)) =>
       println("Queue 1")
-      stay using d.copy(queue = queue.enqueue(Message(msg, context.sender)))
+      stay using deliverMessages(d.copy(queue = queue.enqueue(Message(msg, context.sender))))
 
     // Queue a message (when we can send some more messages in the current period)
     case Event(Queue(msg), d @ Data(_, _, queue)) =>
-      println("Queue 2")
       stay using deliverMessages(d.copy(queue = queue.enqueue(Message(msg, context.sender))))
 
     // Period ends and we have no more messages
@@ -148,10 +144,8 @@ class TimerBasedThrottler(var rate: Rate) extends Actor with Throttler with Logg
 
   onTransition {
     case Idle -> Active =>
-      println("Going active")
       startTimer(rate)
     case Active -> Idle =>
-      println("Going idle")
       stopTimer()
   }
 
@@ -164,34 +158,33 @@ class TimerBasedThrottler(var rate: Rate) extends Actor with Throttler with Logg
    * Send as many messages as we can (while respecting the rate) to the target and
    * return the state data (with the queue containing the remaining ones).
    */
-  private def deliverMessages(data: Data): Data = {
-    val queue = data.queue
-    val nrOfMsgToSend = scala.math.min(queue.length, data.callsLeftInThisPeriod)
+  private def deliverMessages(d: Data): Data = {
+    val nrOfMsgToSend = scala.math.min(d.queue.length, d.callsLeftInThisPeriod)
 
     // Send healthy messages
-    queue.take(nrOfMsgToSend).foreach((x: Message) => {
+    d.queue.take(nrOfMsgToSend).foreach((x: Message) => {
       /*
        *  In case message deliver fails, we throw our own exception so that the supervisor
        *  can deal with it appropriately.
        */
       try {
-        data.target.get.tell(x.message, x.sender)
+        d.target.get.tell(x.message, x.sender)
       } catch {
         case NonFatal(ex) => throw new FailedToSendException("tell() failed.", ex)
       }
     })
     
     // Send Rate Limit exceeded messages
-    queue.drop(nrOfMsgToSend).foreach((x: Message) => {
+    d.queue.drop(nrOfMsgToSend).foreach((x: Message) => {
       try {
         val overloadMessage = OverloadedDispatchRequest(x.message)
-        data.target.get.tell(overloadMessage, x.sender)
+        d.target.get.tell(overloadMessage, x.sender)
       } catch {
         case NonFatal(ex) => throw new FailedToSendException("tell() failed.", ex)
       }	
     })
 
-    val q = queue.drop(queue.size)
-    data.copy(queue = q, callsLeftInThisPeriod = data.callsLeftInThisPeriod - nrOfMsgToSend)
+    val q = d.queue.drop(d.queue.size)
+    d.copy(queue = q, callsLeftInThisPeriod = d.callsLeftInThisPeriod - nrOfMsgToSend)
   }
 }
