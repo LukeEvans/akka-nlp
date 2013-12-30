@@ -6,6 +6,9 @@ import akka.kernel.Bootable
 import com.reactor.nlp.utilities.IPTools
 import com.reactor.nlp.config.SystemCreator
 import akka.actor.Props
+import akka.cluster.Cluster
+import com.winston.nlp.listener.Listener
+import akka.cluster.ClusterEvent.ClusterDomainEvent
 
 class Supervisor extends Bootable {
 	val ip = IPTools.getPrivateIp();
@@ -19,6 +22,9 @@ class Supervisor extends Bootable {
     println("Supervisor node running...")	  
     
 	def startup(){
+		val clusterListener = system.actorOf(Props(classOf[Listener], system),
+             name = "clusterListener")
+         Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
 	}
 
 	def shutdown(){

@@ -44,18 +44,21 @@ class RedisSearchActor extends Actor {
 	}
   	
   	def refresh() {
-  	  
-  		// Refresh stop phrases
-  		val stops = jedis.lrange("stop_list", 0, -1)
-  		stopPhrases.clear()
-  		
-  		stops map { word =>
-  			stopPhrases.add(word)
+  		try{
+	  		// Refresh stop phrases
+	  		val stops = jedis.lrange("stop_list", 0, -1)
+	  		stopPhrases.clear()
+	  		
+	  		stops map { word =>
+	  			stopPhrases.add(word)
+	  		}
+	  		
+	  		// Refresh Total docs
+	  		totalDocuments = jedis.get("reducto-total-docs").toLong
+  		}catch{
+  		case e:Exception =>
+  		    e.printStackTrace()
   		}
-  		
-  		// Refresh Total docs
-  		totalDocuments = jedis.get("reducto-total-docs").toLong
-  		
   	}
   	
   	def processBulk(words:List[String], origin:ActorRef) {
