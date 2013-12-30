@@ -8,7 +8,7 @@ import akka.pattern.{pipe, ask}
 import akka.actor.Props
 import akka.util.Timeout
 import scala.concurrent.duration._
-import com.winston.nlp.search.ElasticSearchActor
+import com.winston.nlp.search.RedisSearchActor
 
 class ScoringWorker(master: ActorRef) extends Worker(master) {
   // We'll use the current dispatcher for the execution context.
@@ -17,7 +17,7 @@ class ScoringWorker(master: ActorRef) extends Worker(master) {
   log.info("Scoring Worker staring")
   
   // Start scoring actor
-  val searchActor = context.actorOf(Props[ElasticSearchActor], "search")
+  val searchActor = context.actorOf(Props[RedisSearchActor], "search")
   val scoringActor = context.actorOf(Props(classOf[ScoringActor], self, searchActor), "scorer")
   
   // Handle work

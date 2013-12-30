@@ -14,7 +14,7 @@ import com.winston.nlp.transport.ReductoRequest
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
 
-class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef) extends Actor { 
+class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef, urlExtractor:ActorRef) extends Actor { 
   
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
@@ -77,7 +77,26 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
     // Process Request
     def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(5 second);
-		
+    	
+    	if(request.headline == null && request.text == null){
+    	  var response = for{
+    	    extraction <-(urlExtractor ? URLContainer(request.url)).mapTo[URLTextResponse]
+    	  }yield extraction
+    	  response map{
+    	    extractionContainer =>
+    	    	request.headline = extractionContainer.extractionTuple._1
+    	    	request.text = extractionContainer.extractionTuple._2
+    	    	summarize(request, origin)
+    	  }
+		}
+    	else{
+    		summarize(request, origin)
+    	}
+    }
+    
+    def summarize(request: ReductoRequest, origin:ActorRef){
+        implicit val timeout = Timeout(5 second);
+      
 		// Split sentences
 		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
@@ -94,7 +113,7 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
 		    val futureParsed = Future.sequence(parseFutures)
 		    
 		    // Score the sentences
-		    val futureScored = (scoringMaster ? SetContainer(set)).mapTo[SetContainer];
+		    val futureScored = (scoringMaster ? ScoringContainer(set, request.decay)).mapTo[SetContainer];
 		    
 		    val resultFuture =  for {
 		      parsed <- futureParsed
@@ -108,8 +127,16 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
 		      item.parsed map { sc =>
 		        newSet.addTreeToSentence(sc.sentence)
 		      }
-
-		      val futureResult = (packagingMaster ? SetContainer(newSet)).mapTo[ResponseContainer];
+		      var numSentences = 3
+		      if(request.ratio > 0){
+		        var totalSentences = newSet.sentences.size()
+		        var ratioSentences = (totalSentences * request.ratio).asInstanceOf[Int]
+		        numSentences = if(ratioSentences>0) ratioSentences else 1 
+		      }
+		      else if (request.sentences != null && request.sentences > 0)
+		        numSentences = request.sentences
+		        
+		      val futureResult = (packagingMaster ? PackagingContainer(newSet, numSentences, request.separationRules)).mapTo[ResponseContainer];
 		      
 		      futureResult map { result =>
 		        origin.tell(result, manager)

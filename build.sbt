@@ -52,6 +52,8 @@ libraryDependencies += "org.apache.opennlp" % "opennlp-tools" % "1.5.3"
 
 libraryDependencies += "com.indeed" % "java-dogstatsd-client" % "2.0.7"
 
+libraryDependencies +=  "redis.clients" % "jedis" % "2.2.1"
+
 libraryDependencies ++= {
   val akkaV = "2.2.3"
   val sprayV = "1.2-RC4"

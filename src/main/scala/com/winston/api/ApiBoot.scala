@@ -22,6 +22,9 @@ import com.winston.split.SplitMaster
 import com.winston.nlp.scoring.ScoringMaster
 import com.winston.nlp.packaging.PackagingMaster
 import com.winston.nlp.pipeline.ReductoMaster
+import com.winston.urlextraction.URLExtractorActor
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import com.winston.nlp.listener.Listener
 
 
 //class ApiBoot(args: Array[String]) extends Bootable {
@@ -41,7 +44,7 @@ class ApiBoot extends Bootable {
 	  
 	      // Easy role change for debugging
           val worker_role = "reducto-frontend"
-          val parser_role = "reducto-parser"
+          val parser_role = "reducto-frontend"
           val supervisor_role = "reducto-frontend"
           val default_parallelization = 1
           val score_parallelization = 1
@@ -75,15 +78,22 @@ class ApiBoot extends Bootable {
 			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "packagingMaster")
 		  
+		  // url extractor 
+		  val urlExtractorRouter = system.actorOf(Props(classOf[URLExtractorActor]).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+			ClusterRouterSettings(
+			totalInstances = 100, maxInstancesPerNode = 1,
+			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
+			name = "urlExtractorActor")
+		  
 		  // Recuto master
-		  val reductoMaster = system.actorOf(Props(classOf[ReductoMaster], default_parallelization, worker_role, splitMaster, parseMaster, scoringMaster, packagingMaster).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+		  val reductoMaster = system.actorOf(Props(classOf[ReductoMaster], default_parallelization, worker_role, splitMaster, parseMaster, scoringMaster, packagingMaster, urlExtractorRouter).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
 			ClusterRouterSettings(
 			totalInstances = 100, maxInstancesPerNode = 1,
 			allowLocalRoutees = true, useRole = Some(supervisor_role)))),
 			name = "reductoMaster")
 			
 		// Actor actually handling the requests
-   		val service = system.actorOf(Props(classOf[ApiActor], reductoMaster).withRouter(
+   		val service = system.actorOf(Props(classOf[ApiActor], reductoMaster).withRouter(	
     	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
@@ -93,8 +103,12 @@ class ApiBoot extends Bootable {
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
     }
   
-    def startup(){
-	}
+
+     def startup(){
+         val clusterListener = system.actorOf(Props(classOf[Listener], system),
+             name = "clusterListener")
+         Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
+    }
 
 	def shutdown(){
 		system.shutdown()
@@ -104,5 +118,6 @@ class ApiBoot extends Bootable {
 object ApiApp {
    def main(args: Array[String]) = {
      val api = new ApiBoot
+     api.startup
    }
 }

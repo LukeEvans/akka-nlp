@@ -49,8 +49,8 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
  
   // Log stats to datadog
   def getStats() {	
-    log.info("Workers size {}", workers.size)
-    log.info("Work size {}", workQ.size)
+//    log.info("Workers size {}", workers.size)
+//    log.info("Work size {}", workQ.size)
     
     statsd.recordGaugeValue("workers.count", workers.size);
     statsd.recordGaugeValue("work.size", workQ.size)

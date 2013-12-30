@@ -27,18 +27,18 @@ class ScoringActor(manager:ActorRef, searchRouter:ActorRef) extends Actor {
 	manager ! ReadyForWork
 	
 	def receive = {
-		case set: SetContainer =>
-		  val origin = sender;
-		  processScore(set.set, origin);
+		case scoreContainer: ScoringContainer =>
+		  val origin = sender
+		  processScore(scoreContainer, origin)
 	}
-
-	def processScore(set:SentenceSet, origin:ActorRef) {
+	
+	def processScore(container:ScoringContainer, origin:ActorRef) {
 		implicit val timeout = Timeout(500 seconds);
 		import context.dispatcher
 		
 		val futureTD = (searchRouter ? LongContainer(0)).mapTo[LongContainer]
 		val futureSP = (searchRouter ? StopPhrasesObject()).mapTo[StopPhrasesObject]
-		val futureFQ = (termFrequencyRouter ? SetContainer(set)).mapTo[TermFrequencyResponse]
+		val futureFQ = (termFrequencyRouter ? SetContainer(container.set)).mapTo[TermFrequencyResponse]
 		
 		val future = for {
 		 totalDocs <- futureTD
@@ -49,30 +49,31 @@ class ScoringActor(manager:ActorRef, searchRouter:ActorRef) extends Actor {
 		future map { item =>
 		  
 		  	// Calculate cosine score
-		  	set.calculateCosinSim;
+		  	container.set.calculateCosinSim;
 		  	
 			// Set total docs
-			set.putTotalCount(item.totalDocs.long)
+			container.set.putTotalCount(item.totalDocs.long)
 			
 			// Add word frequencies
-			set.addWordFrequencies(item.frequencies.mapObject)
+			container.set.addWordFrequencies(item.frequencies.mapObject)
 			
 			// Mark invalid words
-			set.markInavlidWords(item.stopPhrases.phrases);
+			container.set.markInavlidWords(item.stopPhrases.phrases);
 			
 			// Find index counts
-			set.findTotalObservedCounts;
+			container.set.findTotalObservedCounts;
 	
 			// Find total terms
-			set.findTotalTermsInDoc;
+			container.set.findTotalTermsInDoc;
 			
 			// Calculate TFIDF
-			set.calculateTFIDF;
-			
+			container.set.calculateTFIDF;
+
 			// Calculate weight
-			set.calculateWeight;
+			container.set.setDecay(container.decayRulesOn)
+			container.set.calculateWeight;
 			
-			origin.tell(SetContainer(set), manager)
+			origin.tell(SetContainer(container.set), manager)
 			manager ! WorkComplete("Done")
 		}
 	}

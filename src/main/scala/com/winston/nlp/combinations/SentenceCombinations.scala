@@ -18,12 +18,14 @@ class SentenceCombinations {
 	  this.size = size
 	}
 	
-	def this(nlpSentences:ArrayList[NLPSentence]){
+	def this(nlpSentences:ArrayList[NLPSentence], separationMax:Int){
 	  this()
 	  sentences = new ArrayList[String]
 	  scores = new ArrayList[Double]
 	  
 	  this.nlpSentences = nlpSentences
+	  this.maxSentSeparation = separationMax
+	  println("maxSentSeparation: " + maxSentSeparation)
 	  
 	  for(sentence <- nlpSentences){
 	    sentences.add(sentence.value)

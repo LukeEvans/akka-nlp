@@ -9,6 +9,13 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import edu.stanford.nlp.trees.Tree
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.HttpResponse
+import java.net.URL;
+import java.net.URI;
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 object Tools {
   
@@ -167,4 +174,51 @@ object Tools {
     }
     return md5
   }
+  
+    def fetchURL(url:String):JsonNode = {
+        try {
+                var httpClient = new DefaultHttpClient();
+                httpClient.getParams().setParameter("http.socket.timeout", new Integer(20000));
+                        var getRequest = new HttpGet(parseUrl(url).toString());
+                        getRequest.addHeader("accept", "application/json");
+
+                        var response = httpClient.execute(getRequest);
+
+                        // Return JSON
+                        var mapper = new ObjectMapper();
+                        var reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                        return mapper.readTree(reader);
+
+                } catch{
+                  case e:Exception =>{
+                        System.out.println("Failure: " + url);
+                        e.printStackTrace();
+                        return null;
+                  }
+                }
+     }
+    
+             //================================================================================
+        // URL encoding Methods
+        //================================================================================
+        def parseUrl(s:String):URL = {
+                var u:URL = null;
+                try {
+                        u = new URL(s);
+                        try {
+                                return new URI(
+                                                u.getProtocol(), 
+                                                u.getAuthority(), 
+                                                u.getPath(),
+                                                u.getQuery(), 
+                                                u.getRef()).toURL();
+                        } catch {                  
+                                  case e:Exception=> {
+                                          e.printStackTrace();
+                        
+                                  }
+                        }
+                } 
+                return null;
+        }
 }
