@@ -19,7 +19,6 @@ class RedisSearchActor extends Actor {
   	var totalDocuments: Long = 0;
   	var stopPhrases = new ArrayList[String];
   	
-//	val jedis = new Jedis("reducto-words.1hm814.0001.use1.cache.amazonaws.com");
 	val jedis = new Jedis("localhost");
   	
   	implicit val ec = context.dispatcher

@@ -14,10 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import akka.actor.ReceiveTimeout
 import com.winston.monitoring.MonitoredActor
 import scala.compat.Platform
+import com.winston.nlp.transport.messages.Error
 
 class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper) extends MonitoredActor("per-request-actor") with ActorLogging {
-    
-    case class Error(status: String)
     
     import context._
     

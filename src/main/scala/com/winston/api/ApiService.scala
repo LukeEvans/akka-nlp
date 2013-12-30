@@ -38,12 +38,20 @@ import com.winston.split.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.transport.ReductoResponse
 import akka.routing.RoundRobinRouter
+import com.winston.throttle.Dispatcher
+import com.winston.throttle.TimerBasedThrottler
+import com.winston.throttle.Throttler._
 
 class ApiActor(reducto:ActorRef) extends Actor with ApiService {
   def actorRefFactory = context
    	
   println("Starting API Service actor...")
   val reductoRouter = reducto
+  val dispatcher = actorRefFactory.actorOf(Props(classOf[Dispatcher], reductoRouter), "dispatcher")
+  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, 1 seconds))))
+  
+  // Set the target
+  throttler ! SetTarget(Some(dispatcher))
   
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
   ExceptionHandler {
@@ -81,6 +89,7 @@ trait ApiService extends HttpService {
   
   private implicit val timeout = Timeout(5 seconds);
   implicit val reductoRouter:ActorRef
+  implicit val throttler:ActorRef
   
     // Mapper        
   val mapper = new ObjectMapper() with ScalaObjectMapper
@@ -175,10 +184,8 @@ trait ApiService extends HttpService {
         }
         
         def initiateRequest(request:ReductoRequest, ctx: RequestContext) {
-        	val start = Platform.currentTime
-        	val tempActor = actorRefFactory.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
-        	
-        	reductoRouter.tell(RequestContainer(request), tempActor)
+            val dispatchReq = DispatchRequest(RequestContainer(request), ctx, mapper)
+        	throttler.tell(Queue(dispatchReq), Actor.noSender)
         }
         
 }
