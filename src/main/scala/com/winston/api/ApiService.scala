@@ -104,7 +104,8 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }~             
+                }
+                          
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => 
@@ -132,20 +133,14 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }~         
+                }
+                          
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => ctx =>
-//                            val start = Platform.currentTime
                           	val request = new ReductoRequest(obj, "TEXT")
                             println("Handling request")
                             initiateRequest(request, ctx)
-                            
-//                            complete {
-//                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-//                                container.resp.finishResponse(start, mapper) 
-//                              }
-//                            }
                           }
                   }        
                 }
@@ -169,7 +164,7 @@ trait ApiService extends HttpService {
         path("health"){
                 get{
                         complete{"OK."}
-                }~
+                }
                 post{
                         complete{"OK."}
                 }
