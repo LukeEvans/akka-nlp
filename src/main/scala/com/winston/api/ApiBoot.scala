@@ -23,6 +23,8 @@ import com.winston.nlp.scoring.ScoringMaster
 import com.winston.nlp.packaging.PackagingMaster
 import com.winston.nlp.pipeline.ReductoMaster
 import com.winston.urlextraction.URLExtractorActor
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import com.winston.nlp.listener.Listener
 
 
 //class ApiBoot(args: Array[String]) extends Bootable {
@@ -101,8 +103,12 @@ class ApiBoot extends Bootable {
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
     }
   
-    def startup(){
-	}
+
+     def startup(){
+         val clusterListener = system.actorOf(Props(classOf[Listener], system),
+             name = "clusterListener")
+         Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
+    }
 
 	def shutdown(){
 		system.shutdown()
@@ -112,5 +118,6 @@ class ApiBoot extends Bootable {
 object ApiApp {
    def main(args: Array[String]) = {
      val api = new ApiBoot
+     api.startup
    }
 }

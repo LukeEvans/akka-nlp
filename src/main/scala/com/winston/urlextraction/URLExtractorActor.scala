@@ -4,7 +4,6 @@ import akka.actor._
 import akka.pattern.Patterns
 import akka.util.Timeout
 import com.winston.nlp.transport.messages._
-import com.winston.urlextraction.URLExtractor
 
 class URLExtractorActor extends Actor {
 	    val urlExtractor = new URLExtractor()

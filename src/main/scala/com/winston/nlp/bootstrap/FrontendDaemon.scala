@@ -5,6 +5,10 @@ import com.typesafe.config.ConfigFactory
 import akka.kernel.Bootable
 import com.reactor.nlp.utilities.IPTools
 import com.reactor.nlp.config.SystemCreator
+import akka.actor.Props
+import akka.cluster.Cluster
+import akka.cluster.ClusterEvent.ClusterDomainEvent
+import com.winston.nlp.listener.Listener
 
 class FrontendDaemon(args:Array[String]) extends Bootable {
 	val ip = IPTools.getPrivateIp();
@@ -16,6 +20,9 @@ class FrontendDaemon(args:Array[String]) extends Bootable {
     val system = ActorSystem("NLPClusterSystem-0-1", config)
     
 	def startup(){
+		val clusterListener = system.actorOf(Props(classOf[Listener], system),
+             name = "clusterListener")
+         Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
 	}
 
 	def shutdown(){

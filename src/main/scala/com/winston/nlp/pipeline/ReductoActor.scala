@@ -78,7 +78,7 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
     def process(request: ReductoRequest, origin: ActorRef) {
     	implicit val timeout = Timeout(5 second);
     	
-    	if(request.headline == null && request.url == null){
+    	if(request.headline == null && request.text == null){
     	  var response = for{
     	    extraction <-(urlExtractor ? URLContainer(request.url)).mapTo[URLTextResponse]
     	  }yield extraction
@@ -86,9 +86,17 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
     	    extractionContainer =>
     	    	request.headline = extractionContainer.extractionTuple._1
     	    	request.text = extractionContainer.extractionTuple._2
+    	    	summarize(request, origin)
     	  }
+		}
+    	else{
+    		summarize(request, origin)
     	}
-		
+    }
+    
+    def summarize(request: ReductoRequest, origin:ActorRef){
+        implicit val timeout = Timeout(5 second);
+      
 		// Split sentences
 		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		
