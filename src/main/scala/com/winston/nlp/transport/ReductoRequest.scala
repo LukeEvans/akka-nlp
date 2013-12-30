@@ -43,13 +43,13 @@ class ReductoRequest extends TransportMessage {
 	def this(request:HttpRequest, rt:String) {
 	  this()
 	  
-	  url = if (request.uri.query.get("url") != null) request.uri.query.get("url").get else null
-	  headline = if (request.uri.query.get("headline") != null) request.uri.query.get("headline").get else null
-	  text = if (request.uri.query.get("text") != null) request.uri.query.get("text").get else null
-	  sentences = if (request.uri.query.get("sentences") != null) request.uri.query.get("sentences").get.toInt else 3
-	  decay = if (request.uri.query.get("decay") != null) request.uri.query.get("decay").get.toBoolean else true
-	  separationRules = if (request.uri.query.get("separationRules") != null) request.uri.query.get("separationRules").get.toBoolean else true
-	  ratio = if (request.uri.query.get("ratio") != null) request.uri.query.get("ratio").get.toDouble else 0.0
+	  url = if (request.uri.query.get("url") != None) request.uri.query.get("url").get else null
+	  headline = if (request.uri.query.get("headline") != None) request.uri.query.get("headline").get else null
+	  text = if (request.uri.query.get("text") != None) request.uri.query.get("text").get else null
+	  sentences = if (request.uri.query.get("sentences") != None) request.uri.query.get("sentences").get.toInt else 3
+	  decay = if (request.uri.query.get("decay") != None) request.uri.query.get("decay").get.toBoolean else true
+	  separationRules = if (request.uri.query.get("separationRules") != None) request.uri.query.get("separationRules").get.toBoolean else true
+	  ratio = if (request.uri.query.get("ratio") != None) request.uri.query.get("ratio").get.toDouble else 0.0
 	  
 	  request_type = rt;
 	}

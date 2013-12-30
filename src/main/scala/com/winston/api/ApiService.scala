@@ -104,8 +104,7 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }
-                          
+                }~             
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => 
@@ -133,8 +132,7 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }
-                          
+                }~         
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => ctx =>
@@ -171,7 +169,7 @@ trait ApiService extends HttpService {
         path("health"){
                 get{
                         complete{"OK."}
-                }
+                }~
                 post{
                         complete{"OK."}
                 }
