@@ -27,7 +27,7 @@ class Listener(originSystem:ActorSystem) extends Actor with ActorLogging {
         member.address, previousStatus)
       memberCount -= 1
       if(memberCount < 2){
-        log.info("Only member left up, shutting down...")
+        log.error("Only member left up, shutting down...")
         originSystem.shutdown
         System.exit(-1)
       }
