@@ -23,11 +23,7 @@ case class ResponseContainer(resp:ReductoResponse) extends response
 case class HammerRequestContainer(req:ReductoRequest) extends request
 
 // Sentence set messages
-//<<<<<<< HEAD
-//case class SetContainer(set:SentenceSet, number:Int) extends request
-//=======
 case class SetContainer(val set:SentenceSet) extends request
-
 
 // Sentence 
 case class SentenceContainer(val sentence:NLPSentence) extends request
