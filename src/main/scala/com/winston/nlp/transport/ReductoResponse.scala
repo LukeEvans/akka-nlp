@@ -9,6 +9,9 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.databind.DeserializationFeature
 import java.util.ArrayList
+import scala.collection.mutable.Map
+import java.util.LinkedHashMap
+import com.winston.nlp.SentenceSet
 
 class ReductoResponse extends TransportMessage {
 	val status = "OK"
@@ -43,6 +46,22 @@ class ReductoResponse extends TransportMessage {
 	  val duration = stop - start
 	  time = duration + " ms"
 	  val jsonString = mapper.writeValueAsString(this)
+	  jsonString;
+	}
+	
+	def markCompleteTime(start:Long) {
+		val stop = Platform.currentTime
+		val duration = stop - start
+	    time = duration + " ms"
+	}
+	
+	def finishSetResponse(start:Long, res:SentenceSet, mapper:ObjectMapper): String = {
+	  val stop = Platform.currentTime
+	  val duration = stop - start
+	  val fakeTime = duration + " ms"
+	  
+	  val m:LinkedHashMap[String, String] = new LinkedHashMap[String, String]()
+	  val jsonString = mapper.writeValueAsString(res)
 	  jsonString;
 	}
 }

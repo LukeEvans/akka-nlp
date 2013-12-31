@@ -1,4 +1,4 @@
-package com.winston.nlp.annotate
+package com.winston.split
 
 import scala.collection.JavaConversions._
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
@@ -6,13 +6,15 @@ import java.util.Properties
 import edu.stanford.nlp.pipeline.Annotation
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
-import java.util.ArrayList
 import com.winston.nlp.transport.messages._
 import com.winston.nlp.SentenceSet
 import com.winston.nlp.NLPSentence
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation
 import com.winston.nlp.transport.ReductoRequest
 import com.winston.webextraction.WebExtractor
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
+import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation
 
 class NLPSplitter {
 
@@ -59,6 +61,6 @@ class NLPSplitter {
 		  set.addSentence(sentence);
 		}
 
-		SetContainer(set, 0);
+		SetContainer(set);
 	}
 }

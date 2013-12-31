@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.winston.nlp.SummaryResult
-import com.winston.nlp.worker.ReductoActor
+import com.winston.nlp.pipeline.ReductoActor
 import akka.actor._
 import akka.actor.ActorRef
 import akka.actor.Props
@@ -28,19 +28,31 @@ import spray.util.LoggingContext
 import com.winston.nlp.transport.ReductoRequest
 import com.fasterxml.jackson.core.JsonParseException
 import scala.compat.Platform
-import com.winston.nlp.transport.ReductoResponse
 import com.winston.nlp.transport.messages._
 import reflect.ClassTag
 import akka.pattern.AskTimeoutException
 import com.winston.nlp.scoring.ScoringActor
-import com.winston.nlp.worker.ParseActor
-import com.winston.nlp.worker.PackagingActor
-import com.winston.nlp.worker.SplitActor
+import com.winston.nlp.parse.ParseActor
+import com.winston.nlp.packaging.PackagingActor
+import com.winston.split.SplitActor
 import com.winston.nlp.search.ElasticSearchActor
+import com.winston.nlp.transport.ReductoResponse
+import akka.routing.RoundRobinRouter
+import com.winston.throttle.Dispatcher
+import com.winston.throttle.TimerBasedThrottler
+import com.winston.throttle.Throttler._
 
-class ApiActor extends Actor with ApiService {
+class ApiActor(reducto:ActorRef) extends Actor with ApiService {
   def actorRefFactory = context
    	
+  println("Starting API Service actor...")
+  val reductoRouter = reducto
+  val dispatcher = actorRefFactory.actorOf(Props(classOf[Dispatcher], reductoRouter), "dispatcher")
+  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, 1 seconds))))
+  
+  // Set the target
+  throttler ! SetTarget(Some(dispatcher))
+  
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
   ExceptionHandler {
     case e: NoSuchElementException => ctx =>
@@ -74,67 +86,17 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 }
 
 trait ApiService extends HttpService {
-  
-  // Splitting router
-  val splitRouter = actorRefFactory.actorOf(Props[SplitActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),	
-	name = "splitRouter")
-	  
-  // Parsing router
-  val parseRouter = actorRefFactory.actorOf(Props[ParseActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.HeapMetricsSelector), 
-	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-	name = "parseRouter")
 
-  // Search router
-  val elasticSearchRouter = actorRefFactory.actorOf(Props[ElasticSearchActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-	name = "elasticSearchRouter")
-	  
-  // Scoring router
-  val scoringRouter = actorRefFactory.actorOf(Props(classOf[ScoringActor], elasticSearchRouter).withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-	name = "scoringRouter")
+  private implicit val timeout = Timeout(5 seconds);
+  implicit val reductoRouter:ActorRef
+  implicit val throttler:ActorRef
 
-  // Package router
-  val packageRouter = actorRefFactory.actorOf(Props[PackagingActor].withRouter(ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-	ClusterRouterSettings(
-//	totalInstances = 100, maxInstancesPerNode = 3,
-//	allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-	name = "packageRouter")
   
-  // Reducto Router
-  val reductoRouter = actorRefFactory.actorOf(Props(classOf[ReductoActor],splitRouter, parseRouter, scoringRouter, packageRouter).withRouter(
-   	ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-   	ClusterRouterSettings(
-//    totalInstances = 100, maxInstancesPerNode = 3,
-//    allowLocalRoutees = true, useRole = Some("reducto-backend")))),
-   	totalInstances = 1, maxInstancesPerNode = 1,
-	allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
-   	name = "reductoActors")
-  
-  // Mapper	
+    // Mapper        
   val mapper = new ObjectMapper() with ScalaObjectMapper
       mapper.registerModule(DefaultScalaModule)
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-       
+      
   val apiRoute =
         path(""){
           complete("Reducto API")
@@ -185,17 +147,29 @@ trait ApiService extends HttpService {
                           
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){ obj => 
-                            val start = Platform.currentTime
+                          entity(as[String]){ obj => ctx =>
                           	val request = new ReductoRequest(obj, "TEXT")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
-                            }
+                            println("Handling request")
+                            initiateRequest(request, ctx)
                           }
                   }        
                 }
+        }~
+        path("hammer") {
+          post {
+            respondWithMediaType(MediaTypes.`application/json`){
+            	entity(as[String]){ obj =>
+            	  	val start = Platform.currentTime
+            		val request = new ReductoRequest(obj, "TEXT");
+                    complete {
+                    	reductoRouter.ask(HammerRequestContainer(request))(100.seconds).mapTo[SetContainer] map { res => 
+                    	    val container = new ReductoResponse()
+                    	    container.finishSetResponse(start, res.set, mapper)
+                    	}
+                     }            		
+            	}
+            }
+          }
         }~
         path("health"){
                 get{
@@ -206,7 +180,14 @@ trait ApiService extends HttpService {
                 }
         }~
         path(RestPath) { path =>
-          getFromFile("/var/www/akka-public/" + path)
+          val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path
+          getFromFile(resourcePath)
         }
+        
+        def initiateRequest(request:ReductoRequest, ctx: RequestContext) {
+            val dispatchReq = DispatchRequest(RequestContainer(request), ctx, mapper)
+        	throttler.tell(Queue(dispatchReq), Actor.noSender)
+        }
+        
 }
 

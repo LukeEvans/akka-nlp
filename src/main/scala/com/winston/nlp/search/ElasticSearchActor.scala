@@ -17,10 +17,18 @@ import scala.collection.JavaConversions._
 
 class ElasticSearchActor extends HttpRequestActor {
 	
-	val totalCount = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count";
-	val queryCount = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:";
-	val stopPhrases = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/stop/_search?size=500";
-
+	val totalCountEndpoint = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count";
+	val queryCountEndpoint = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/news,twitter/_count?q=text:";
+	val stopPhraseEndpoint = "http://ec2-54-234-94-194.compute-1.amazonaws.com:9200/stop/_search?size=500";
+	
+	var stopRequestsProcessed = 0;
+	var tdRequestsProcessed = 0;
+	val refreshThreshold = 1000;
+	
+	var stopPhrases = new ArrayList[String];
+	var totalDocuments: Long = 0;
+	
+	
 	// Elasticsearch client 
 	var client: Client = null;
 	
@@ -51,8 +59,8 @@ class ElasticSearchActor extends HttpRequestActor {
 		case sp:StopPhrasesObject =>
 		  val origin = sender;
 		  processStopPhrases(origin);
-		  
 	}
+	
 	//================================================================================
 	// Init 
 	//================================================================================
@@ -85,23 +93,45 @@ class ElasticSearchActor extends HttpRequestActor {
 		}
 		
 		origin ! TermFrequencyResponse(wordMap.toMap)
+	  
+//	  val wordMap: LinkedHashMap[String, Long] = new LinkedHashMap[String, Long]();
+//	  wordList map { word => wordMap.put(word,1)}
+//	  origin ! TermFrequencyResponse(wordMap.toMap)
 	}
 	
 	def processTermSearch(text: String, origin:ActorRef) {
-		val uri = queryCount + java.net.URLEncoder.encode(text, "UTF-8")
+		val uri = queryCountEndpoint + text
 		val node = processRequest(HttpObject(uri, null, null, "GET"), null)
 		val freq = SingleTermFrequency(text, node.path("count").asLong());
 		origin ! freq
 	}
 
 	def processTotalDocuments(origin:ActorRef) {
-		val uri = totalCount;
+	  	// If we've processed (refreshThreshold), refresh total docs
+	    if (tdRequestsProcessed < refreshThreshold && totalDocuments > 0) {
+	    	origin ! LongContainer(totalDocuments)
+	    	return;
+	    }
+	    
+		val uri = totalCountEndpoint;
 		val node = processRequest(HttpObject(uri), null)
-		origin ! LongContainer(node.path("count").asLong())
+		val newCount = node.path("count").asLong()
+		origin ! LongContainer(newCount)
+		
+		// Reset
+		totalDocuments = newCount
+		tdRequestsProcessed = 0;
 	}
 	
 	def processStopPhrases(origin:ActorRef) {
-		val uri = stopPhrases;
+	  
+	    // If we've processed (refreshThreshold), refresh stop list
+	    if (stopRequestsProcessed < refreshThreshold && stopPhrases != null && stopPhrases.size() > 0) {
+	    	origin ! StopPhrasesObject(stopPhrases)
+	    	return;
+	    }
+	    
+		val uri = stopPhraseEndpoint;
 		val node = processRequest(HttpObject(uri), null)
 				
 		val phrases = new ArrayList[String];
@@ -121,5 +151,9 @@ class ElasticSearchActor extends HttpRequestActor {
 		} 
 		  
 		origin ! StopPhrasesObject(phrases)
+		
+		// Reset phrases
+		stopPhrases = phrases
+		stopRequestsProcessed = 0;
 	}
 }

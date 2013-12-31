@@ -50,6 +50,18 @@ libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.0"
 
 libraryDependencies += "org.apache.opennlp" % "opennlp-tools" % "1.5.3"
 
+libraryDependencies += "com.indeed" % "java-dogstatsd-client" % "2.0.7"
+
+libraryDependencies +=  "redis.clients" % "jedis" % "2.2.1"
+
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.13"
+
+libraryDependencies += "ch.qos.logback" % "logback-core"  % "1.0.13"
+
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.5"
+
+libraryDependencies += "com.typesafe.akka" % "akka-slf4j_2.10" % "2.2.3"
+
 libraryDependencies ++= {
   val akkaV = "2.2.3"
   val sprayV = "1.2-RC4"
