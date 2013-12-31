@@ -9,7 +9,7 @@
     </appender>
 
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>/var/log/reactor/reducto.log</file>
+        <file>reducto.log</file>
         <append>true</append>
         <encoder>
             <pattern>%date{yyyy-MM-dd} %X{akkaTimestamp} %-5level[%thread] %logger{1} - %msg%n</pattern>
