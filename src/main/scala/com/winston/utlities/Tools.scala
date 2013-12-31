@@ -8,9 +8,31 @@ import scala.concurrent.Future
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import org.apache.commons.lang3.StringEscapeUtils
 import edu.stanford.nlp.trees.Tree
+import java.util.ArrayList
+import com.winston.nlp.NLPWord
 
 object Tools {
+  
+  def getStringFromList(wordList:ArrayList[NLPWord]):String = {
+    var lastWord:NLPWord = null
+    var sentence:String = ""
+    
+    for(word <- wordList){
+      if(word.remove){
+    	  //do nothing
+      }
+      else if(lastWord == null || word.startIndex == lastWord.endIndex){
+    	  sentence += word.value
+      }
+      else{
+    	  sentence += (" " + word.value) 
+      }
+      lastWord = word
+    }    
+    return sentence
+  }
   
   def getStringFromTree(tree:Tree):String = {
     var sb = new StringBuilder()
@@ -166,5 +188,17 @@ object Tools {
       }
     }
     return md5
+  }
+  
+  def cleanHtmlFormat(input:String):String = {
+    var output = StringEscapeUtils.escapeHtml4(input);
+    output = output.replaceAll("&rdquo;", "&quot;");
+    output = output.replaceAll("&ldquo;", "&quot;");
+    output = output.replaceAll("&lsquo;", "'");
+    output = output.replaceAll("&rsquo;", "'");
+    output = output.replaceAll("&mdash;", "-");
+    output = StringEscapeUtils.unescapeHtml4(output);
+ 
+    return output
   }
 }

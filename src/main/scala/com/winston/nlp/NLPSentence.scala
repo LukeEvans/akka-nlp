@@ -51,6 +51,15 @@ class NLPSentence extends TransportMessage {
 	  }
 	}
 	
+	def addWord(w:String, start:Int, end:Int){
+	  if(!words.contains(w)){
+		  var word = new NLPWord(w)
+		  word.startIndex = start
+		  word.endIndex = end
+		  words.add(word)
+	  }
+	}
+	
 	def grabValue():String = {
 	  return value
 	}

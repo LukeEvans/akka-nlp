@@ -4,7 +4,7 @@ import java.util.ArrayList
 import java.util.LinkedHashMap
 import com.winston.nlp.messages.TransportMessage
 import scala.collection.JavaConversions._
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import com.winston.nlp.stats.TFIDF
 
 class SentenceSet(h:String, ft:String) extends TransportMessage {
