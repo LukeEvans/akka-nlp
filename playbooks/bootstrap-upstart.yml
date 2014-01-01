@@ -2,7 +2,7 @@
 
 - name: Bootstrap upstart
   hosts:
-  = tag_Name_reducto-seed-01
+  - tag_Name_reducto-seed-01
   - tag_Name_reducto-frontend-01
   - tag_Name_reducto-worker-01
   - tag_Name_reducto-supervisor-01
