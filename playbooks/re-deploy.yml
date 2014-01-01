@@ -1,6 +1,6 @@
 ---
 
-- name: Kill-Dist
+- name: Send distribution
   hosts:
   - tag_Name_reducto-frontend-01
   - tag_Name_reducto-worker-01
@@ -103,10 +103,10 @@
   sudo: true
   gather_facts: false
   tasks:
-      - name: Kill previous parser runs
-        command: stop reducto-parser N=1
+      - name: Kill previous supervisor runs
+        command: stop reducto-supervisor N=1
 
         ignore_errors: yes
 
-      - name: Run parser daemons
-        command: start reducto-parser N=1
+      - name: Run supervisor daemons
+        command: start reducto-supervisor N=1
