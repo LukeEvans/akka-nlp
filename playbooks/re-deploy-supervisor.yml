@@ -9,13 +9,11 @@
   tasks:
       
       - name: Kill previous run
-        command: killall java
+        command: stop reducto-supervisor N=1
         ignore_errors: yes
 
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
-      - name: Run Supervisor Akka
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.Supervisor &
-        async: 450000
-        poll: 0
+      - name: Run supervisor Akka
+        command: start reducto-supervisor N=1

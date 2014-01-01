@@ -19,9 +19,17 @@ class ReductoResponse extends TransportMessage {
 	var article_headline:String = null;
 	var summary:String = null
 	var sentence_indices:ArrayList[Int] = _;
+	
+	@JsonIgnore
 	var saliency_score:Float = 0;
+	
+	@JsonIgnore
 	var relevance_score:Float = 0;
+	
+	@JsonIgnore
 	var novelty_score:Float = 0;
+	
+	@JsonIgnore
 	var social_salience:Float = 0;
 	
 	//================================================================================

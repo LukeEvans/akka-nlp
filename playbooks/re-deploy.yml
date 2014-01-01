@@ -1,6 +1,6 @@
 ---
 
-- name: Kill-Dist
+- name: Send distribution
   hosts:
   - tag_Name_reducto-frontend-01
   - tag_Name_reducto-worker-01
@@ -10,8 +10,9 @@
   sudo: true
   gather_facts: false
   tasks:
-      - name: Kill previous run
-        command: killall java
+
+      - name: Remove old Dist
+        command: rm -rf /usr/local/reducto-dist
         ignore_errors: yes
 
       - name: Copy project Dist
@@ -27,10 +28,12 @@
   gather_facts: false
 
   tasks:
-    - name: Run Frontend
-      command: nohup /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot &
-      async: 450000
-      poll: 0
+      - name: Kill previous frontend run
+        command: stop reducto-frontend N=1
+        ignore_errors: yes
+
+      - name: Run frontend daemon
+        command: start reducto-frontend N=1
 
 
 - name: Re-deploy Worker
@@ -41,36 +44,35 @@
   sudo: true
   gather_facts: false
   tasks:
-      - name: Run worker 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
-        async: 450000
-        poll: 0  
+      - name: Kill previous worker runs
+        command: stop reducto-worker N={{ item }}
+        with_items:
+           - 1
+           - 2
+        ignore_errors: yes
 
-      - name: Run worker 2
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.WorkerDaemon &
-        async: 450000
-        poll: 0  
+      - name: Run worker daemons
+        command: start reducto-worker N={{ item }}
+        with_items:
+           - 1
+           - 2
 
-      - name: Run parser 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0  
+      - name: Kill previous parser runs
+        command: stop reducto-parser N={{ item }}
+        with_items:
+           - 1
+           - 2
+           - 3
+           - 4
+        ignore_errors: yes
 
-      - name: Run parser 2
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0  
-
-      - name: Run parser 3
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0 
-
-      - name: Run parser 4
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0 
-
+      - name: Run parser daemons
+        command: start reducto-parser N={{ item }}
+        with_items:
+           - 1
+           - 2
+           - 3
+           - 4
 
 - name: Re-deploy Parser
   hosts:
@@ -80,25 +82,22 @@
   sudo: true
   gather_facts: false
   tasks:
-      - name: Run parser 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0  
+      - name: Kill previous parser runs
+        command: stop reducto-parser N={{ item }}
+        with_items:
+           - 1
+           - 2
+           - 3
+           - 4
+        ignore_errors: yes
 
-      - name: Run parser 2
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0  
-
-      - name: Run parser 3
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0  
-
-      - name: Run parser 4
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.ParseDaemon &
-        async: 450000
-        poll: 0  
+      - name: Run parser daemons
+        command: start reducto-parser N={{ item }}
+        with_items:
+           - 1
+           - 2
+           - 3
+           - 4
 
 
 - name: Re-deploy Supervisor
@@ -109,7 +108,10 @@
   sudo: true
   gather_facts: false
   tasks:
-      - name: Run supervisor 1
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.Supervisor &
-        async: 450000
-        poll: 0  
+      - name: Kill previous supervisor runs
+        command: stop reducto-supervisor N=1
+
+        ignore_errors: yes
+
+      - name: Run supervisor daemons
+        command: start reducto-supervisor N=1

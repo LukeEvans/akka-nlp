@@ -148,7 +148,6 @@ trait ApiService extends HttpService {
                   respondWithMediaType(MediaTypes.`application/json`){
                           entity(as[String]){ obj => ctx =>
                           	val request = new ReductoRequest(obj, "TEXT")
-                            println("Handling request")
                             initiateRequest(request, ctx)
                           }
                   }        
