@@ -23,7 +23,7 @@
   gather_facts: false
 
   tasks:
-      - name: Kill previous run
+      - name: Kill previous frontend run
         command: stop reducto-frontend N=1
         ignore_errors: yes
 
