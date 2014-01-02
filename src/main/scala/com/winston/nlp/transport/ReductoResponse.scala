@@ -14,7 +14,7 @@ import java.util.LinkedHashMap
 import com.winston.nlp.SentenceSet
 
 class ReductoResponse extends TransportMessage {
-	val status = "OK"
+	var status = "OK"
 	var time:String = null
 	var article_headline:String = null;
 	var summary:String = null
@@ -63,5 +63,10 @@ class ReductoResponse extends TransportMessage {
 	  val m:LinkedHashMap[String, String] = new LinkedHashMap[String, String]()
 	  val jsonString = mapper.writeValueAsString(res)
 	  jsonString;
+	}
+	
+	def setStatus(status:String):ReductoResponse = {
+	  this.status = status
+	  this
 	}
 }
