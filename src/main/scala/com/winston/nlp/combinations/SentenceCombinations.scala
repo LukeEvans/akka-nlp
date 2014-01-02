@@ -25,7 +25,6 @@ class SentenceCombinations {
 	  
 	  this.nlpSentences = nlpSentences
 	  this.maxSentSeparation = separationMax
-	  println("maxSentSeparation: " + maxSentSeparation)
 	  
 	  for(sentence <- nlpSentences){
 	    sentences.add(sentence.value)
@@ -91,24 +90,23 @@ class SentenceCombinations {
 	  }
 	    
 	  for(combo <- combosForRemoval){
-		 combos.remove(combo)
+
+        	  combos.remove(combo)
+	  }  
+          
+	  for(combo <- combos){
+		  combo.mmrScore = getScore(scores, combo.sentenceNumbers)
 	  }
-	    
-	  var returnCombo = new SentenceCombination()
-	    
-	  for(i <- 0 to (combos.get(0).size-1)){
-	     returnCombo.sentenceNumbers.add(-1)
-	  }
-	    
-	  for(i <- 0 to (combos.size()-1)){
-	    var score = getScore(scores, combos.get(i).sentenceNumbers)
-	    var highScore = getScore(scores, returnCombo.sentenceNumbers)
-	      
-	    if(highScore < score){
-	      returnCombo = combos.get(i)
-	    }
-	  }
-	  return returnCombo;
+          
+	  var sorted = combos.sortWith((x,y) => x.mmrScore > y.mmrScore)
+          
+	  for(combo <- sorted){
+		  val validator = new Validator(combo.sentenceNumbers, nlpSentences);
+		  if(validator.validate()){
+			  return combo
+		  }
+      }
+	  return sorted.get(0);
 	}
 
 	def getCombosSentLimit(numbers:ArrayList[Int], min:Int, max:Int, n:Int, store: ArrayList[ArrayList[Int]]){

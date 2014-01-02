@@ -87,5 +87,3 @@
       - name: Kill previous supervisor runs
         command: stop reducto-supervisor N=1
         ignore_errors: yes
-
-
