@@ -9,7 +9,7 @@
     security_group: Akka
 
     # Instace types
-    frontend_instance_type: hs1.8xlarge
+    frontend_instance_type: m2.2xlarge
 
     # Image (Ubuntu 12.04)
     image: ami-a73264ce 
