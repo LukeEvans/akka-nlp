@@ -86,10 +86,11 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
 }
 
 trait ApiService extends HttpService {
-  
+
   private implicit val timeout = Timeout(5 seconds);
   implicit val reductoRouter:ActorRef
   implicit val throttler:ActorRef
+
   
     // Mapper        
   val mapper = new ObjectMapper() with ScalaObjectMapper
@@ -98,7 +99,9 @@ trait ApiService extends HttpService {
       
   val apiRoute =
         path(""){
-          complete("Reducto API")
+          get{
+        	  getFromResource("web/index.html")
+          }
         }~
         path("url"){
                 get{
@@ -113,19 +116,25 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }
-                          
+                }~                        
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[String]){ obj => 
-                            val start = Platform.currentTime
-                          	val request = new ReductoRequest(obj, "URL")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
-                            }
-                          }
+                	  		formFields('url, 'sentences.?.as[Int], 'decay ? false, 'ratio ? 0.0, 'separate ? false){
+                	  			(url, sentences, decay, ratio, separate) =>{
+                	  				val start = Platform.currentTime
+                	  				val request = new ReductoRequest(url, "URL", true).setDecay(decay).setSent(sentences).setSeparation(separate)
+                	  				complete {
+                	  					reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
+                	  						container.resp.finishResponse(start, mapper);
+                	  					}
+                	  				}
+                	  		  }
+                	  		}~
+                	  		entity(as[String]){ obj => ctx =>
+                	  			val request = new ReductoRequest(obj, "TEXT")
+                	  			println("Handling request")
+                	  			initiateRequest(request, ctx)
+                	  		} 
                   }        
                 }
         }~        
@@ -142,10 +151,20 @@ trait ApiService extends HttpService {
                             }
                           }
                   }        
-                }
-                          
-                post{
+                }~     
+                post{              
                   respondWithMediaType(MediaTypes.`application/json`){
+                         formFields('headline, 'text, 'sentences.?.as[Int], 'decay ? false, 'ratio ? 0.0, 'separate ? false){
+                        	 (headline, text, sentences, decay, ratio, separate) =>{
+                        		 val start = Platform.currentTime
+                        		 val request = new ReductoRequest(headline, text, "URL").setDecay(decay).setSent(sentences).setSeparation(separate)
+                        		 complete {
+                        			 reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
+                        			 container.resp.finishResponse(start, mapper);
+                        			 }
+                        		 }
+                	  		  }
+                	  	  }~
                           entity(as[String]){ obj => ctx =>
                           	val request = new ReductoRequest(obj, "TEXT")
                             println("Handling request")
@@ -177,6 +196,11 @@ trait ApiService extends HttpService {
                 post{
                         complete{"OK."}
                 }
+        }~
+        pathPrefix("css" / Segment) { file =>
+          get {
+            getFromResource("web/css/" + file)
+          }
         }~
         path(RestPath) { path =>
           val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path

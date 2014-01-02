@@ -36,7 +36,7 @@ class ElasticSearchActor extends HttpRequestActor {
 	  println("--Creating ES Bulker");
 	  self ! InitRequest
 	}
-		
+	
 	override def postStop() {
 	  println("--Stopped ES Bulker");
 	}
