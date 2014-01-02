@@ -10,8 +10,8 @@ case class SentenceCombination() extends Ordered[SentenceCombination]{
 	var sentences:ArrayList[NLPSentence] = new ArrayList[NLPSentence]
 	var mmr:MMRmatrix = new MMRmatrix
 	var combinedWeight:Double = 0
-	
 	var mmrThreshold:Double = 0.5
+	var mmrScore:Double = 0.0
 	
 	def this(sentences: ArrayList[NLPSentence], sentenceNumbers:ArrayList[Int]){
 	  this()
