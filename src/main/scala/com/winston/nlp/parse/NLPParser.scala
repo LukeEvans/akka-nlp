@@ -32,8 +32,7 @@ class NLPParser {
 	try {
 		parseModelIn =  new FileInputStream("/usr/local/reducto-dist" + "/config/en-parser-chunking.bin")
 	} catch {
-	  	case e: Exception => println("\n\nError opening file\n\n"); e.printStackTrace();
-//	  	case e: Exception => parseModelIn =  new FileInputStream(currentPath + "/src/main/resources/en-parser-chunking.bin")
+	  	case e: Exception => parseModelIn =  new FileInputStream(currentPath + "/src/main/resources/en-parser-chunking.bin")
 	}
 	
 	var tokenModelIn:InputStream = null;
@@ -41,8 +40,7 @@ class NLPParser {
 	try { 
 		tokenModelIn = new FileInputStream("/usr/local/reducto-dist" + "/config/en-token.bin");
 	} catch {
-	    case e: Exception => println("\n\nError opening file\n\n"); e.printStackTrace();
-//	  	case e: Exception => tokenModelIn = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
+	  	case e: Exception => tokenModelIn = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
 	}
 	
 	var tokenizer:Tokenizer = null;
