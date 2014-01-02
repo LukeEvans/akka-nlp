@@ -29,6 +29,12 @@ class NLPSentence extends TransportMessage {
 	  }
 	}
 	
+	def this(s:String, w:ArrayList[NLPWord]){
+	  this()
+	  value = s;
+	  words = w;
+	}
+	
 	def this(s:String){
 	  this()
 	  value = s
@@ -59,6 +65,17 @@ class NLPSentence extends TransportMessage {
 	  if(!words.contains(w)){
 		  words.add(new NLPWord(w))
 	  }
+	}
+	
+
+	def addWord(w:String, start:Int, end:Int, originalText:String){
+		if(!words.contains(w)){
+			var word = new NLPWord(w)
+			word.startIndex = start
+			word.endIndex = end
+			word.originalText = originalText
+			words.add(word)
+     	}
 	}
 	
 	def grabValue():String = {
@@ -179,5 +196,4 @@ class NLPSentence extends TransportMessage {
 	  s += value
 	  return s
 	}
-	
 }

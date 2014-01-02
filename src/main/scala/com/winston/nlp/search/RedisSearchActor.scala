@@ -19,7 +19,7 @@ class RedisSearchActor extends Actor {
   	var totalDocuments: Long = 0;
   	var stopPhrases = new ArrayList[String];
   	
-  	val jedis = new Jedis("localhost");
+	val jedis = new Jedis("localhost");
   	
   	implicit val ec = context.dispatcher
   	case object RefreshTick

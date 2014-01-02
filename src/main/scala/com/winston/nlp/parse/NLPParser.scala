@@ -1,5 +1,4 @@
 package com.winston.nlp.parse
-
 import scala.collection.JavaConversions._
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import java.util.Properties

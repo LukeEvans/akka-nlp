@@ -3,7 +3,6 @@ package com.winston.split
 import akka.actor._
 import com.winston.nlp.transport.messages._
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
-import com.winston.nlp.split.NLPSplitter
 
 class SplitActor(manager: ActorRef) extends Actor {
 

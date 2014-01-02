@@ -33,7 +33,7 @@
         ignore_errors: yes
 
       - name: Run frontend daemon
-        command: start reducto-frontend N=1    
+        command: start reducto-frontend N=1
 
 
 - name: Re-deploy Worker
@@ -102,7 +102,7 @@
 
 - name: Re-deploy Supervisor
   hosts:
-  - tag_Name_reducto-frontend-01
+  - tag_Name_reducto-supervisor-01
   
   user: ubuntu
   sudo: true

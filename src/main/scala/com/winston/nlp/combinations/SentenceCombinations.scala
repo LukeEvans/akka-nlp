@@ -4,6 +4,7 @@ import scala.collection.JavaConversions._
 import java.util.ArrayList
 import com.winston.nlp.NLPSentence
 import com.winston.nlp.validation.Validator
+import scala.util.Sorting
 
 class SentenceCombinations {
 	var sentences:ArrayList[String] = new ArrayList[String]
@@ -20,11 +21,13 @@ class SentenceCombinations {
 	
 	def this(nlpSentences:ArrayList[NLPSentence], separationMax:Int){
 	  this()
+	  
 	  sentences = new ArrayList[String]
 	  scores = new ArrayList[Double]
 	  
 	  this.nlpSentences = nlpSentences
 	  this.maxSentSeparation = separationMax
+	  println("maxSentSeparation: " + maxSentSeparation)
 	  
 	  for(sentence <- nlpSentences){
 	    sentences.add(sentence.value)
@@ -37,17 +40,7 @@ class SentenceCombinations {
 	
 	def getHighestCombo(numSentences:Int, sentence:Boolean):SentenceCombination = {
 	  var combos:ArrayList[SentenceCombination] = generateCombinations(numSentences, sentence)
-	  
-//	  var newCombos:ArrayList[SentenceCombination] = new ArrayList[SentenceCombination]
-//	  
-//	  // Add all valid combos
-//	  for(combo <- combos){
-//	    val validator = new Validator(combo.sentenceNumbers, nlpSentences);
-//	    if(validator.validate()){
-//			newCombos.add(combo);
-//		}
-//	  }
-	  
+
 	  return findHighestMMRCombo(scores, combos)
 	}
 		
@@ -82,15 +75,13 @@ class SentenceCombinations {
 	
 	def findHighestMMRCombo(scores: ArrayList[Double], combos: ArrayList[SentenceCombination]): SentenceCombination = {
 	  var combosForRemoval = new ArrayList[SentenceCombination];
-	  
+          
 	  for(combo <- combos){
-	    if(combo.isOverMaxMMR()){
-	      combosForRemoval.add(combo)
-	    }
-	  }
-	    
+		  if(combo.isOverMaxMMR())
+			  combosForRemoval.add(combo)
+      }
+            
 	  for(combo <- combosForRemoval){
-
         	  combos.remove(combo)
 	  }  
           
@@ -103,6 +94,7 @@ class SentenceCombinations {
 	  for(combo <- sorted){
 		  val validator = new Validator(combo.sentenceNumbers, nlpSentences);
 		  if(validator.validate()){
+			  println("Highest MMR: " + combo.mmrScore)
 			  return combo
 		  }
       }

@@ -56,7 +56,7 @@
 
     # Reducto Config
     - name: Modify min number of roles
-      local_action: lineinfile dest=../src/main/resources/reducto.conf regexp='^#?akka.cluster.min' line='akka.cluster.min-nr-of-members = {{min_number}}'
+      local_action: lineinfile dest=../src/main/resources/reducto.conf regexp='^akka.cluster.min' line='akka.cluster.min-nr-of-members = {{min_number}}'
 
     - name: Modify min frontend 
       local_action: lineinfile dest=../src/main/resources/reducto.conf regexp='^\s*#?reducto-frontend.min' line='  reducto-frontend.min-nr-of-members = {{min_frontend}}'
