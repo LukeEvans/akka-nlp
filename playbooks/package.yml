@@ -15,7 +15,7 @@
     # Roles
     worker_role: reducto-worker
     parser_role: reducto-parser
-    supervisor_role: reducto-supervisor
+    supervisor_role: reducto-frontend
 
     # Minimum Role instances
     min_number: 3
