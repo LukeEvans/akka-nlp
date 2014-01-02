@@ -27,7 +27,6 @@ class SentenceCombinations {
 	  
 	  this.nlpSentences = nlpSentences
 	  this.maxSentSeparation = separationMax
-	  println("maxSentSeparation: " + maxSentSeparation)
 	  
 	  for(sentence <- nlpSentences){
 	    sentences.add(sentence.value)
@@ -94,7 +93,6 @@ class SentenceCombinations {
 	  for(combo <- sorted){
 		  val validator = new Validator(combo.sentenceNumbers, nlpSentences);
 		  if(validator.validate()){
-			  println("Highest MMR: " + combo.mmrScore)
 			  return combo
 		  }
       }

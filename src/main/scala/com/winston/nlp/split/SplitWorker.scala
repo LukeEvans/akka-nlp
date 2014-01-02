@@ -1,8 +1,9 @@
-package com.winston.split
+package com.winston.nlp.split
 
 import akka.actor.ActorRef
 import com.winston.nlp.MasterWorker.Worker
 import akka.actor.Props
+import com.winston.split.SplitActor
 
 class SplitWorker(master: ActorRef) extends Worker(master) {
   // We'll use the current dispatcher for the execution context.
