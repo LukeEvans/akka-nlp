@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+encoding//src/main/scala/com/winston/nlp/parse/ParseActor.scala=UTF-8
+encoding//src/main/scala/com/winston/nlp/scoring/TermFrequencyActor.scala=UTF-8

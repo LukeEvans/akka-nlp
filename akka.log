@@ -1,0 +1,224 @@
+2013-12-31  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] a.e.s.Slf4jLogger - Slf4jLogger started
+2013-12-31 18:22:33.854UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Remoting - Starting remoting
+2013-12-31 18:22:34.241UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2013-12-31 18:22:34.244UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2013-12-31 18:22:34.258UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2013-12-31 18:22:34.316UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2013-12-31 18:22:34.316UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2013-12-31 18:22:34.335UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2013-12-31 18:22:34.343UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2013-12-31 18:22:34.354UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2013-12-31 18:22:34.372UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] c.w.n.l.Listener - Current members: Member(address = akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551, status = Joining):
+2013-12-31 18:22:35.362UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2013-12-31 18:22:35.365UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2013-12-31 18:22:35.446UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2013-12-31 18:22:35.446UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.ParseMaster - Parse master starting...
+2013-12-31 18:22:35.446UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.PackagingMaster - Packaging master starting...
+2013-12-31 18:22:35.447UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.s.ScoringMaster - Scoring master starting...
+2013-12-31 18:22:35.447UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.s.SplitMaster - Split master starting...
+2013-12-31 18:22:35.450UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.n.p.PackagingWorker - Packaging Worker staring
+2013-12-31 18:22:35.451UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ParseWorker - Parse Worker staring
+2013-12-31 18:22:35.453UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ReductoWorker - Reducto Worker staring
+2013-12-31 18:22:35.454UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.s.SplitMaster - Error. Luke is too amazing
+2013-12-31 18:22:35.457UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#516628777]
+2013-12-31 18:22:35.459UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.s.ScoringWorker - Scoring Worker staring
+2013-12-31 18:22:35.464UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.s.SplitWorker - Split Worker staring
+2013-12-31 18:22:35.465UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#783133358]
+2013-12-31 18:22:35.465UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#2106019275]
+2013-12-31 18:22:35.466UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#1729531062]
+2013-12-31 18:22:35.476UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#1805052921]
+2013-12-31  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] a.e.s.Slf4jLogger - Slf4jLogger started
+2013-12-31 18:24:35.291UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Starting remoting
+2013-12-31 18:24:35.497UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2013-12-31 18:24:35.500UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2013-12-31 18:24:35.515UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2013-12-31 18:24:35.746UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2013-12-31 18:24:35.746UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2013-12-31 18:24:35.763UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2013-12-31 18:24:35.767UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2013-12-31 18:24:35.781UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2013-12-31 18:24:35.804UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] c.w.n.l.Listener - Current members: Member(address = akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551, status = Joining):
+2013-12-31 18:24:36.792UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2013-12-31 18:24:36.795UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2013-12-31 18:24:36.876UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.s.ScoringMaster - Scoring master starting...
+2013-12-31 18:24:36.876UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2013-12-31 18:24:36.877UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ParseMaster - Parse master starting...
+2013-12-31 18:24:36.877UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.PackagingMaster - Packaging master starting...
+2013-12-31 18:24:36.879UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.s.SplitMaster - Split master starting...
+2013-12-31 18:24:36.881UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.s.SplitMaster - Error. Luke is too amazing
+2013-12-31 18:24:36.887UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.PackagingWorker - Packaging Worker staring
+2013-12-31 18:24:36.887UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ReductoWorker - Reducto Worker staring
+2013-12-31 18:24:36.889UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ParseWorker - Parse Worker staring
+2013-12-31 18:24:36.893UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.s.SplitWorker - Split Worker staring
+2013-12-31 18:24:36.893UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#1548945189]
+2013-12-31 18:24:36.898UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#-1197717557]
+2013-12-31 18:24:36.898UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#-1705618318]
+2013-12-31 18:24:36.899UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.s.ScoringWorker - Scoring Worker staring
+2013-12-31 18:24:36.902UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#842860122]
+2013-12-31 18:24:36.903UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#1184227124]
+2013-12-31 18:24:38.629UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] s.c.s.HttpListener - Bound to /0.0.0.0:8080
+2014-01-01  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] a.e.s.Slf4jLogger - Slf4jLogger started
+2014-01-01 22:51:08.090UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Starting remoting
+2014-01-01 22:51:08.701UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-01 22:51:08.704UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-01 22:51:08.722UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2014-01-01 22:51:09.010UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2014-01-01 22:51:09.010UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2014-01-01 22:51:09.039UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2014-01-01 22:51:09.044UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2014-01-01 22:51:09.055UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2014-01-01 22:51:09.077UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] c.w.n.l.Listener - Current members: Member(address = akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551, status = Joining):
+2014-01-01 22:51:10.113UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2014-01-01 22:51:10.115UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2014-01-01 22:51:10.305UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.s.SplitMaster - Split master starting...
+2014-01-01 22:51:10.305UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.n.p.ParseMaster - Parse master starting...
+2014-01-01 22:51:10.305UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.n.s.ScoringMaster - Scoring master starting...
+2014-01-01 22:51:10.306UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.n.p.PackagingMaster - Packaging master starting...
+2014-01-01 22:51:10.306UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2014-01-01 22:51:10.312UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ParseWorker - Parse Worker staring
+2014-01-01 22:51:10.314UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ReductoWorker - Reducto Worker staring
+2014-01-01 22:51:10.314UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.s.ScoringWorker - Scoring Worker staring
+2014-01-01 22:51:10.316UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.PackagingWorker - Packaging Worker staring
+2014-01-01 22:51:10.320UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#1335993159]
+2014-01-01 22:51:10.322UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.s.SplitWorker - Split Worker staring
+2014-01-01 22:51:10.323UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#-1923176501]
+2014-01-01 22:51:10.323UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#1090016957]
+2014-01-01 22:51:10.325UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#-1582585974]
+2014-01-01 22:51:10.327UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#-1794621351]
+2014-01-01 22:51:12.997UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] s.c.s.HttpListener - Bound to /0.0.0.0:8080
+2014-01-01 22:51:33.837UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.t.Dispatcher - Handling request
+2014-01-01 22:51:36.194UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.a.PerRequestActor - {"status":"Request timeout"}
+2014-01-01 22:51:37.744UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.t.Dispatcher - Handling request
+2014-01-01  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] a.e.s.Slf4jLogger - Slf4jLogger started
+2014-01-01 22:53:01.646UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Starting remoting
+2014-01-01 22:53:01.812UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-01 22:53:01.815UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-01 22:53:01.829UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2014-01-01 22:53:01.892UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2014-01-01 22:53:01.892UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2014-01-01 22:53:01.898UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2014-01-01 22:53:01.903UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2014-01-01 22:53:01.909UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2014-01-01 22:53:01.926UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.n.l.Listener - Current members: Member(address = akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551, status = Joining):
+2014-01-01 22:53:02.929UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2014-01-01 22:53:02.930UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2014-01-01 22:53:03.004UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.n.s.ScoringMaster - Scoring master starting...
+2014-01-01 22:53:03.005UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.s.SplitMaster - Split master starting...
+2014-01-01 22:53:03.005UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.n.p.ParseMaster - Parse master starting...
+2014-01-01 22:53:03.006UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.n.p.PackagingMaster - Packaging master starting...
+2014-01-01 22:53:03.006UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2014-01-01 22:53:03.015UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.s.ScoringWorker - Scoring Worker staring
+2014-01-01 22:53:03.015UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ParseWorker - Parse Worker staring
+2014-01-01 22:53:03.015UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.PackagingWorker - Packaging Worker staring
+2014-01-01 22:53:03.019UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.ReductoWorker - Reducto Worker staring
+2014-01-01 22:53:03.021UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.s.SplitWorker - Split Worker staring
+2014-01-01 22:53:03.023UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#-932444155]
+2014-01-01 22:53:03.023UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#316996269]
+2014-01-01 22:53:03.027UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#-1601669562]
+2014-01-01 22:53:03.029UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] c.w.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#-1878196230]
+2014-01-01 22:53:03.032UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#887130753]
+2014-01-01 22:53:04.304UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] s.c.s.HttpListener - Bound to /0.0.0.0:8080
+2014-01-01 22:53:12.799UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.t.Dispatcher - Handling request
+2014-01-01 22:53:14.999UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.a.PerRequestActor - {"status":"Request timeout"}
+2014-01-01 22:53:15.867UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.t.Dispatcher - Handling request
+2014-01-02  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] a.e.s.Slf4jLogger - Slf4jLogger started
+2014-01-02 16:19:39.665UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Starting remoting
+2014-01-02 16:19:39.872UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-02 16:19:39.875UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-02 16:19:39.889UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2014-01-02 16:19:39.970UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2014-01-02 16:19:39.970UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2014-01-02 16:19:39.977UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2014-01-02 16:19:39.981UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2014-01-02 16:19:39.987UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2014-01-02 16:19:40.033UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.l.Listener - Current members: Member(address = akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551, status = Joining):
+2014-01-02 16:19:41.007UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2014-01-02 16:19:41.008UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2014-01-02 16:19:41.084UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.n.p.ParseMaster - Parse master starting...
+2014-01-02 16:19:41.084UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.n.p.PackagingMaster - Packaging master starting...
+2014-01-02 16:19:41.084UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.s.SplitMaster - Split master starting...
+2014-01-02 16:19:41.085UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.n.s.ScoringMaster - Scoring master starting...
+2014-01-02 16:19:41.088UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2014-01-02 16:19:41.090UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.s.ScoringWorker - Scoring Worker staring
+2014-01-02 16:19:41.093UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.n.p.ParseWorker - Parse Worker staring
+2014-01-02 16:19:41.094UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.PackagingWorker - Packaging Worker staring
+2014-01-02 16:19:41.094UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.ReductoWorker - Reducto Worker staring
+2014-01-02 16:19:41.145UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.s.SplitWorker - Split Worker staring
+2014-01-02 16:19:41.148UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#-163622265]
+2014-01-02 16:19:41.148UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#-512720163]
+2014-01-02 16:19:41.149UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#-1939784987]
+2014-01-02 16:19:41.150UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#1226070844]
+2014-01-02 16:19:41.153UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#-1427732792]
+2014-01-02 16:19:42.469UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] s.c.s.HttpListener - Bound to /0.0.0.0:8080
+2014-01-02 16:19:55.204UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] c.w.t.Dispatcher - Handling request
+2014-01-02 16:19:57.382UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.a.PerRequestActor - {"status":"Request timeout"}
+2014-01-02 16:19:58.301UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] c.w.t.Dispatcher - Handling request
+2014-01-02 16:20:00.013UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.t.Dispatcher - Handling request
+2014-01-02 16:20:01.300UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.t.Dispatcher - Handling request
+2014-01-02 16:20:02.485UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-22] c.w.t.Dispatcher - Handling request
+2014-01-02  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] a.e.s.Slf4jLogger - Slf4jLogger started
+2014-01-02 18:07:16.167UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Remoting - Starting remoting
+2014-01-02 18:07:16.332UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-02 18:07:16.335UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-02 18:07:16.348UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2014-01-02 18:07:16.427UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2014-01-02 18:07:16.427UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2014-01-02 18:07:16.434UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2014-01-02 18:07:16.440UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2014-01-02 18:07:16.451UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2014-01-02 18:07:16.464UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-22] c.w.n.l.Listener - Current members: Member(address = akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551, status = Joining):
+2014-01-02 18:07:17.467UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2014-01-02 18:07:17.469UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2014-01-02 18:07:17.561UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2014-01-02 18:07:17.561UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.PackagingMaster - Packaging master starting...
+2014-01-02 18:07:17.561UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.ParseMaster - Parse master starting...
+2014-01-02 18:07:17.562UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.s.ScoringMaster - Scoring master starting...
+2014-01-02 18:07:17.562UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.s.SplitMaster - Split master starting...
+2014-01-02 18:07:17.565UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-22] c.w.n.p.ParseWorker - Parse Worker staring
+2014-01-02 18:07:17.570UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.s.SplitWorker - Split Worker staring
+2014-01-02 18:07:17.578UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.n.p.PackagingWorker - Packaging Worker staring
+2014-01-02 18:07:17.582UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.s.ScoringWorker - Scoring Worker staring
+2014-01-02 18:07:17.582UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-25] c.w.n.p.ReductoWorker - Reducto Worker staring
+2014-01-02 18:07:17.588UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#-266887767]
+2014-01-02 18:07:17.590UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#601777267]
+2014-01-02 18:07:17.590UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#1706654815]
+2014-01-02 18:07:17.593UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#288021996]
+2014-01-02 18:07:17.595UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#-695303550]
+2014-01-02 18:07:18.911UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] s.c.s.HttpListener - Bound to /0.0.0.0:8080
+2014-01-02 18:07:28.561UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-3] c.w.t.Dispatcher - Handling request
+2014-01-02 18:07:30.822UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.a.PerRequestActor - {"status":"Request timeout"}
+2014-01-02 18:07:32.306UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-26] c.w.t.Dispatcher - Handling request
+2014-01-02 18:07:38.292UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-24] c.w.t.Dispatcher - Handling request
+2014-01-02 18:07:39.749UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-19] c.w.t.Dispatcher - Handling request
+2014-01-02  INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] a.e.s.Slf4jLogger - Slf4jLogger started
+2014-01-02 18:32:47.838UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Starting remoting
+2014-01-02 18:32:48.274UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Remoting started; listening on addresses :[akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-02 18:32:48.289UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Remoting - Remoting now listens on addresses: [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551]
+2014-01-02 18:32:48.327UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Starting up...
+2014-01-02 18:32:48.564UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Registered cluster JMX MBean [akka:type=Cluster]
+2014-01-02 18:32:48.565UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Started up successfully
+2014-01-02 18:32:48.585UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-4] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics will be retreived from MBeans, and may be incorrect on some platforms. To increase metric accuracy add the 'sigar.jar' to the classpath and the appropriate platform-specific native libary to 'java.library.path'. Reason: java.lang.ClassNotFoundException: org.hyperic.sigar.Sigar
+2014-01-02 18:32:48.605UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Metrics collection has started successfully
+2014-01-02 18:32:48.611UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] c.w.n.l.Listener - Current members: :
+2014-01-02 18:32:48.612UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-21] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] is JOINING, roles [reducto-frontend]
+2014-01-02 18:32:49.623UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] Cluster(akka://NLPClusterSystem-0-1) - Cluster Node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] - Leader is moving node [akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551] to [Up]
+2014-01-02 18:32:49.624UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] c.w.n.l.Listener - Member is Up: akka.tcp://NLPClusterSystem-0-1@127.0.0.1:2551
+2014-01-02 18:32:49.984UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.PackagingMaster - Packaging master starting...
+2014-01-02 18:32:49.984UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.ParseMaster - Parse master starting...
+2014-01-02 18:32:49.984UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.s.ScoringMaster - Scoring master starting...
+2014-01-02 18:32:49.984UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.n.p.ReductoMaster - Reducto pipeline master starting...
+2014-01-02 18:32:49.984UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.s.SplitMaster - Split master starting...
+2014-01-02 18:32:49.991UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-22] c.w.s.SplitWorker - Split Worker staring
+2014-01-02 18:32:49.993UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-28] c.w.n.p.PackagingWorker - Packaging Worker staring
+2014-01-02 18:32:50.033UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.s.ScoringWorker - Scoring Worker staring
+2014-01-02 18:32:50.033UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.s.SplitMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/splitMaster/c1/splitRouter/c1#970512154]
+2014-01-02 18:32:50.041UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.s.ScoringMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/scoringMaster/c1/scoringRouter/c1#-1117964860]
+2014-01-02 18:32:50.042UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.ParseWorker - Parse Worker staring
+2014-01-02 18:32:50.029UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.ReductoWorker - Reducto Worker staring
+2014-01-02 18:32:50.046UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.ParseMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/parseMaster/c1/parseRouter/c1#-307124748]
+2014-01-02 18:32:50.047UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.PackagingMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/packagingMaster/c1/packagingRouter/c1#-1612003600]
+2014-01-02 18:32:50.048UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-23] c.w.n.p.ReductoMaster - Worker created: Actor[akka://NLPClusterSystem-0-1/user/reductoMaster/c1/reductoRouter/c1#-521213603]
+2014-01-02 18:32:51.705UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] s.c.s.HttpListener - Bound to /0.0.0.0:8080
+2014-01-02 18:33:00.752UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-27] c.w.t.Dispatcher - Handling request
+2014-01-02 18:33:03.006UTC ERROR[NLPClusterSystem-0-1-akka.actor.default-dispatcher-2] c.w.a.PerRequestActor - {"status":"Request timeout"}
+2014-01-02 18:33:03.959UTC INFO [NLPClusterSystem-0-1-akka.actor.default-dispatcher-20] c.w.t.Dispatcher - Handling request
