@@ -45,11 +45,6 @@ class ParseActor(manager: ActorRef) extends Actor {
 	  val sc = parser.parseProcess(sentence)
 	  val durr = Platform.currentTime - start
 	  
-	  if (durr > longest) {
-	    longest = durr;
-	    println(name + "- " + sentence.index + " " + durr)
-	  }
-	  
 	  origin.tell(sc, manager)
 	  manager ! WorkComplete("Done")
 	}
