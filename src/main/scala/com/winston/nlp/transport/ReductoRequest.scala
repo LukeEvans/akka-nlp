@@ -53,32 +53,4 @@ class ReductoRequest extends TransportMessage {
 	  
 	  request_type = rt;
 	}
-	
-	def this(urlString:String, rt:String, idk:Boolean){
-	  this()
-	  url = urlString
-	  request_type = rt
-	}
-	
-	def this(headlineString:String, textString:String, rt:String){
-	  this()
-	  headline = headlineString
-	  text = textString
-	  request_type = rt
-	}
-	
-	def setSent(sentences:Int):ReductoRequest ={
-	  this.sentences = sentences
-	  return this
-	}
-	
-	def setDecay(decay:Boolean):ReductoRequest ={
-	  this.decay = decay
-	  return this
-	}
-	
-	def setSeparation(separation:Boolean):ReductoRequest ={
-	  this.separationRules = separation
-	  return this
-	}
 }

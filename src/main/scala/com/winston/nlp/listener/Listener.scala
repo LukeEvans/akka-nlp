@@ -8,9 +8,8 @@ import akka.cluster.ClusterEvent.CurrentClusterState
 import akka.cluster.ClusterEvent.MemberUp
 import akka.actor.Actor
 import akka.actor.ActorSystem
-import com.winston.monitoring.MonitoredActor
 
-class Listener(originSystem:ActorSystem) extends MonitoredActor("cluster-listener") {
+class Listener(originSystem:ActorSystem) extends Actor with ActorLogging {
   var memberCount = 0
   def receive = {
     case state: CurrentClusterState =>{

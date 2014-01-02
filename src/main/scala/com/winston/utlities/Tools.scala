@@ -3,18 +3,12 @@ package com.winston.utlities
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.HashMap
-import java.net.URL;
-import java.net.URI;
-import java.io.InputStreamReader
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import edu.stanford.nlp.trees.Tree
-import com.winston.nlp.NLPWord
-import java.util.ArrayList
-
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.HttpResponse
@@ -24,28 +18,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object Tools {
-  
-  def getStringFromList(wordList:ArrayList[NLPWord]):String = {
-           var lastWord:NLPWord = null
-           var sentence:String = ""
-    
-           for(word <- wordList){
-                   if(!leafIsParenthetical(word.value)){
-                     if(lastWord == null || word.startIndex == lastWord.endIndex)
-                       sentence = sentence + word.value
-                     else
-                           sentence = sentence + (" "+ word.originalText)
-                   }
-                   else{
-                     if(lastWord == null || word.startIndex == lastWord.endIndex)
-                       sentence = sentence + word.value
-                     else
-                           sentence = sentence + (" "+ word.originalText)
-                   }
-                   lastWord = word
-           }    
-          return sentence
-  }
   
   def getStringFromTree(tree:Tree):String = {
     var sb = new StringBuilder()
@@ -91,10 +63,6 @@ object Tools {
   	case "$" => true
     case "``" => true
     case _ => false
-  }
-  
-  def leafIsParenthetical(value:String):Boolean = {
-    if(value.contains("RRB") || value.contains("LRB")) true else false
   }
   
   def generateRandomNumber():Int = {
@@ -206,7 +174,7 @@ object Tools {
     }
     return md5
   }
-
+  
     def fetchURL(url:String):JsonNode = {
         try {
                 var httpClient = new DefaultHttpClient();
