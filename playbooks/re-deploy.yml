@@ -102,7 +102,7 @@
 
 - name: Re-deploy Supervisor
   hosts:
-  - tag_Name_reducto-supervisor-01
+  - tag_Name_reducto-frontend-01
   
   user: ubuntu
   sudo: true
