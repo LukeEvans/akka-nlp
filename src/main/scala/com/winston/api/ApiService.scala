@@ -167,7 +167,6 @@ trait ApiService extends HttpService {
                 	  	  }~
                           entity(as[String]){ obj => ctx =>
                           	val request = new ReductoRequest(obj, "TEXT")
-                            println("Handling request")
                             initiateRequest(request, ctx)
                           }
                   }        

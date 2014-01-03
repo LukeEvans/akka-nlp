@@ -32,7 +32,7 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
 		  val error = Error("Request timeout")
 		  val errString = mapper.writeValueAsString(error)
 		  log.error(errString)
-		  complete(OK, errString)
+		  complete(GatewayTimeout, errString)
 		  statsd.histogram("request.timeout", 1)
 		  
 		case _ => 

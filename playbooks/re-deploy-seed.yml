@@ -9,13 +9,15 @@
   tasks:
       
       - name: Kill previous run
-        command: killall java
+        command: stop reducto-seed N=1
         ignore_errors: yes
 
+      - name: Remove old Dist
+        command: rm -rf /usr/local/reducto-dist
+        ignore_errors: yes
+        
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
       - name: Run Seed Akka
-        command: nohup /usr/local/reducto-dist/bin/start com.winston.nlp.bootstrap.SeedDaemon &
-        async: 450000
-        poll: 0
+        command: start reducto-seed N=1

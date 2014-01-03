@@ -1,4 +1,4 @@
-package com.winston.split
+package com.winston.nlp.split
 
 import com.winston.nlp.MasterWorker.Master
 import akka.actor.Props

@@ -12,6 +12,20 @@ resolvers += "spray repo" at "http://repo.spray.io/"
 
 resolvers += "jlangdetect-googlecode" at "https://jlangdetect.googlecode.com/svn/repo"
 
+libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3"
+
+libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-europarl" % "0.3" excludeAll(
+        ExclusionRule(organization = "javax.jms"),
+        ExclusionRule(organization = "com.sun.jdmk"),
+        ExclusionRule(organization = "com.sun.jmx")
+)
+
+libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect" % "0.3" excludeAll(
+        ExclusionRule(organization = "javax.jms"),
+        ExclusionRule(organization = "com.sun.jdmk"),
+        ExclusionRule(organization = "com.sun.jmx")
+)
+
 atmosSettings
 
 traceAkka("2.2.3")
@@ -63,20 +77,6 @@ libraryDependencies += "ch.qos.logback" % "logback-core"  % "1.0.13"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.5"
 
 libraryDependencies += "com.typesafe.akka" % "akka-slf4j_2.10" % "2.2.3"
-
-libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3"
-
-libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-europarl" % "0.3" excludeAll(
-	ExclusionRule(organization = "javax.jms"),
-	ExclusionRule(organization = "com.sun.jdmk"),
-	ExclusionRule(organization = "com.sun.jmx")
-)
-
-libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect" % "0.3" excludeAll(
-	ExclusionRule(organization = "javax.jms"),
-	ExclusionRule(organization = "com.sun.jdmk"),
-	ExclusionRule(organization = "com.sun.jmx")
-)
 
 libraryDependencies ++= {
   val akkaV = "2.2.3"

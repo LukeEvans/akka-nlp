@@ -27,7 +27,8 @@
 				</p>
 			</div>	
 			
-			<form action="http://ec2-107-22-14-112.compute-1.amazonaws.com:8080/url" method="post">
+			<!-- <form action="http://ec2-107-22-14-112.compute-1.amazonaws.com:8080/url" method="post"> -->
+			<form action="http://localhost:8080/url" method="post">
 				<div>URL: </div>
 				<div>
 					<input class = "input_box" name="url"/>
@@ -48,7 +49,8 @@
 			</form>
 			<br>
 			<br>
-			<form action="http://ec2-107-22-14-112.compute-1.amazonaws.com:8080/text" method="post">
+			<!-- <form action="http://ec2-107-22-14-112.compute-1.amazonaws.com:8080/text" method="post"> -->
+			<form action="http://localhost:8080/text" method="post">
 				<div>Headline: </div>
 				<div>
 					<input class = "input_box" name="headline"/>
@@ -68,7 +70,7 @@
 					<input class="input_box_small" type="number" name="sentences" min="1" value = "3"> # of Sentences </input>
 					&nbsp;
 					&nbsp;
-					<input class="input_box_small" type="text" name ="ratio" value= "0.0"> Ratio (e.g. 0.2)</input>
+					<input class="input_box_small" type="text" value="0.0" name ="ratio"> Ratio (e.g. 0.2)</input>
 				</div>
 				<div class="submit_button"><button type="submit" >Submit</button></div>
 			</form>

@@ -25,13 +25,14 @@ class Dispatcher(reductoRouter:ActorRef) extends MonitoredActor("reducto-dispatc
          val tempActor = context.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
         	
         reductoRouter.tell(request, tempActor)
+        log.info("Handling request")
     
     case OverloadedDispatchRequest(message) =>
         message match {
           case req:DispatchRequest =>
           	val err = req.mapper.writeValueAsString(Error("Rate limit exceeded"))
           	completeOverload(req.ctx, ServiceUnavailable, err)    
-          	log.info(err)
+          	log.error(err)
           	
           case _ => log.info("Unrecognized overload message")
         }

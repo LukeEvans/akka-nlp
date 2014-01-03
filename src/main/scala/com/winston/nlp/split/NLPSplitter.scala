@@ -1,4 +1,4 @@
-package com.winston.split
+package com.winston.nlp.split
 
 import scala.collection.JavaConversions._
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
@@ -9,16 +9,16 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
 import com.winston.nlp.transport.messages._
 import com.winston.nlp.SentenceSet
 import com.winston.nlp.NLPSentence
-import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation
 import com.winston.nlp.transport.ReductoRequest
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
-import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation
 import java.io.FileInputStream
 import opennlp.tools.tokenize.TokenizerModel
 import opennlp.tools.tokenize.TokenizerME
 import java.io.InputStream
 import opennlp.tools.tokenize.Tokenizer
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
+import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation
 
 class NLPSplitter{
         var currentPath = System.getProperty("user.dir")
@@ -26,7 +26,15 @@ class NLPSplitter{
         splitProps.put("annotators", "tokenize, ssplit");
         var splitProcessor:StanfordCoreNLP = null;
         var tokenizer:Tokenizer = null;
-        var tokenModelIn:InputStream = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
+        
+        var tokenModelIn: InputStream = null;
+        
+       	try { 
+       		tokenModelIn = new FileInputStream("/usr/local/reducto-dist" + "/config/en-token.bin");
+       	} catch {
+       		case e: Exception => tokenModelIn = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
+       	}
+	
         var tokenModel:TokenizerModel = null
         
         def init() {

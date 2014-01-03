@@ -97,11 +97,12 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
     
     def summarize(request: ReductoRequest, origin:ActorRef){
         implicit val timeout = Timeout(5 second);
+      
         
         var detectedLanguage = detector.detectLanguage(request.text)
         if(detectedLanguage != null){
-          origin.tell(ResponseContainer(detectedLanguage), manager)
-          return
+        	origin.tell(ResponseContainer(detectedLanguage), manager)
+        	return
         }
         
 		// Split sentences

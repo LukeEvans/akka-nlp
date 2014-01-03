@@ -18,7 +18,7 @@ import com.winston.nlp.search.ElasticSearchActor
 import com.winston.nlp.scoring.ScoringActor
 import com.winston.nlp.packaging.PackagingActor
 import com.winston.nlp.parse.ParseMaster
-import com.winston.split.SplitMaster
+import com.winston.nlp.split.SplitMaster
 import com.winston.nlp.scoring.ScoringMaster
 import com.winston.nlp.packaging.PackagingMaster
 import com.winston.nlp.pipeline.ReductoMaster
