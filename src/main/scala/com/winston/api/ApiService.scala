@@ -119,10 +119,10 @@ trait ApiService extends HttpService {
                 }~                        
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                	  		formFields('url, 'sentences.?.as[Int], 'decay ? false, 'ratio ? 0.0, 'separate ? false){
-                	  			(url, sentences, decay, ratio, separate) =>{
+                	  		formFields('url, 'sentences.?.as[Int], 'decay ? true, 'ratio ? 0.0, 'separationRules ? true){
+                	  			(url, sentences, decay, ratio, separationRules) =>{
                 	  				val start = Platform.currentTime
-                	  				val request = new ReductoRequest(url, "URL", true).setDecay(decay).setSent(sentences).setSeparation(separate)
+                	  				val request = new ReductoRequest(url, "URL", true).setDecay(decay).setSent(sentences).setSeparation(separationRules)
                 	  				complete {
                 	  					reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
                 	  						container.resp.finishResponse(start, mapper);
@@ -154,10 +154,10 @@ trait ApiService extends HttpService {
                 }~     
                 post{              
                   respondWithMediaType(MediaTypes.`application/json`){
-                         formFields('headline, 'text, 'sentences.?.as[Int], 'decay ? false, 'ratio ? 0.0, 'separate ? false){
-                        	 (headline, text, sentences, decay, ratio, separate) =>{
+                         formFields('headline, 'text, 'sentences.?.as[Int], 'decay ? true, 'ratio ? 0.0, 'separationRules ? true){
+                        	 (headline, text, sentences, decay, ratio, separationRules) =>{
                         		 val start = Platform.currentTime
-                        		 val request = new ReductoRequest(headline, text, "URL").setDecay(decay).setSent(sentences).setSeparation(separate)
+                        		 val request = new ReductoRequest(headline, text, "URL").setDecay(decay).setSent(sentences).setSeparation(separationRules)
                         		 complete {
                         			 reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
                         			 container.resp.finishResponse(start, mapper);
