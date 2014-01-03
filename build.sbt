@@ -12,7 +12,11 @@ resolvers += "spray repo" at "http://repo.spray.io/"
 
 resolvers += "jlangdetect-googlecode" at "https://jlangdetect.googlecode.com/svn/repo"
 
-libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3"
+libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
+        ExclusionRule(organization = "javax.jms"),
+        ExclusionRule(organization = "com.sun.jdmk"),
+        ExclusionRule(organization = "com.sun.jmx")
+)
 
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-europarl" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
