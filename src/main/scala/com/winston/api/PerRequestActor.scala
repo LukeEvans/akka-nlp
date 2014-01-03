@@ -15,6 +15,7 @@ import akka.actor.ReceiveTimeout
 import com.winston.monitoring.MonitoredActor
 import scala.compat.Platform
 import com.winston.nlp.transport.messages.Error
+import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
 
 class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper) extends MonitoredActor("per-request-actor") with ActorLogging {
     
@@ -35,6 +36,9 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
 		  complete(GatewayTimeout, errString)
 		  statsd.histogram("request.timeout", 1)
 		  
+		case fail: WorkFailed =>
+		  log.error("Got a fail message")
+		  stop(self)
 		case _ => 
 		  log.error("Got a message that I've never even heard of!")
 		  statsd.histogram("unrecognized.message", 1)

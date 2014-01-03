@@ -22,7 +22,7 @@ class Dispatcher(reductoRouter:ActorRef) extends MonitoredActor("reducto-dispatc
   def receive = {
     case DispatchRequest(request, ctx, mapper) => 
          val start = Platform.currentTime
-         val tempActor = context.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
+         val tempActor = context.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper), "per-req")
         	
         reductoRouter.tell(request, tempActor)
         log.info("Handling request")
@@ -36,6 +36,8 @@ class Dispatcher(reductoRouter:ActorRef) extends MonitoredActor("reducto-dispatc
           	
           case _ => log.info("Unrecognized overload message")
         }
+        
+    case _ => log.warning("Unknown Request")
 
   }
   
