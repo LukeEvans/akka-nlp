@@ -8,6 +8,7 @@ object MasterWorkerProtocol {
   case class WorkerCreated(worker: ActorRef)
   case class WorkerRequestsWork(worker: ActorRef)
   case class WorkIsDone(worker: ActorRef)
+  case class WorkFailed(worker: ActorRef)
  
   // Messages to Workers
   case class WorkToBeDone(work: Any)
@@ -20,4 +21,5 @@ object MasterWorkerProtocol {
   
   // Master Worker Stats
   case object GetStats
+  
 }

@@ -4,7 +4,8 @@ import akka.actor.ActorLogging
 import akka.actor.Actor
 import akka.actor.ActorRef
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
-import akka.actor.actorRef2Scala
+import scala.concurrent.duration._
+import akka.actor.ReceiveTimeout
 
 abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
  
@@ -24,6 +25,9 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
 	  }
   }
   
+  // Set timeout
+  context.setReceiveTimeout(5.second)
+  
   // This is the state we're in when we're working on something.
   // In this state we can deal with messages in a much more
   // reasonable manner
@@ -38,6 +42,11 @@ abstract class Worker(master: ActorRef) extends Actor with ActorLogging {
     // Our derivation has completed its task
     case WorkComplete(result) =>
       master ! WorkIsDone(self)
+      requestWork()
+      // We're idle now
+      context.become(idle)
+    case ReceiveTimeout =>
+      master ! WorkFailed(self)
       requestWork()
       // We're idle now
       context.become(idle)

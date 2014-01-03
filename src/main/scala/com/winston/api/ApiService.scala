@@ -58,25 +58,32 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
     case e: NoSuchElementException => ctx =>
       println("no element")
       val err = "\n--No Such Element Exception--"
-      log.warning("{}\n encountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\n encountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(BadRequest, "Ensure all required fields are present.")
     
     case e: JsonParseException => ctx =>
       println("json parse")
       val err = "\n--Exception parsing input--"
-      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(InternalServerError, "Ensure all required fields are present with all Illegal characters properly escaped")
       
     case e: AskTimeoutException => ctx =>
       println("Ask Timeout")
       val err = "\n--Timeout Exception--"
-      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(RequestTimeout, "Server Timeout")
     
+    case e: NullPointerException => ctx => 
+      println("Null Pointer")
+      val err = "\n--Exception parsing input--"
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(InternalServerError, "Ensure all required fields are present with all Illegal characters properly escaped")
+    
     case e: Exception => ctx => 
+      e.printStackTrace()
       println("Unknown")
       val err = "\n--Unknon Exception--"
-      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(InternalServerError, "Internal Server Error")
   }
     
