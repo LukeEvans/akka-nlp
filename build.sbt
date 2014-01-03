@@ -64,7 +64,11 @@ libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.5"
 
 libraryDependencies += "com.typesafe.akka" % "akka-slf4j_2.10" % "2.2.3"
 
-libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3"
+libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
+        ExclusionRule(organization = "javax.jms"),
+        ExclusionRule(organization = "com.sun.jdmk"),
+        ExclusionRule(organization = "com.sun.jmx")
+)
 
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-europarl" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
