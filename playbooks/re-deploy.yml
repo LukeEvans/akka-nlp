@@ -33,7 +33,7 @@
         ignore_errors: yes
 
       - name: Run frontend daemon
-        command: start reducto-frontend N=1  && sleep 5
+        command: "start reducto-frontend N=1 && sleep 5"
 
 
 - name: Re-deploy Worker
@@ -52,7 +52,7 @@
         ignore_errors: yes
 
       - name: Run worker daemons
-        command: start reducto-worker N={{ item }} && sleep 5
+        command: "start reducto-worker N={{ item }} && sleep 5"
         with_items:
            - 1
            - 2
@@ -67,7 +67,7 @@
         ignore_errors: yes
 
       - name: Run parser daemons
-        command: start reducto-parser N={{ item }} && sleep 5
+        command: "start reducto-parser N={{ item }} && sleep 5"
         with_items:
            - 1
            - 2
@@ -93,7 +93,7 @@
         ignore_errors: yes
 
       - name: Run parser daemons
-        command: start reducto-parser N={{ item }} && sleep 5
+        command: "start reducto-parser N={{ item }} && sleep 5"
         with_items:
            - 1
            - 2
@@ -115,4 +115,4 @@
         ignore_errors: yes
 
       - name: Run supervisor daemons
-        command: start reducto-supervisor N=1 && sleep 5
+        command: "start reducto-supervisor N=1 && sleep 5"
