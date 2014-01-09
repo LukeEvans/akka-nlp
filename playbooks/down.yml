@@ -28,6 +28,9 @@
         command: stop reducto-frontend N=1
         ignore_errors: yes
 
+      - name: Kill previous supervisor run
+        command: stop reducto-supervisor N=1
+        ignore_errors: yes
 
 - name: Down Worker
   hosts:
@@ -51,6 +54,7 @@
            - 2
            - 3
            - 4
+           - 5
         ignore_errors: yes
 
 
@@ -69,6 +73,7 @@
            - 2
            - 3
            - 4
+           - 5
         ignore_errors: yes
 
 
