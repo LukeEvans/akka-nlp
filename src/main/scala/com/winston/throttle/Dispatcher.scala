@@ -22,7 +22,7 @@ class Dispatcher(reductoRouter:ActorRef) extends MonitoredActor("reducto-dispatc
   def receive = {
     case DispatchRequest(request, ctx, mapper) => 
          val start = Platform.currentTime
-         val tempActor = context.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper), "per-req")
+         val tempActor = context.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
         	
         reductoRouter.tell(request, tempActor)
         log.info("Handling request")
