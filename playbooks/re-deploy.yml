@@ -11,12 +11,12 @@
   gather_facts: false
   tasks:
 
-      - name: Remove old Dist
-        command: rm -rf /usr/local/reducto-dist
-        ignore_errors: yes
+      #- name: Remove old Dist
+      #  command: rm -rf /usr/local/reducto-dist
+      #  ignore_errors: yes
 
-      - name: Copy project Dist
-        copy: src=../target/reducto-dist dest=/usr/local/
+      #- name: Copy project Dist
+      #  copy: src=../target/reducto-dist dest=/usr/local/
 
 
 - name: Re-deploy Frontend
