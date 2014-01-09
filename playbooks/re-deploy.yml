@@ -75,6 +75,7 @@
            - 2
            - 3
            - 4
+           - 5
         ignore_errors: yes
 
       - name: Pause
@@ -107,6 +108,7 @@
            - 2
            - 3
            - 4
+           - 5
         ignore_errors: yes
 
       - name: Pause
