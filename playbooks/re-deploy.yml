@@ -33,7 +33,7 @@
         ignore_errors: yes
 
       - name: Run frontend daemon
-        command: "start reducto-frontend N=1 && sleep 5"
+        command: "start reducto-frontend N=1; sleep 5"
 
 
 - name: Re-deploy Worker
