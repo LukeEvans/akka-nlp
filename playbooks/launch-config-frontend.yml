@@ -25,7 +25,7 @@
  
     # Frontend
     - name: Launch frontend instances
-      local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{frontend_instance_type}} image={{image}} wait=true count={{frontend_count}} region={{region}} instance_tags='{"Name":"reducto-frontend-01"}'
+      local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{frontend_instance_type}} image={{image}} wait=true count={{frontend_count}} region={{region}} instance_tags='{"Name":"reducto-fe-01"}'
       register: ec2
     - name: Add all worker instance public IPs to host group
       local_action: add_host hostname={{item.public_ip}} groupname=launched ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/.ssh/Akka.pem
