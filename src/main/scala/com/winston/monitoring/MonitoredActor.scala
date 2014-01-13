@@ -16,8 +16,6 @@ abstract class MonitoredActor(tag:String) extends Actor with ActorLogging {
     tags								            /* DataDog extension: Constant tags, always applied */
   )   
   
-  
-  
   override def postStop() {
     statsd.stop();
   }
