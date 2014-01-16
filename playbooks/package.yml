@@ -13,9 +13,9 @@
     parse_parallelization: 1
 
     # Roles
-    worker_role: reducto-worker
-    parser_role: reducto-parser
-    supervisor_role: reducto-supervisor
+    worker_role: reducto-frontend
+    parser_role: reducto-frontend
+    supervisor_role: reducto-frontend
 
     # Minimum Role instances
     min_number: 3
