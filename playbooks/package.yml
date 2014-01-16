@@ -8,23 +8,21 @@
   vars:
 
     # Parallelization Hints
-    default_parallelization: 5
-    score_parallelization: 2
+    default_parallelization: 2
+    score_parallelization: 1
     parse_parallelization: 1
 
     # Roles
-    worker_role: reducto-frontend
-    parser_role: reducto-frontend
-    supervisor_role: reducto-frontend
+    worker_role: reducto-worker
+    parser_role: reducto-parser
+    supervisor_role: reducto-supervisor
 
     # Minimum Role instances
-    min_number: 3
+    min_number: 1
     min_frontend: 1
-    min_supervisor: 1
-    min_worker: 1
-
+if
     # Seed node ip
-    seed_ip: 10.183.157.175
+    seed_ip: 10.180.206.175
    
     # Redis address
     redis_address : "reducto-words.1hm814.0001.use1.cache.amazonaws.com"
@@ -60,12 +58,6 @@
 
     - name: Modify min frontend 
       local_action: lineinfile dest=../src/main/resources/reducto.conf regexp='^\s*#?reducto-frontend.min' line='  reducto-frontend.min-nr-of-members = {{min_frontend}}'
-
-    - name: Modify min supervisor 
-      local_action: lineinfile dest=../src/main/resources/reducto.conf regexp='^\s*#?reducto-supervisor.min' line='  reducto-supervisor.min-nr-of-members = {{min_supervisor}}'
-
-    - name: Modify min worker 
-      local_action: lineinfile dest=../src/main/resources/reducto.conf regexp='^\s*#?reducto-worker.min' line='  reducto-worker.min-nr-of-members = {{min_worker}}'
 
 
     # Application Config

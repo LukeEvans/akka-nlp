@@ -2,10 +2,7 @@
 
 - name: Send distribution
   hosts:
-  - tag_Name_reducto-frontend-01
-  - tag_Name_reducto-worker-01
-  - tag_Name_reducto-supervisor-01
-  - tag_Name_reducto-parser-01
+  - tag_Name_reducto-akka-01
   user: ubuntu
   sudo: true
   gather_facts: false
@@ -18,10 +15,31 @@
       - name: Copy project Dist
         copy: src=../target/reducto-dist dest=/usr/local/
 
+- name: Re-deploy seed
+  hosts:
+  - tag_Name_reducto-akka-01
+  
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+
+  tasks:
+      - name: Kill previous seed run
+        command: stop reducto-seed N=1
+        ignore_errors: yes
+
+      - name: Pause
+        pause: seconds=5
+
+      - name: Run seed daemon
+        command: "start reducto-seed N=1"
+      
+      - name: Pause
+        pause: seconds=5
 
 - name: Re-deploy Frontend
   hosts:
-  - tag_Name_reducto-frontend-01
+  - tag_Name_reducto-akka-01
   
   user: ubuntu
   sudo: true
@@ -43,7 +61,7 @@
 
 - name: Re-deploy Worker
   hosts:
-  - tag_Name_reducto-worker-01
+  - tag_Name_reducto-akka-01
   
   user: ubuntu
   sudo: true
@@ -53,7 +71,6 @@
         command: stop reducto-worker N={{ item }}
         with_items:
            - 1
-           - 2
         ignore_errors: yes
 
       - name: Pause
@@ -63,7 +80,6 @@
         command: start reducto-worker N={{ item }}
         with_items:
            - 1
-           - 2
 
       - name: Pause
         pause: seconds=5
@@ -72,10 +88,7 @@
         command: stop reducto-parser N={{ item }}
         with_items:
            - 1
-           - 2
-           - 3
-           - 4
-           - 5
+
         ignore_errors: yes
 
       - name: Pause
@@ -85,17 +98,13 @@
         command: start reducto-parser N={{ item }}
         with_items:
            - 1
-           - 2
-           - 3
-           - 4
-           - 5
 
       - name: Pause
         pause: seconds=5
 
 - name: Re-deploy Parser
   hosts:
-  - tag_Name_reducto-parser-01
+  - tag_Name_reducto-akka-01
   
   user: ubuntu
   sudo: true
@@ -105,10 +114,6 @@
         command: stop reducto-parser N={{ item }}
         with_items:
            - 1
-           - 2
-           - 3
-           - 4
-           - 5
         ignore_errors: yes
 
       - name: Pause
@@ -118,17 +123,13 @@
         command: start reducto-parser N={{ item }}
         with_items:
            - 1
-           - 2
-           - 3
-           - 4
-           - 5
 
       - name: Pause
         pause: seconds=5           
 
 - name: Re-deploy Supervisor
   hosts:
-  - tag_Name_reducto-frontend-01
+  - tag_Name_reducto-akka-01
   
   user: ubuntu
   sudo: true
