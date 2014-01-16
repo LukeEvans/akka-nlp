@@ -8,6 +8,8 @@ import akka.pattern.{pipe, ask}
 import akka.actor.Props
 import akka.util.Timeout
 import scala.concurrent.duration._
+import akka.actor.OneForOneStrategy
+import akka.actor.SupervisorStrategy._
 
 class ReductoWorker(master: ActorRef, split:ActorRef, parse:ActorRef, score:ActorRef, pack:ActorRef, url:ActorRef) extends Worker(master) {
   // We'll use the current dispatcher for the execution context.
@@ -17,7 +19,7 @@ class ReductoWorker(master: ActorRef, split:ActorRef, parse:ActorRef, score:Acto
   
   // Start reducto actor
   val reductoActor = context.actorOf(Props(classOf[ReductoActor], self, split, parse, score, pack, url), "reducto")
-  
+
   // Handle work
   def doWork(workSender: ActorRef, msg: Any): Unit = {
       reductoActor.tell(msg, workSender)

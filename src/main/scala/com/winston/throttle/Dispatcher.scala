@@ -36,6 +36,8 @@ class Dispatcher(reductoRouter:ActorRef) extends MonitoredActor("reducto-dispatc
           	
           case _ => log.info("Unrecognized overload message")
         }
+        
+    case _ => log.warning("Unknown Request")
 
   }
   

@@ -1,6 +1,6 @@
 ---
 
-- name: Send distribution
+- name: Down
   hosts:
   - tag_Name_reducto-frontend-01
   - tag_Name_reducto-worker-01
@@ -15,11 +15,7 @@
         command: rm -rf /usr/local/reducto-dist
         ignore_errors: yes
 
-      - name: Copy project Dist
-        copy: src=../target/reducto-dist dest=/usr/local/
-
-
-- name: Re-deploy Frontend
+- name: Down Frontend
   hosts:
   - tag_Name_reducto-frontend-01
   
@@ -32,19 +28,11 @@
         command: stop reducto-frontend N=1
         ignore_errors: yes
 
-      - name: Run frontend daemon
-        command: start reducto-frontend N=1
+      - name: Kill previous supervisor run
+        command: stop reducto-supervisor N=1
+        ignore_errors: yes
 
-      - name: Pause
-        pause: seconds=5
-
-      - name: Run frontend daemon
-        command: "start reducto-frontend N=1"
-      
-      - name: Pause
-        pause: seconds=5
-
-- name: Re-deploy Worker
+- name: Down Worker
   hosts:
   - tag_Name_reducto-worker-01
   
@@ -59,18 +47,6 @@
            - 2
         ignore_errors: yes
 
-      - name: Pause
-        pause: seconds=5
-
-      - name: Run worker daemons
-        command: start reducto-worker N={{ item }}
-        with_items:
-           - 1
-           - 2
-
-      - name: Pause
-        pause: seconds=5
-
       - name: Kill previous parser runs
         command: stop reducto-parser N={{ item }}
         with_items:
@@ -81,22 +57,8 @@
            - 5
         ignore_errors: yes
 
-      - name: Pause
-        pause: seconds=5
 
-      - name: Run parser daemons
-        command: start reducto-parser N={{ item }}
-        with_items:
-           - 1
-           - 2
-           - 3
-           - 4
-           - 5
-
-      - name: Pause
-        pause: seconds=5
-
-- name: Re-deploy Parser
+- name: Down Parser
   hosts:
   - tag_Name_reducto-parser-01
   
@@ -114,22 +76,8 @@
            - 5
         ignore_errors: yes
 
-      - name: Pause
-        pause: seconds=5
 
-      - name: Run parser daemons
-        command: start reducto-parser N={{ item }}
-        with_items:
-           - 1
-           - 2
-           - 3
-           - 4
-           - 5
-
-      - name: Pause
-        pause: seconds=5           
-
-- name: Re-deploy Supervisor
+- name: Down Supervisor
   hosts:
   - tag_Name_reducto-supervisor-01
   
@@ -141,8 +89,3 @@
         command: stop reducto-supervisor N=1
         ignore_errors: yes
 
-      - name: Pause
-        pause: seconds=5        
-
-      - name: Run supervisor daemons
-        command: start reducto-supervisor N=1

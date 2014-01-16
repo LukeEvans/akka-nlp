@@ -58,25 +58,32 @@ implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
     case e: NoSuchElementException => ctx =>
       println("no element")
       val err = "\n--No Such Element Exception--"
-      log.warning("{}\n encountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\n encountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(BadRequest, "Ensure all required fields are present.")
     
     case e: JsonParseException => ctx =>
       println("json parse")
       val err = "\n--Exception parsing input--"
-      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(InternalServerError, "Ensure all required fields are present with all Illegal characters properly escaped")
       
     case e: AskTimeoutException => ctx =>
       println("Ask Timeout")
       val err = "\n--Timeout Exception--"
-      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(RequestTimeout, "Server Timeout")
     
+    case e: NullPointerException => ctx => 
+      println("Null Pointer")
+      val err = "\n--Exception parsing input--"
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      ctx.complete(InternalServerError, "Ensure all required fields are present with all Illegal characters properly escaped")
+    
     case e: Exception => ctx => 
+      e.printStackTrace()
       println("Unknown")
       val err = "\n--Unknon Exception--"
-      log.warning("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
+      log.error("{}\nencountered while handling request:\n {}\n\n{}", err, ctx.request,e)
       ctx.complete(InternalServerError, "Internal Server Error")
   }
     
@@ -119,10 +126,10 @@ trait ApiService extends HttpService {
                 }~                        
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                	  		formFields('url, 'sentences.?.as[Int], 'decay ? false, 'ratio ? 0.0, 'separate ? false){
-                	  			(url, sentences, decay, ratio, separate) =>{
+                	  		formFields('url, 'sentences.?.as[Int], 'decay ? true, 'ratio ? 0.0, 'separationRules ? true){
+                	  			(url, sentences, decay, ratio, separationRules) =>{
                 	  				val start = Platform.currentTime
-                	  				val request = new ReductoRequest(url, "URL", true).setDecay(decay).setSent(sentences).setSeparation(separate)
+                	  				val request = new ReductoRequest(url, "URL", true).setDecay(decay).setSent(sentences).setSeparation(separationRules)
                 	  				complete {
                 	  					reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
                 	  						container.resp.finishResponse(start, mapper);
@@ -154,10 +161,10 @@ trait ApiService extends HttpService {
                 }~     
                 post{              
                   respondWithMediaType(MediaTypes.`application/json`){
-                         formFields('headline, 'text, 'sentences.?.as[Int], 'decay ? false, 'ratio ? 0.0, 'separate ? false){
-                        	 (headline, text, sentences, decay, ratio, separate) =>{
+                         formFields('headline, 'text, 'sentences.?.as[Int], 'decay ? true, 'ratio ? 0.0, 'separationRules ? true){
+                        	 (headline, text, sentences, decay, ratio, separationRules) =>{
                         		 val start = Platform.currentTime
-                        		 val request = new ReductoRequest(headline, text, "URL").setDecay(decay).setSent(sentences).setSeparation(separate)
+                        		 val request = new ReductoRequest(headline, text, "URL").setDecay(decay).setSent(sentences).setSeparation(separationRules)
                         		 complete {
                         			 reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
                         			 container.resp.finishResponse(start, mapper);

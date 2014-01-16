@@ -3,8 +3,8 @@ package com.winston.utlities
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.HashMap
-import java.net.URL;
-import java.net.URI;
+import java.net.URL
+import java.net.URI
 import java.io.InputStreamReader
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
@@ -14,14 +14,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import edu.stanford.nlp.trees.Tree
 import com.winston.nlp.NLPWord
 import java.util.ArrayList
-
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.HttpResponse
-import java.net.URL;
-import java.net.URI;
+import java.net.URL
+import java.net.URI
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import org.apache.commons.lang3.StringEscapeUtils
 
 object Tools {
   
@@ -253,4 +253,16 @@ object Tools {
                 } 
                 return null;
         }
+        
+  	def decodeCharacters(input:String):String = {
+		var output = StringEscapeUtils.escapeHtml4(input);
+		output = output.replaceAll("&rdquo;", "&quot;");
+		output = output.replaceAll("&ldquo;", "&quot;");
+		output = output.replaceAll("&lsquo;", "'");
+		output = output.replaceAll("&rsquo;", "'");
+		output = output.replaceAll("&mdash;", "-");
+		output = StringEscapeUtils.unescapeHtml4(output);
+		
+		return output;
+	}
 }

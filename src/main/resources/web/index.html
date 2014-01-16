@@ -26,7 +26,9 @@
 					3. Click "Submit" to perform News Summarization with Contextual Results.<br>
 				</p>
 			</div>	
+
 			
+			<!-- <form action="http://ec2-107-22-14-112.compute-1.amazonaws.com:8080/url" method="post"> -->
 			<form action="http://localhost:8080/url" method="post">
 				<div>URL: </div>
 				<div>
@@ -42,13 +44,19 @@
 					<input class="input_box_small" type="number" name="sentences" min="1" value = "3"> # of Sentences </input>
 					&nbsp;
 					&nbsp;
-					<input class="input_box_small" type="text" name ="ratio" placeholder="0.0" value= "0.0"> Ratio (e.g. 0.2)</input>
+					<input class="input_box_small" type="text" name ="ratio" value= "0.0"> Ratio (e.g. 0.2)</input>
 				</div>
 				<div class="submit_button"><button type="submit" >Submit</button></div>
 			</form>
 			<br>
+<<<<<<< HEAD
 			<br>
 			<form action="http://localhost:8080/text" method="post">
+=======
+			<br>
+			<!-- <form action="http://ec2-107-22-14-112.compute-1.amazonaws.com:8080/text" method="post"> -->
+			<form action="http://localhost:8080/text" method="post">
+>>>>>>> consolidate
 				<div>Headline: </div>
 				<div>
 					<input class = "input_box" name="headline"/>
@@ -68,7 +76,7 @@
 					<input class="input_box_small" type="number" name="sentences" min="1" value = "3"> # of Sentences </input>
 					&nbsp;
 					&nbsp;
-					<input class="input_box_small" type="text" name ="ratio"> Ratio (e.g. 0.2)</input>
+					<input class="input_box_small" type="text" value="0.0" name ="ratio"> Ratio (e.g. 0.2)</input>
 				</div>
 				<div class="submit_button"><button type="submit" >Submit</button></div>
 			</form>

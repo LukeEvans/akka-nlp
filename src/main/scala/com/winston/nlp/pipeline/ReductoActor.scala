@@ -12,10 +12,12 @@ import scala.util.Success
 import scala.util.Failure
 import com.winston.nlp.transport.ReductoRequest
 import com.winston.nlp.MasterWorker.MasterWorkerProtocol._
+import com.winston.nlp.languagedetection.LanguageDetector
+import com.winston.utlities.Tools
 
 
 class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef, scoringMaster:ActorRef, packagingMaster:ActorRef, urlExtractor:ActorRef) extends Actor { 
-  
+	var detector = new LanguageDetector
     case class ReductoIntermediate(parsed:List[SentenceContainer], scored:SetContainer)
   
     println("\n\n\n\nStarting Reducto\n\n\n\n")
@@ -97,6 +99,17 @@ class ReductoActor(manager:ActorRef, splitMaster:ActorRef, parseMaster:ActorRef,
     def summarize(request: ReductoRequest, origin:ActorRef){
         implicit val timeout = Timeout(5 second);
       
+        // Detect Language
+        var detectedLanguage = detector.detectLanguage(request.text)
+        if(detectedLanguage != null){
+        	origin.tell(ResponseContainer(detectedLanguage), manager)
+        	return
+        }
+        
+        // Remove special characters
+        request.headline = Tools.decodeCharacters(request.headline)
+        request.text = Tools.decodeCharacters(request.text)
+        
 		// Split sentences
 		val split = (splitMaster ? RequestContainer(request)).mapTo[SetContainer];
 		

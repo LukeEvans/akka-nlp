@@ -21,7 +21,7 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
   implicit val ec = context.dispatcher
   
   val cancellable =
-  context.system.scheduler.schedule(5 seconds,
+  context.system.scheduler.schedule(1 seconds,
     50 milliseconds,
     self,
     GetStats)
@@ -49,9 +49,6 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
  
   // Log stats to datadog
   def getStats() {	
-//    log.info("Workers size {}", workers.size)
-//    log.info("Work size {}", workQ.size)
-    
     statsd.recordGaugeValue("workers.count", workers.size);
     statsd.recordGaugeValue("work.size", workQ.size)
     
@@ -61,8 +58,11 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
     workers.foreach {
       case (worker, m) =>
         if (m.isEmpty) idleWorkers += 1
-        else busyWorkers += 1
+        else { 
+          busyWorkers += 1
+        }
       case _ =>
+
     }
     
     statsd.recordGaugeValue("idle.workers", idleWorkers)
@@ -106,6 +106,16 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
       else
         workers += (worker -> None)
       
+    // Worker has failed
+    case WorkFailed(worker) =>
+      if (!workers.contains(worker))
+        log.error("Blurgh! {} said it's job failed but we didn't know about him", worker)
+      else {
+        // Send the work that it was doing back to the sender to mark as failed
+        val (workSender, work) = workers(worker).get
+        workers += (worker -> None)
+      }
+        
     // A worker died.  If he was doing anything then we need
     // to give it to someone else so we just add it back to the
     // master and let things progress as usual
