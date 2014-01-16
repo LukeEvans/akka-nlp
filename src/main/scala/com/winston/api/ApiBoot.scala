@@ -34,7 +34,7 @@ class ApiBoot extends Bootable {
       
 	println("IP: " + ip)
 	
-	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
+	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2552") 
       .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
       
     implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
