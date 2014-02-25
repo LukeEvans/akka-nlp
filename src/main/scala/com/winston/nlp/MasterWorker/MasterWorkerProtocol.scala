@@ -16,7 +16,7 @@ object MasterWorkerProtocol {
   case object NoWorkToBeDone
   
   // Messages between Workers and their Actors
-  case class WorkComplete(msg: Any)
+  case class WorkComplete(msg: Any = "done")
   case object ReadyForWork
   
   // Master Worker Stats
