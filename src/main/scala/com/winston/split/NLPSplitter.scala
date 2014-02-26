@@ -26,9 +26,16 @@ class NLPSplitter{
         splitProps.put("annotators", "tokenize, ssplit");
         var splitProcessor:StanfordCoreNLP = null;
         var tokenizer:Tokenizer = null;
-        var tokenModelIn:InputStream = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
         var tokenModel:TokenizerModel = null
-        
+
+		var tokenModelIn:InputStream = null;
+		
+		try { 
+			tokenModelIn = new FileInputStream("/usr/local/reducto-dist" + "/config/en-token.bin");
+		} catch {
+		  	case e: Exception => tokenModelIn = new FileInputStream(currentPath + "/src/main/resources/en-token.bin");
+		}
+	
         def init() {
                 splitProcessor = new StanfordCoreNLP(splitProps)
                 println("--Splitter Created");
