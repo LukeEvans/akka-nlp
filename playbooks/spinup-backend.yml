@@ -11,13 +11,13 @@
     instance_name: Reducto-Backend-01
 
     # Instace types
-    instance_type: m1.large
+    instance_type: m3.xlarge
 
     # Image (Ubuntu 12.04)
     image: ami-a73264ce 
 
     # Instance Counts
-    instance_count: 1
+    instance_count: 2
 
     # Region
     region: us-east-1
