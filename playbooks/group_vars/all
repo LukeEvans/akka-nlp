@@ -8,8 +8,7 @@ upstart_daemons:
 frontend_upstart_daemons:
   - reducto-frontend
 
-backend_upstart_daemons:
-  - reducto-backend
+backend_upstart_daemons: reducto-backend
 
 local:
   - localhost
