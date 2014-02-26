@@ -4,7 +4,7 @@
   pause: seconds=60
 
 - name: Kill previous runs
-  command: stop {{ frontend_upstart_daemons }} N={{item}}
+  command: "stop {{backend_upstart_daemons}} N={{item}}"
   with_items:
      - 1
      - 2
