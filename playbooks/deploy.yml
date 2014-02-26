@@ -19,6 +19,7 @@
       - undeploy-backend
 
 
+
 # Distribute
 - name: Run Frontend
   hosts: 
@@ -29,6 +30,7 @@
   gather_facts: false
   roles:
       - distribute
+
 
 # Deploy
 - name: Run Frontend
