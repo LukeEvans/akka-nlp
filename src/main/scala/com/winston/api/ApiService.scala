@@ -113,65 +113,32 @@ trait ApiService extends HttpService {
         path("url"){
                 get{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[HttpRequest]){ obj => 
-                            val start = Platform.currentTime
+                          entity(as[HttpRequest]){ obj => ctx =>
                           	val request = new ReductoRequest(obj, "URL")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
-                                container.resp.finishResponse(start, mapper);
-                              }
-                            }
+                            initiateRequest(request, ctx)
                           }
                   }        
                 }~                        
                 post{
                   respondWithMediaType(MediaTypes.`application/json`){
-                	  		formFields('url, 'sentences.?.as[Int], 'decay ? true, 'ratio ? 0.0, 'separationRules ? true){
-                	  			(url, sentences, decay, ratio, separationRules) =>{
-                	  				val start = Platform.currentTime
-                	  				val request = new ReductoRequest(url, "URL", true).setDecay(decay).setSent(sentences).setSeparation(separationRules)
-                	  				complete {
-                	  					reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
-                	  						container.resp.finishResponse(start, mapper);
-                	  					}
-                	  				}
-                	  		  }
-                	  		}~
-                	  		entity(as[String]){ obj => ctx =>
-                	  			val request = new ReductoRequest(obj, "TEXT")
-                	  			println("Handling request")
-                	  			initiateRequest(request, ctx)
-                	  		} 
+                          entity(as[String]){ obj => ctx =>
+                          	val request = new ReductoRequest(obj, "URL")
+                            initiateRequest(request, ctx)
+                          }
                   }        
                 }
         }~        
         path("text"){
                 get{
                   respondWithMediaType(MediaTypes.`application/json`){
-                          entity(as[HttpRequest]){ obj => 
-                            val start = Platform.currentTime
-                          	val request = new ReductoRequest(obj, "TEXT")
-                            complete {
-                              reductoRouter.ask(RequestContainer(request))(100.seconds).mapTo[ResponseContainer] map { container => 
-                                container.resp.finishResponse(start, mapper) 
-                              }
-                            }
+                          entity(as[HttpRequest]){ obj => ctx =>
+                          	val request = new ReductoRequest(obj, "URL")
+                            initiateRequest(request, ctx)
                           }
                   }        
                 }~     
                 post{              
                   respondWithMediaType(MediaTypes.`application/json`){
-                         formFields('headline, 'text, 'sentences.?.as[Int], 'decay ? true, 'ratio ? 0.0, 'separationRules ? true){
-                        	 (headline, text, sentences, decay, ratio, separationRules) =>{
-                        		 val start = Platform.currentTime
-                        		 val request = new ReductoRequest(headline, text, "URL").setDecay(decay).setSent(sentences).setSeparation(separationRules)
-                        		 complete {
-                        			 reductoRouter.ask(RequestContainer(request))(10.seconds).mapTo[ResponseContainer] map { container =>
-                        			 container.resp.finishResponse(start, mapper);
-                        			 }
-                        		 }
-                	  		  }
-                	  	  }~
                           entity(as[String]){ obj => ctx =>
                           	val request = new ReductoRequest(obj, "TEXT")
                             initiateRequest(request, ctx)
