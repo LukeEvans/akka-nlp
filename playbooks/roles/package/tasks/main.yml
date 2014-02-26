@@ -1,0 +1,24 @@
+---
+
+- name: Pause
+  pause: seconds=60
+
+- name: Modify Seed node
+  local_action: lineinfile dest=../src/main/resources/application.conf regexp='^\s*seed-nodes =' line='    seed-nodes = ["akka.tcp://NLPClusterSystem-0-2@{{seed_ip}}:2551"]'
+
+- name: Run sbt dist
+  local_action: shell cd .. && sbt dist
+
+# Reactor Config
+- name: Modify min number of roles
+  local_action: lineinfile dest=../src/main/resources/reactor.conf regexp='^akka.cluster.min' line='akka.cluster.min-nr-of-members = {{min_number}}'  
+
+- name: Modify min frontend 
+  local_action: lineinfile dest=../src/main/resources/reactor.conf regexp='^\s*#?frontend.min' line='  frontend.min-nr-of-members = {{min_frontend}}'
+
+- name: Modify min backend 
+  local_action: lineinfile dest=../src/main/resources/reactor.conf regexp='^\s*#?supervisor.min' line='  backend.min-nr-of-members = {{min_backend}}'  
+
+# Redis
+- name: Point to redis machine
+  local_action: lineinfile dest=../src/main/scala/com/winston/nlp/search/RedisSearchActor.scala regexp='^\s*val jedis =' line='val jedis = new Jedis("{{redis_address}}");'  

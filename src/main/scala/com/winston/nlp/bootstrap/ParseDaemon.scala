@@ -15,9 +15,9 @@ class ParseDaemon extends Bootable {
 
 	println("IP: " + ip)
 	
-	val config = ConfigFactory.empty.withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-parser]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+	val config = ConfigFactory.empty.withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-parser]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reactor"))
       
-    val system = ActorSystem("NLPClusterSystem-0-1", config)
+    val system = ActorSystem("NLPClusterSystem-0-2", config)
     
 	def startup(){
 		val clusterListener = system.actorOf(Props(classOf[Listener], system),

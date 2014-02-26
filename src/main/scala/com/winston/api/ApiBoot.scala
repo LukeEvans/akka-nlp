@@ -35,17 +35,17 @@ class ApiBoot extends Bootable {
 	println("IP: " + ip)
 	
 	val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
-      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reactor"))
       
-    implicit val system = ActorSystem("NLPClusterSystem-0-1", config)
+    implicit val system = ActorSystem("NLPClusterSystem-0-2", config)
         
     //#registerOnUp
     Cluster(system) registerOnMemberUp {
 	  
 	      // Easy role change for debugging
-          val worker_role = "reducto-frontend"
-          val parser_role = "reducto-frontend"
-          val supervisor_role = "reducto-frontend"
+          val worker_role = "backend"
+          val parser_role = "backend"
+          val supervisor_role = "backend"
           val default_parallelization = 1
           val score_parallelization = 1
           val parse_parallelization = 1
@@ -97,7 +97,7 @@ class ApiBoot extends Bootable {
     	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
     	  ClusterRouterSettings(
     	  totalInstances = 100, maxInstancesPerNode = 1,
-    	  allowLocalRoutees = true, useRole = Some("reducto-frontend")))),
+    	  allowLocalRoutees = true, useRole = Some("frontend")))),
     	  name = "serviceRouter")
     		 
        IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)

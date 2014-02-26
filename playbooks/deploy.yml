@@ -1,14 +1,55 @@
----
-
-- name: Deploy
-  hosts:
-  - tag_Name_reducto-frontend-01
+# Undeploy
+- name: Undeploy Frontend
+  hosts: 
+  - tag_Name_Reducto-Frontend-01
   user: ubuntu
   sudo: true
-  gather_facts: true
-  tasks:
-      - name: Copy project Dist
-        copy: src=../target/reducto-dist dest=/usr/local/
+  gather_facts: false
+  roles:
+      - undeploy-frontend
 
-      - name: Run Akka
-        command: /usr/local/reducto-dist/bin/start com.winston.api.ApiBoot
+
+- name: Undeploy Backend
+  hosts: 
+  - tag_Name_Reducto-Backend-01
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  roles:
+      - undeploy-backend
+
+
+# Distribute
+- name: Run Frontend
+  hosts: 
+  - tag_Name_Reducto-Frontend-01
+  - tag_Name_Reducto-Backend-01
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  roles:
+      - distribute
+
+# Deploy
+- name: Run Frontend
+  hosts: 
+  - tag_Name_Reducto-Frontend-01
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  roles:
+      - undeploy-frontend
+      - distribute
+      - deploy-frontend
+
+
+- name: Run Backend
+  hosts: 
+  - tag_Name_Reducto-Backend-01
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  roles:
+      - undeploy-backend
+      - distribute  
+      - deploy-backend      

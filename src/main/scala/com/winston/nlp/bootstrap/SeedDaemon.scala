@@ -15,9 +15,9 @@ class SeedDaemon extends Bootable {
 
 	println("IP: " + ip)
 	
-    val config = ConfigFactory.parseString("akka.cluster.roles = [reducto-seed]\nakka.remote.netty.tcp.port=2551\nakka.remote.netty.tcp.hostname=\""+ip+"\"").withFallback(ConfigFactory.load("reducto"))
+    val config = ConfigFactory.parseString("akka.cluster.roles = [reducto-seed]\nakka.remote.netty.tcp.port=2551\nakka.remote.netty.tcp.hostname=\""+ip+"\"").withFallback(ConfigFactory.load("reactor"))
         
-    val system = ActorSystem("NLPClusterSystem-0-1", config)
+    val system = ActorSystem("NLPClusterSystem-0-2", config)
     
     println("Seed node running...")	  
     

@@ -1,0 +1,15 @@
+dist_name:
+  - reducto-dist
+
+upstart_daemons:
+  - reducto-frontend
+  - reducto-backend
+
+frontend_upstart_daemons:
+  - reducto-frontend
+
+backend_upstart_daemons:
+  - reducto-backend
+
+local:
+  - localhost

@@ -1,0 +1,19 @@
+seed_ip: 10.209.143.159
+
+default_role: backend
+
+default_parallelization: 5
+score_parallelization: 2
+parse_parallelization: 1
+
+worker_role: backend
+parser_role: backend
+supervisor_role: backend
+
+# Redis address
+redis_address : "reducto-words.1hm814.0001.use1.cache.amazonaws.com"
+
+# Minimum Role instances
+min_number: 2
+min_frontend: 1
+min_backend: 1

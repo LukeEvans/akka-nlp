@@ -15,9 +15,9 @@ class FrontendDaemon(args:Array[String]) extends Bootable {
 
 	val config =
       (if (args.nonEmpty) ConfigFactory.parseString(s"akka.remote.netty.tcp.port=${args(0)}") else ConfigFactory.empty)
-      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reducto"))
+      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [reducto-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\"")).withFallback(ConfigFactory.load("reactor"))
       
-    val system = ActorSystem("NLPClusterSystem-0-1", config)
+    val system = ActorSystem("NLPClusterSystem-0-2", config)
     
 	def startup(){
 		val clusterListener = system.actorOf(Props(classOf[Listener], system),
