@@ -41,7 +41,6 @@
   gather_facts: false
   roles:
       - undeploy-frontend
-      - distribute
       - deploy-frontend
 
 
@@ -53,5 +52,4 @@
   gather_facts: false
   roles:
       - undeploy-backend
-      - distribute  
       - deploy-backend      

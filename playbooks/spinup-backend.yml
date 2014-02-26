@@ -26,7 +26,7 @@
   tasks:
  
     # Instance
-    - name: Launch frontend instances
+    - name: Launch Backend instances
       local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{instance_type}} image={{image}} wait=true count={{instance_count}} region={{region}} instance_tags='{"Name":"{{instance_name}}"}'
       register: ec2
 
