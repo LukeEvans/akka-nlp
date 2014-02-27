@@ -40,7 +40,6 @@
   sudo: true
   gather_facts: false
   roles:
-      - undeploy-frontend
       - deploy-frontend
 
 
@@ -51,5 +50,4 @@
   sudo: true
   gather_facts: false
   roles:
-      - undeploy-backend
       - deploy-backend      
