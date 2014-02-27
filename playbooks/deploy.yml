@@ -21,7 +21,7 @@
 
 
 # Distribute
-- name: Run Frontend
+- name: Distribute 
   hosts: 
   - tag_Name_Reducto-Frontend-01
   - tag_Name_Reducto-Backend-01

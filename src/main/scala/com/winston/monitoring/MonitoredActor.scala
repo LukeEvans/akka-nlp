@@ -10,7 +10,7 @@ abstract class MonitoredActor(tag:String) extends Actor with ActorLogging {
   
   // Datadog client
 	val statsd = new NonBlockingStatsDClient(
-    "reducto-1", 				                    /* prefix to any stats; may be null or empty string */
+    "reducto-kc", 				                    /* prefix to any stats; may be null or empty string */
     "localhost",					    			/* common case: localhost */
     8125,   		                                /* port */
     tags								            /* DataDog extension: Constant tags, always applied */
