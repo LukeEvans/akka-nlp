@@ -46,8 +46,8 @@ class ApiBoot extends Bootable {
           val worker_role = "backend"
           val parser_role = "backend"
           val supervisor_role = "backend"
-          val default_parallelization = 1
-          val score_parallelization = 1
+          val default_parallelization = 5
+          val score_parallelization = 2
           val parse_parallelization = 1
 		    
 		  // Splitting master
