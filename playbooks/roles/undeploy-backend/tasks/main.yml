@@ -7,6 +7,5 @@
   command: "stop {{backend_upstart_daemons}} N={{item}}"
   with_items:
      - 1
-     - 2
 
   ignore_errors: yes

@@ -7,4 +7,3 @@
   command: "start {{backend_upstart_daemons}} N={{item}}"
   with_items:
      - 1
-     - 2
