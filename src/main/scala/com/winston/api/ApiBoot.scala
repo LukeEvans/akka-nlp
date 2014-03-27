@@ -27,7 +27,6 @@ import akka.cluster.ClusterEvent.ClusterDomainEvent
 import com.winston.nlp.listener.Listener
 
 
-//class ApiBoot(args: Array[String]) extends Bootable {
 class ApiBoot extends Bootable {
 
 	val ip = IPTools.getPrivateIp();
@@ -43,9 +42,9 @@ class ApiBoot extends Bootable {
     Cluster(system) registerOnMemberUp {
 	  
 	      // Easy role change for debugging
-          val worker_role = "backend"
-          val parser_role = "backend"
-          val supervisor_role = "backend"
+          val worker_role = "frontend"
+          val parser_role = "frontend"
+          val supervisor_role = "frontend"
           val default_parallelization = 5
           val score_parallelization = 2
           val parse_parallelization = 1
